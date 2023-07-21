@@ -1,32 +1,21 @@
-from typing import Any
 from flask import Flask
-from sqlalchemy import create_engine
-from sqlalchemy import Column, String, Integer
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from user_repository import create_user
+from user_repository import get_all_users
+from user_repository import find_user_by_email
+
 
 app = Flask(__name__)
 
-# connect with data base
-engine = create_engine('sqlite:///sqlalchemy.sqlite', echo=True)
+# create_user("email@test2.pl")
 
-# manage tables
-base = declarative_base()
+for user in get_all_users():
+    print(str(user.user_id) + ' ' + user.email)
 
-class user (base):
 
-    __tablename__ = 'users'
-
-    user_id = Column(Integer, primary_key=True)
-    email = Column(String)
-
-    def __init__(self, user_id, email):
-        self.user_id = user_id
-        self.email = email
-
-base.metadata.create_all(engine)
+for user in find_user_by_email("email@test2.pl"):
+    print(str(user.user_id) + ' ' + user.email)
 
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World2!</p>"
+    return "<p>Hello, World!</p>"
