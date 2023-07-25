@@ -1,4 +1,1 @@
-export PYTHONPATH="/workspaces/shared-spaces/project/src/model:/workspaces/shared-spaces/project/src/configuration:/workspaces/shared-spaces/project/src/repository"
-
-
 . .venv/bin/activate
