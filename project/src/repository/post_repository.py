@@ -22,12 +22,8 @@ def create_post(user_id, text):
         session.add(post)
         session.commit()
     else:
-        raise RepositoryException('User already exists')
+        raise RepositoryException('Post already exists')
 
-
-# def get_all_users():
-#     """Returns all users from the persistence layer"""
-#     return session.query(User).all()
 
 
 def get_post_by_text(text):

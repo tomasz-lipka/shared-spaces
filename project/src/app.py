@@ -1,38 +1,27 @@
-import sys
-sys.path.insert(1, '/workspaces/shared-spaces/project/src/repository')
-sys.path.insert(1, '/workspaces/shared-spaces/project/src/exception')
-sys.path.insert(1, '/workspaces/shared-spaces/project/src/persistence')
-
 from flask import Flask
-from user_repository import create_user
-from post_repository import create_post
-from space_repository import create_space
-from space_assignment_repository import create_space_assignment
-from user_repository import get_all_users
-from user_repository import get_user_by_email
-from repository_exception import RepositoryException
+from flask_login import LoginManager, login_required
+import secrets
+from controller.auth_controller import auth_controller
+import repository.user_repository as repository
+from exception.repository_exception import RepositoryException
 
 
 app = Flask(__name__)
+app.register_blueprint(auth_controller)
+# Generates a 32-byte (64-character) random hex string
+app.config["SECRET_KEY"] = secrets.token_hex(32)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
-try:
-    create_user("email@test2.pl")
-except RepositoryException as re:
-    print(re)
-
-create_post(1, "text 1")
-create_space('space 1')
-create_space_assignment(1,1)
-
-# for user in get_all_users():
-#     print(str(user.user_id) + ' ' + user.email)
-
-user = get_user_by_email("email@test1.pl")
-print('find: ')
-print(user)
+@login_manager.user_loader
+def load_user(user_id):
+    """Request loader according to Flask-Login library"""
+    return repository.get_user_by_id(user_id)
 
 
 @app.route("/")
+@login_required
 def hello_world():
+    """Hello world"""
     return "<p>Hello, World!</p>"
