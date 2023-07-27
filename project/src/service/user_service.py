@@ -1,19 +1,46 @@
 import bcrypt
-import repository.generic_repository as repository
+from flask_login import login_user, logout_user, current_user, login_required
+
+from repository.sql_alchemy_repository import SqlAlchemyRepository
 from exception.service_exception import ServiceException
 from model.user import User
 
 
+repository = SqlAlchemyRepository()
+
+
+def login(login, password):
+    """Logs user in"""
+    user = get_verified_user(login, password)
+    if not user:
+        raise ServiceException('Wrong login and/or password')
+    login_user(user)
+
+
 def create_user(login, password, confirm_password):
     """Creates a new user"""
-    if password == confirm_password:
-        user = User(login, get_hashed(password))
-    else:
+    if password != confirm_password:
         raise ServiceException('Passwords don\'t match')
-    if not repository.get_by_filter(User, User.login == login):
-        repository.add(user)
-    else:
+    if repository.get_by_filter(User, User.login == login):
         raise ServiceException('User already exists')
+    repository.add(User(login, get_hashed(password)))
+
+
+def logout():
+    """Logs the current user out"""
+    logout_user()
+
+
+@login_required
+def change_password(old_password, new_password, confirm_password):
+    """Changes the exisiting password to a new one"""
+    session_user = repository.get_by_id(User, current_user.get_id())
+    if not verify_password(session_user, old_password):
+        raise ServiceException('Wrong password')
+    if new_password != confirm_password:
+        raise ServiceException('New passwords don\'t match')
+    session_user.password = get_hashed(new_password)
+    repository.add(session_user)
 
 
 def get_verified_user(login, password):
@@ -33,8 +60,3 @@ def get_hashed(password):
 def verify_password(user, password):
     """Checks if the users hashed password matches the input password"""
     return bcrypt.checkpw(password.encode('utf-8'), user.password)
-
-# TODO
-def change_password(new_password):
-    """Changes the exisiting hashed password to a new one"""
-    # self.password = self.get_hashed(new_password)
