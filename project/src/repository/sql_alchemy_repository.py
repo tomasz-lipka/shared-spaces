@@ -27,22 +27,25 @@ class SqlAlchemyRepository(Repository):
         session.refresh(object)
         return object.id
 
-    def delete(self, object):
-        """Delete entity from repo"""
-        pass
+    def delete_by_id(self, model, id):
+        """Deletes an entity from repo by ID"""
+        object = self.get_by_id(model, id)
+        if object:
+            session.delete(object)
+            session.commit()
 
     def get_by_id(self, model, id):
-        """Get entity of given model from repo by id"""
+        """Returns an entity of given model from repo by id"""
         return session.query(model).get(id)
 
     def get_first_by_filter(self, model, query_filter):
-        """Get first found entity of given model using a query filter"""
+        """Returns first found entity of given model using a query filter"""
         return session.query(model).filter(query_filter).first()
 
     def get_all_by_filter(self, model, query_filter):
-        """Get all found entities of given model using a query filter"""
+        """Returns all found entities of given model using a query filter"""
         return session.query(model).filter(query_filter).all()
 
-    def get_all(self, oreference_object):
-        """Get all entities associated to a given reference object"""
+    def get_all(self, reference_object):
+        """Returns all entities associated to a given reference object"""
         pass

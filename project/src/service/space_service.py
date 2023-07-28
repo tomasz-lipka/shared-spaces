@@ -17,7 +17,10 @@ def get_all_of_user():
 
 @login_required
 def get_by_id(space_id):
-    """Return space by ID and check if user is member of requested space"""
+    """
+    Returns space by ID if user is member of requested space.
+    Shows if the user is admin of it
+    """
     space = member_service.get_by_id(current_user.get_id(), space_id)
     if not space:
         raise ServiceException('No such space or user not member of it')
@@ -32,9 +35,21 @@ def create(name):
 
 
 @login_required
+def get_members_by_space_id(space_id):
+    """
+    Returns a list of space members.
+    Shows which users have admin priviliges.
+    Only user who is member of the requested space can see it
+    """
+    space = get_by_id(space_id)
+    return member_service.get_members_of_space(space.id)
+
+
+@login_required
 def delete(space_id):
-    """"""
-    pass
+    """Deletes and empty space if the logged in user is admin of it"""
+
+    repository.delete_by_id(Space, space_id)
 
 
 @login_required

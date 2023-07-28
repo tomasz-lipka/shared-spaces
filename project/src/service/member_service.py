@@ -22,8 +22,17 @@ def get_all_by_user_id(user_id):
 
 @login_required
 def get_by_id(user_id, space_id):
-    """Returns space by space_id where user is member of"""
+    """
+    Returns space by space_id where user is member of.
+    And information if he is admin of it
+    """
     spaces = repository.get_all_by_filter(Member, Member.user_id == user_id)
     for space in spaces:
         if space.id == space_id:
             return space
+
+
+@login_required
+def get_members_of_space(space_id):
+    """Returns members of requested space. Shows info who is admin"""
+    return repository.get_all_by_filter(Member, Member.space_id == space_id)

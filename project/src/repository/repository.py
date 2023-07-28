@@ -9,21 +9,21 @@ class Repository(ABC):
         """Add or update entity in repo"""
 
     @abstractmethod
-    def delete(self, object):
-        """Delete entity from repo"""
+    def delete_by_id(self, id):
+        """Deletes an entity from repo by ID"""
 
     @abstractmethod
     def get_by_id(self, model, id):
-        """Get entity of given model from repo by id"""
+        """Returns an entity of given model from repo by id"""
 
     @abstractmethod
     def get_first_by_filter(self, model, query_filter):
-        """Get first found entity of given model using a query filter"""
+        """Returns first found entity of given model using a query filter"""
 
     @abstractmethod
     def get_all_by_filter(self, model, query_filter):
-        """Get all found entities of given model using a query filter"""
+        """Returns all found entities of given model using a query filter"""
 
     @abstractmethod
     def get_all(self, reference_object):
-        """Get all entities associated to a given reference object"""
+        """Returns all entities associated to a given reference object"""
