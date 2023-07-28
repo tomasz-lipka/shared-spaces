@@ -3,11 +3,11 @@ from sqlalchemy.orm import relationship
 from model.base import Base
 
 
-class Member(Base):
+class Assignment(Base):
     """
-    Model of the member entity. It assigns users to their spaces and grants admin roles
+    Model of the assignment entity. It assigns users to their spaces and grants admin roles
     """
-    __tablename__ = 'members'
+    __tablename__ = 'assignments'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
@@ -22,7 +22,7 @@ class Member(Base):
         self.space_id = space_id
 
     def __str__(self):
-        return f"Member(id='{self.id}', user='{self.user}', space='{self.space}', is_admin='{self.is_admin}')"
+        return f"Assignment(id='{self.id}', user='{self.user}', space='{self.space}', is_admin='{self.is_admin}')"
 
     def to_dict(self):
         """Returns dictionary for json serialization"""

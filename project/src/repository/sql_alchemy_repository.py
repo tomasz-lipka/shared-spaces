@@ -5,7 +5,7 @@ from repository.repository import Repository
 from model.base import Base
 from model.user import User
 from model.space import Space
-from model.member import Member
+from model.assignment import Assignment
 
 
 engine = create_engine('sqlite:///my_db.sqlite')

@@ -4,6 +4,7 @@ import secrets
 
 from controller.user_controller import user_controller
 from controller.space_controller import space_controller
+from controller.assignment_controller import assignment_controller
 from repository.sql_alchemy_repository import SqlAlchemyRepository
 from model.user import User
 
@@ -11,6 +12,8 @@ from model.user import User
 app = Flask(__name__)
 app.register_blueprint(user_controller)
 app.register_blueprint(space_controller)
+app.register_blueprint(assignment_controller)
+
 
 # Generates a 32-byte (64-character) random hex string
 app.config["SECRET_KEY"] = secrets.token_hex(32)
