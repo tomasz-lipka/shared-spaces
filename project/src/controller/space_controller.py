@@ -19,9 +19,13 @@ def get_all_of_user():
 
 
 @space_controller.route('/spaces/<int:space_id>', methods=["GET"])
-def get(space_id):
+def get_by_id(space_id):
     """Endpoint to get a particular space of which the logged in user is member of"""
-    pass
+    try:
+        space = service.get_by_id(space_id)
+        return json.dumps(space.to_dict())
+    except ServiceException as exc:
+        return make_response(str(exc), 400)
 
 
 @space_controller.route('/spaces', methods=["POST"])

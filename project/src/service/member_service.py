@@ -18,3 +18,12 @@ def create(user_id, space_id):
 def get_all_by_user_id(user_id):
     """Returns all entities queried by user id"""
     return repository.get_all_by_filter(Member, Member.user_id == user_id)
+
+
+@login_required
+def get_by_id(user_id, space_id):
+    """Returns space by space_id where user is member of"""
+    spaces = repository.get_all_by_filter(Member, Member.user_id == user_id)
+    for space in spaces:
+        if space.id == space_id:
+            return space
