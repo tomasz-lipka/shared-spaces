@@ -1,52 +1,24 @@
-from abc import ABC, abstractmethod
+
+from json import JSONEncoder
+import json
+
+class SpaceAssignment():
+    user_id = 0
+    space_id = 0
+ 
+
+    def __init__(self, user_id, space_id):
+        self.user_id = user_id
+        self.space_id = space_id
 
 
-class Repository(ABC):
-    """Abstract repository class. Template for specific repository implementations"""
 
-    @abstractmethod
-    def add(self, object):
-        """Add or update entity in repo"""
-
-    @abstractmethod
-    def delete(self, object):
-        """Delete entity from repo"""
-
-    @abstractmethod
-    def get_by_id(self, model, id):
-        """Get entity of given model from repo by id"""
-
-    @abstractmethod
-    def get_by_filter(self, model, query_filter):
-        """Get entity of given model using a query filter"""
-
-    @abstractmethod
-    def get_all(self, reference_object):
-        """Get all entities associated to a given reference object"""
+class SpaceAssignmentJSONEncoder(JSONEncoder):
+    def default(self, obj):
+        return obj.__dict__
 
 
-class SqlAlchemyRepository(Repository):
-    """Implementation of the Repository abstract class"""
 
-    def add(self, object):
-        """Add or update entity in repo"""
-        pass
-
-    def delete(self, object):
-        """Delete entity from repo"""
-        pass
-
-    def get_by_id(self, model, id):
-        """Get entity of given model from repo by id"""
-        pass
-
-    def get_by_filter(self, model, query_filter):
-        """Get entity of given model using a query filter"""
-        pass
-
-    # def get_all(self, oreference_object):
-    #     """Get all entities associated to a given reference object"""
-    #     pass
-
-
-repo = SqlAlchemyRepository()
+space_assignment = SpaceAssignment(1,1)
+json_data = json.dumps(space_assignment, cls=SpaceAssignmentJSONEncoder)
+print(json_data)

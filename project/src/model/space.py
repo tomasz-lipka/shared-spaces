@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from base import Base
+from model.base import Base
 
 
 class Space(Base):
@@ -8,12 +8,18 @@ class Space(Base):
     """
     __tablename__ = 'spaces'
 
-    space_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
 
     def __init__(self, name):
         self.name = name
 
     def __str__(self):
-        return f"Space(space_id='{self.space_id}', name={self.name})"
+        return f"Space(id='{self.id}', name={self.name})"
 
+    def to_dict(self):
+        """Returns dictionary for json serialization"""
+        return {
+            'id': self.id,
+            'name': self.name
+        }

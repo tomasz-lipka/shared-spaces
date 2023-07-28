@@ -21,7 +21,7 @@ def create_user(login, password, confirm_password):
     """Creates a new user"""
     if password != confirm_password:
         raise ServiceException('Passwords don\'t match')
-    if repository.get_by_filter(User, User.login == login):
+    if repository.get_first_by_filter(User, User.login == login):
         raise ServiceException('User already exists')
     repository.add(User(login, get_hashed(password)))
 
@@ -45,7 +45,7 @@ def change_password(old_password, new_password, confirm_password):
 
 def get_verified_user(login, password):
     """Verifies if the given credentials match an exisiting user"""
-    user = repository.get_by_filter(User, User.login == login)
+    user = repository.get_first_by_filter(User, User.login == login)
     if user and verify_password(user, password):
         return user
     return None

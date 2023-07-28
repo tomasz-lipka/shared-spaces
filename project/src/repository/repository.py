@@ -17,8 +17,12 @@ class Repository(ABC):
         """Get entity of given model from repo by id"""
 
     @abstractmethod
-    def get_by_filter(self, model, query_filter):
-        """Get entity of given model using a query filter"""
+    def get_first_by_filter(self, model, query_filter):
+        """Get first found entity of given model using a query filter"""
+
+    @abstractmethod
+    def get_all_by_filter(self, model, query_filter):
+        """Get all found entities of given model using a query filter"""
 
     @abstractmethod
     def get_all(self, reference_object):

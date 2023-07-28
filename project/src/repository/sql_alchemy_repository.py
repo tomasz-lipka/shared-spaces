@@ -4,6 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from repository.repository import Repository
 from model.base import Base
 from model.user import User
+from model.space import Space
+from model.member import Member
 
 
 engine = create_engine('sqlite:///my_db.sqlite')
@@ -19,9 +21,11 @@ class SqlAlchemyRepository(Repository):
     """Implementation of the Repository abstract class"""
 
     def add(self, object):
-        """Add or update entity in repo"""
+        """Add or update entity in repo and return its ID"""
         session.add(object)
         session.commit()
+        session.refresh(object)
+        return object.id
 
     def delete(self, object):
         """Delete entity from repo"""
@@ -31,9 +35,13 @@ class SqlAlchemyRepository(Repository):
         """Get entity of given model from repo by id"""
         return session.query(model).get(id)
 
-    def get_by_filter(self, model, query_filter):
-        """Get entity of given model using a query filter"""
+    def get_first_by_filter(self, model, query_filter):
+        """Get first found entity of given model using a query filter"""
         return session.query(model).filter(query_filter).first()
+
+    def get_all_by_filter(self, model, query_filter):
+        """Get all found entities of given model using a query filter"""
+        return session.query(model).filter(query_filter).all()
 
     def get_all(self, oreference_object):
         """Get all entities associated to a given reference object"""

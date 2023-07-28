@@ -12,11 +12,11 @@ def login():
     try:
         data = request.json
         service.login(data['login'], data['password'])
-        return make_response('Loged in', 200)
+        return make_response('Logged in', 200)
     except ServiceException as exc:
         return make_response(str(exc), 401)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 409)
+        return make_response('Invalid payload :' + str(key_err), 400)
 
 
 @user_controller.route('/register', methods=["POST"])
@@ -30,7 +30,7 @@ def register():
     except ServiceException as exc:
         return make_response(str(exc), 400)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 409)
+        return make_response('Invalid payload :' + str(key_err), 400)
 
 
 @user_controller.route('/logout')
@@ -51,4 +51,4 @@ def change_password():
     except ServiceException as exc:
         return make_response(str(exc), 400)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 409)
+        return make_response('Invalid payload :' + str(key_err), 400)
