@@ -21,6 +21,10 @@ class Repository(ABC):
         """Returns first found entity of given model using a query filter"""
 
     @abstractmethod
+    def get_first_by_two_filters(self, model, query_filter1, query_filter2):
+        """Returns first found entity of given model using two query filters"""
+
+    @abstractmethod
     def get_all_by_filter(self, model, query_filter):
         """Returns all found entities of given model using a query filter"""
 

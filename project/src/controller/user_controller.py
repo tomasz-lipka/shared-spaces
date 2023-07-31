@@ -8,7 +8,11 @@ user_controller = Blueprint('user_controller', __name__)
 
 @user_controller.route('/login', methods=["POST"])
 def login():
-    """Endpoint for user log-in"""
+    """
+    Endpoint 
+    Logs user in
+    Returns: nothing
+    """
     try:
         data = request.json
         service.login(data['login'], data['password'])
@@ -21,7 +25,11 @@ def login():
 
 @user_controller.route('/register', methods=["POST"])
 def register():
-    """Endpoint for user registration"""
+    """
+    Endpoint 
+    Registers a new user
+    Returns: nothing
+    """
     try:
         data = request.json
         service.create_user(
@@ -35,14 +43,22 @@ def register():
 
 @user_controller.route('/logout')
 def logout():
-    """Endpoint for user logout"""
+    """
+    Endpoint 
+    Logs user out
+    Returns: nothing
+    """
     service.logout()
     return make_response('Logged out', 200)
 
 
 @user_controller.route('/change-password', methods=["POST"])
 def change_password():
-    """Endpoint to change the password"""
+    """
+    Endpoint
+    Changes users password
+    Returns: nothing
+    """
     try:
         data = request.json
         service.change_password(

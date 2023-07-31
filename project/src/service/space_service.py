@@ -4,48 +4,58 @@ from repository.sql_alchemy_repository import SqlAlchemyRepository
 from exception.service_exception import ServiceException
 from model.space import Space
 import service.assignment_service as assignment_service
-
+from service.validator_helper import *
 
 repository = SqlAlchemyRepository()
 
 
 @login_required
-def create(name):
+def create_space(name):
     """
-    Creates a new Space. Grants admin role to logged in user
+    Adds a new Space to repo. Invokes a service method: creates assignment
     Returns: nothing
     """
     space_id = repository.add(Space(name))
-    assignment_service.create(current_user.get_id(), space_id)
+    assignment_service.create_assignment_with_admin(space_id)
 
 
 @login_required
 def get_space_by_space_id(space_id):
     """
-    Gets Space by space_id
-    Logged in user must be member
+    Invokes validators: if space exists, if user exists, if space-user assignment exists 
     Returns: Space object
     """
-    if not assignment_service.is_member(current_user.get_id(), space_id):
-        raise ServiceException('User not member of space or no such space')
-    return repository.get_by_id(Space, space_id)
-
-
-# -------------------------------------------------------------------------------
-
-# @login_required
-# def delete_by_space_id(space_id):
-#     """Deletes and empty space if the logged in user is member and admin of it"""
-#     # space = get_by_space_id(space_id)
-#     if not assignment_service.is_admin_by_space_id(current_user.get_id(), space_id):
-#         raise ServiceException('Can\'t delete - not admin')
-#     if not assignment_service.is_empty_by_space_id(current_user.get_id(), space_id):
-#         raise ServiceException('Can\'t delete - not empty')
-#     assignment_service.delete_by_space_id(current_user.get_id(), space.id)
-#     repository.delete_by_id(Space, space.id)
+    space = validate_space(space_id)
+    validate_assignment(validate_user(current_user.get_id()), space)
+    return space
 
 
 @login_required
-def rename(space_id):
-    """"""
-    pass
+def delete_space_by_space_id(space_id):
+    """
+    Invokes validators: if space exists, if user exists, if space-user assignment exists, if is admin, if is empty
+    Invokes a service method: deletes assignment
+    Deletes space from repo
+    Returns: nothing
+    """
+    space = validate_space(space_id)
+    assignment = validate_assignment(validate_user(current_user.get_id()), space)
+    validate_admin(assignment)
+    if contains_only_owner(space):
+        assignment_service.delete_assignment(assignment)
+        repository.delete_by_id(Space, space_id)
+
+
+@login_required
+def rename_space(space_id, new_name):
+    """
+    Invokes validators: if space exists, if user exists, if space-user assignment exists, if is admin
+    Renames a space in repo
+    Returns: nothing
+    """
+    space = validate_space(space_id)
+    assignment = validate_assignment(validate_user(current_user.get_id()), space)
+    validate_admin(assignment)
+
+    space.name = new_name
+    repository.add(space)

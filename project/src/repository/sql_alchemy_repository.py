@@ -42,6 +42,10 @@ class SqlAlchemyRepository(Repository):
         """Returns first found entity of given model using a query filter"""
         return session.query(model).filter(query_filter).first()
 
+    def get_first_by_two_filters(self, model, query_filter1, query_filter2):
+        """Returns first found entity of given model using two query filters"""
+        return session.query(model).filter(query_filter1).filter(query_filter2).first()
+
     def get_all_by_filter(self, model, query_filter):
         """Returns all found entities of given model using a query filter"""
         return session.query(model).filter(query_filter).all()

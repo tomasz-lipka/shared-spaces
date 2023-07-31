@@ -1,70 +1,75 @@
 from repository.sql_alchemy_repository import SqlAlchemyRepository
 from flask_login import current_user, login_required
 from model.assignment import Assignment
-from exception.service_exception import ServiceException
-
+from service.validator_helper import validate_user, validate_space, validate_assignment, validate_admin, validate_no_assignment
 
 repository = SqlAlchemyRepository()
 
 
 @login_required
-def get_all():
+def get_users_assignments():
     """
-    Gets all Assignments. Shows where logged in user has admin role
-    Logged in user must be member
+    Gets all Assignments of logged in user. Shows where he's admin
     Returns: list(Assignment)
     """
     return repository.get_all_by_filter(Assignment, Assignment.user_id == current_user.get_id())
 
 
 @login_required
-def create(user_id, space_id):
+def get_assignments_by_space_id(space_id):
+    """
+    Returns assignments by space_id
+    Logged in user must be: member
+    Returns: list(Assignments)
+    """
+    user = validate_user(current_user.get_id())
+    space = validate_space(space_id)
+    validate_assignment(user, space)
+    return repository.get_all_by_filter(Assignment, Assignment.space_id == space.id)
+
+
+@login_required
+def create_assignment(user_id, space_id):
+    """
+    Creates Assignment. Assignment with given space_id and user_id musn't exist. User and Space must exist
+    Logged in user must be: member, admin
+    Returns: nothing
+    """
+    space = validate_space(space_id)
+    admin_assignment = validate_assignment(
+        validate_user(current_user.get_id()), space)
+    validate_admin(admin_assignment)
+    validate_no_assignment(validate_user(user_id), space)
+
+    repository.add(Assignment(user_id, space_id))
+
+
+# NEW
+@login_required
+def delete_assignment_by_user_id_space_id(space_id, user_id):
+    space = validate_space(space_id)
+    admin_assignment = validate_assignment(validate_user(current_user.get_id()), space)
+    validate_admin(admin_assignment)
+    assignment = validate_assignment(validate_user(user_id), space)
+    
+    repository.delete_by_id(Assignment, assignment.id)
+
+def create_assignment_with_admin(space_id):
     """
     Creates a new Assignment. Grants admin role to logged in user
     Returns: nothing
     """
-    assignment = Assignment(user_id, space_id)
+    assignment = Assignment(current_user.get_id(), space_id)
     assignment.is_admin = True
     repository.add(assignment)
 
 
-@login_required
-def get_all_by_space_id(space_id):
+def delete_assignment(assignment):
     """
-    Returns assignments by space_id.
-    Logged in user must be member
-    Returns: list(Assignments)
+    Deletes assignment
+    Returns: nothing
     """
-    if not is_member(current_user.get_id(), space_id):
-        raise ServiceException(
-            'User not member of requested space or no such space')
-    return repository.get_all_by_filter(Assignment, Assignment.space_id == space_id)
+    repository.delete_by_id(Assignment, assignment.id)
 
 
-# def delete_by_space_id(user_id, space_id):
-#     """Deletes entity by space ID if there is only the admin member"""
-#     if is_empty_by_space_id(user_id, space_id):
-#         repository.delete_by_id(Assignment, space_id)
 
-def is_admin(space_id):
-    """
-    Checks if logged in user is admin of given space
-    Returns: boolean
-    """
-    pass
-
-
-def is_empty(user_id, space_id):
-    pass
-
-
-def is_member(user_id, space_id):
-    """
-    Checks if given user is member of given space
-    Returns: boolean
-    """
-    assignments = repository.get_all_by_filter(
-        Assignment, Assignment.user_id == user_id)
-    for assignment in assignments:
-        if assignment.space_id == space_id:
-            return True

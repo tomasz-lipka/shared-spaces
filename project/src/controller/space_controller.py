@@ -10,24 +10,22 @@ space_controller = Blueprint('space_controller', __name__)
 def post_space():
     """
     Endpoint
-    Creates a new Space. Makes logged in user admin
+    Invokes a service method: creates a space
     Returns: nothing
     """
     try:
         data = request.json
-        service.create(data['name'])
+        service.create_space(data['name'])
         return make_response('Space created', 200)
     except KeyError as key_err:
         return make_response('Invalid payload :' + str(key_err), 400)
-
 
 @space_controller.route('/spaces/<int:space_id>')
 def get_space(space_id):
     """
     Endpoint
-    Gets a Space by space_id
-    Logged in user must be member
-    Returns: JSON
+    Invokes a service method
+    Returns: JSON (space object)
     """
     try:
         space = service.get_space_by_space_id(space_id)
@@ -36,20 +34,32 @@ def get_space(space_id):
         return make_response(str(exc), 400)
 
 
-# -------------------------------------------------------------------------------
-
-
-# @space_controller.route('/spaces/<int:space_id>', methods=["DELETE"])
-# def delete(space_id):
-#     """Endpoint for deleting an empty space of which the logged in user is admin and member"""
-#     try:
-#         service.delete_by_space_id(space_id)
-#         return make_response('Space deleted', 200)
-#     except ServiceException as exc:
-#         return make_response(str(exc), 400)
+@space_controller.route('/spaces/<int:space_id>', methods=["DELETE"])
+def delete_space(space_id):
+    """
+    Endpoint
+    Invokes a service method: deletes a space
+    Returns: nothing
+    """
+    try:
+        service.delete_space_by_space_id(space_id)
+        return make_response('Space deleted', 200)
+    except ServiceException as exc:
+        return make_response(str(exc), 400)
 
 
 @space_controller.route('/spaces/<int:space_id>', methods=["PUT"])
 def rename(space_id):
-    """Endpoint for renaming a space of which the logged in user is admin"""
-    pass
+    """
+    Endpoint 
+    Invokes a service method: renames a space
+    Returns: nothing
+    """
+    try:
+        data = request.json
+        service.rename_space(space_id, data['new-name'])
+        return make_response('Space renamed', 200)
+    except ServiceException as exc:
+        return make_response(str(exc), 400)
+    except KeyError as key_err:
+        return make_response('Invalid payload :' + str(key_err), 400)

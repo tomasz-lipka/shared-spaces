@@ -60,3 +60,11 @@ def get_hashed(password):
 def verify_password(user, password):
     """Checks if the users hashed password matches the input password"""
     return bcrypt.checkpw(password.encode('utf-8'), user.password)
+
+
+def get_user_by_user_id(user_id):
+    """
+    Gets user by user_id
+    Returns: User
+    """
+    return repository.get_by_id(User, user_id)
