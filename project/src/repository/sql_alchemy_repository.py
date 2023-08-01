@@ -6,6 +6,7 @@ from model.base import Base
 from model.user import User
 from model.space import Space
 from model.assignment import Assignment
+from model.share import Share
 
 
 engine = create_engine('sqlite:///my_db.sqlite')

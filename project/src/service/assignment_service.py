@@ -2,6 +2,7 @@ from repository.sql_alchemy_repository import SqlAlchemyRepository
 from flask_login import current_user, login_required
 from model.assignment import Assignment
 from service.validator_helper import validate_user, validate_space, validate_assignment, validate_admin, validate_no_assignment
+from exception.service_exception import ServiceException
 
 repository = SqlAlchemyRepository()
 
@@ -40,19 +41,22 @@ def create_assignment(user_id, space_id):
         validate_user(current_user.get_id()), space)
     validate_admin(admin_assignment)
     validate_no_assignment(validate_user(user_id), space)
+    if not isinstance(user_id, int):
+        raise ServiceException('"user id" must be type int')
 
     repository.add(Assignment(user_id, space_id))
 
 
-# NEW
 @login_required
 def delete_assignment_by_user_id_space_id(space_id, user_id):
     space = validate_space(space_id)
-    admin_assignment = validate_assignment(validate_user(current_user.get_id()), space)
+    admin_assignment = validate_assignment(
+        validate_user(current_user.get_id()), space)
     validate_admin(admin_assignment)
     assignment = validate_assignment(validate_user(user_id), space)
-    
+
     repository.delete_by_id(Assignment, assignment.id)
+
 
 def create_assignment_with_admin(space_id):
     """
@@ -72,4 +76,14 @@ def delete_assignment(assignment):
     repository.delete_by_id(Assignment, assignment.id)
 
 
-
+def change_admin_permission(space_id, user_id, is_admin):
+    space = validate_space(space_id)
+    admin_assignment = validate_assignment(
+        validate_user(current_user.get_id()), space)
+    validate_admin(admin_assignment)
+    assignment = validate_assignment(validate_user(user_id), space)
+    if not isinstance(is_admin, bool):
+        raise ServiceException('"is admin" must be type boolean')
+    
+    assignment.is_admin = is_admin
+    repository.add(assignment)

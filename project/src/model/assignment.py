@@ -14,8 +14,8 @@ class Assignment(Base):
     space_id = Column(Integer, ForeignKey('spaces.id'), nullable=False)
     is_admin = Column(Boolean, default=False)
 
-    user = relationship('User', backref='members')
-    space = relationship('Space', backref='members')
+    user = relationship('User')
+    space = relationship('Space')
 
     def __init__(self, user_id, space_id):
         self.user_id = user_id

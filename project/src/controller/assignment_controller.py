@@ -52,7 +52,6 @@ def post_member(space_id):
         return make_response('Invalid payload :' + str(key_err), 400)
 
 
-# NEW
 @assignment_controller.route('/spaces/<int:space_id>/members/<int:user_id>', methods=["DELETE"])
 def delete_member(space_id, user_id):
     try:
@@ -62,10 +61,13 @@ def delete_member(space_id, user_id):
         return make_response(str(exc), 400)
 
 
-# NEW
-def make_admin():
-    pass
-
-# NEW
-def unmake_admin():
-    pass
+@assignment_controller.route('/spaces/<int:space_id>/members/<int:user_id>', methods=["PUT"])
+def put_admin(space_id, user_id):
+    try:
+        data = request.json
+        service.change_admin_permission(space_id, user_id, data['is-admin'])
+        return make_response('Admin permission changed', 200)
+    except ServiceException as exc:
+        return make_response(str(exc), 400)
+    except KeyError as key_err:
+        return make_response('Invalid payload :' + str(key_err), 400)

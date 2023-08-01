@@ -2,6 +2,7 @@ from repository.sql_alchemy_repository import SqlAlchemyRepository
 from model.user import User
 from model.space import Space
 from model.assignment import Assignment
+from model.share import Share
 from exception.service_exception import ServiceException
 
 repository = SqlAlchemyRepository()
@@ -67,3 +68,16 @@ def contains_only_owner(space):
     assignments = repository.get_all_by_filter(
         Assignment, Assignment.space_id == space.id)
     return len(assignments) == 1
+
+
+def validate_share(share_id):
+    share = repository.get_by_id(Share, share_id)
+    if not share:
+        raise ServiceException('No such share')
+    return share
+
+
+def validate_share_owner(share, user_id):
+    if not share.user_id == user_id:
+        raise ServiceException('User doesn\'t own this share')
+
