@@ -1,9 +1,9 @@
-from repository.sql_alchemy_repository import SqlAlchemyRepository
-from model.user import User
-from model.space import Space
-from model.assignment import Assignment
-from model.share import Share
-from exception.service_exception import ServiceException
+from ..repository.sql_alchemy_repository import SqlAlchemyRepository
+from ..model.user import User
+from ..model.space import Space
+from ..model.assignment import Assignment
+from ..model.share import Share
+from ..exception.service_exception import ServiceException
 
 repository = SqlAlchemyRepository()
 

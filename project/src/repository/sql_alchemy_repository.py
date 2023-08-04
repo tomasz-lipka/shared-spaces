@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from repository.repository import Repository
-from model.base import Base
-from model.user import User
-from model.space import Space
-from model.assignment import Assignment
-from model.share import Share
+from ..repository.repository import Repository
+from ..model.base import Base
+from ..model.user import User
+from ..model.space import Space
+from ..model.assignment import Assignment
+from ..model.share import Share
 
 
 engine = create_engine('sqlite:///my_db.sqlite')

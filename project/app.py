@@ -2,12 +2,12 @@ from flask import Flask
 from flask_login import LoginManager
 import secrets
 
-from controller.user_controller import user_controller
-from controller.space_controller import space_controller
-from controller.assignment_controller import assignment_controller
-from controller.share_controller import share_controller
-from repository.sql_alchemy_repository import SqlAlchemyRepository
-from model.user import User
+from src.controller.user_controller import user_controller
+from src.controller.space_controller import space_controller
+from src.controller.assignment_controller import assignment_controller
+from src.controller.share_controller import share_controller
+from src.repository.sql_alchemy_repository import SqlAlchemyRepository
+from src.model.user import User
 
 
 app = Flask(__name__)

@@ -1,7 +1,9 @@
 from flask import Blueprint, request, make_response
-from exception.service_exception import ServiceException
-import service.space_service as service
 import json
+
+from ..exception.service_exception import ServiceException
+# import service.space_service as service
+from ..service import space_service as service
 
 space_controller = Blueprint('space_controller', __name__)
 

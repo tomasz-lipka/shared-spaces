@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from model.base import Base
+from ..model.base import Base
 
 
 class Assignment(Base):

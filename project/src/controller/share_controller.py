@@ -1,7 +1,9 @@
 from flask import Blueprint, request, make_response
-from exception.service_exception import ServiceException
-import service.share_service as service
 import json
+
+from ..exception.service_exception import ServiceException
+# import service.share_service as service
+from ..service import share_service as service
 
 share_controller = Blueprint('share_controller', __name__)
 

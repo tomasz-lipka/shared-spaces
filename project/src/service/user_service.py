@@ -1,9 +1,9 @@
 import bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 
-from repository.sql_alchemy_repository import SqlAlchemyRepository
-from exception.service_exception import ServiceException
-from model.user import User
+from ..repository.sql_alchemy_repository import SqlAlchemyRepository
+from ..exception.service_exception import ServiceException
+from ..model.user import User
 
 
 repository = SqlAlchemyRepository()

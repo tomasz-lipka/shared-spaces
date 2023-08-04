@@ -1,8 +1,9 @@
-from repository.sql_alchemy_repository import SqlAlchemyRepository
 from flask_login import current_user, login_required
-from model.assignment import Assignment
-from service.validator_helper import validate_user, validate_space, validate_assignment, validate_admin, validate_no_assignment
-from exception.service_exception import ServiceException
+
+from ..repository.sql_alchemy_repository import SqlAlchemyRepository
+from ..model.assignment import Assignment
+from ..service.validator_helper import validate_user, validate_space, validate_assignment, validate_admin, validate_no_assignment
+from ..exception.service_exception import ServiceException
 
 repository = SqlAlchemyRepository()
 

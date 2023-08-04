@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from model.base import Base
+from ..model.base import Base
 
 
 class Space(Base):

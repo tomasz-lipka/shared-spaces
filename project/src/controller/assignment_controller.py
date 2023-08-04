@@ -1,7 +1,10 @@
 from flask import Blueprint, request, make_response
-from exception.service_exception import ServiceException
-import service.assignment_service as service
 import json
+
+from ..exception.service_exception import ServiceException
+# import service.assignment_service as service
+from ..service import assignment_service as service
+
 
 
 assignment_controller = Blueprint('assignment_controller', __name__)
@@ -71,3 +74,4 @@ def put_admin(space_id, user_id):
         return make_response(str(exc), 400)
     except KeyError as key_err:
         return make_response('Invalid payload :' + str(key_err), 400)
+    

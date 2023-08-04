@@ -1,7 +1,8 @@
 from flask import Blueprint, request, make_response
 
-from exception.service_exception import ServiceException
-import service.user_service as service
+from ..exception.service_exception import ServiceException
+# import service.user_service as service
+from ..service import user_service as service
 
 user_controller = Blueprint('user_controller', __name__)
 
