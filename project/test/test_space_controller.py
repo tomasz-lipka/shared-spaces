@@ -8,50 +8,89 @@ from app import create_app
 from test.test_helper import delete_db_file, register_and_login
 
 
-class TestUserController(TestCase):
+class TestSpaceController(TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = create_app()
-        cls.app.config['TESTING'] = True
-        cls.client = cls.app.test_client()
+
+    def setUp(self):
+        self.app = create_app()
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
 
         login_manager = LoginManager()
-        login_manager.init_app(cls.app)
+        login_manager.init_app(self.app)
 
         @login_manager.user_loader
         def load_user(user_id):
             return SqlAlchemyRepository().get_by_id(User, user_id)
 
-        register_and_login(cls.client)
+   
+    def test_space_endpoints(self):
+        register_and_login(self.client)
+        self.create_space()
+        self.get_space()
+        self.rename_space()
+        self.delete_space()
+        self.get_space_not_exists()
 
-    # def test_create_space():
+    def create_space(self):
+        data = {
+            "name": "test_create_space"
+        }
+        response = self.client.post('/spaces', json=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Space created")
 
-    # def test_get_space():
+    def get_space(self):
+        response = self.client.get('/spaces/1')
+        expected_data = {
+            "id": 1,
+            "name" : "test_create_space"
+        }
+        data = json.loads(response.data)
+        self.assertEqual(data, expected_data)
 
-    # def test_rename_space():
+    def rename_space(self):
+        data = {
+            "new-name": "space_new_name"
+        }
+        response = self.client.put('/spaces/1', json=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Space renamed")
+        response = self.client.get('/spaces/1')
+        expected_data = {
+            "id": 1,
+            "name" : "space_new_name"
+        }
+        data = json.loads(response.data)
+        self.assertEqual(data, expected_data)
 
-    # def test_delete_space()
 
-    # test_get_space_not_exists()
+    def delete_space(self):
+        response = self.client.delete('/spaces/1')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Space deleted")
+
+    def get_space_not_exists(self):
+        response = self.client.get('/spaces/1')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Space with ID '1' doesn't exist")
+    
 
     # ---
 
-    # def test_get_all_my_spaces():
+    rename_space_not_exists
+    delete_space_not_exists
 
-    # def test_rename_space_where_not_admin
+    # def test_get_all_my_spaces(self):
 
-    # def test_get_space_where_not_member()
+    # def test_rename_space_where_not_admin(self)
 
-    # def test_delete_space_where_not_admin()
+    # def test_get_space_where_not_member(self)
 
-    # def test_get_only_spaces_where_member()
+    # def test_delete_space_where_not_admin(self)
 
-    # def test_delete_not_empty_space()
+    # def test_get_only_spaces_where_member(self)
 
-    # def test_try_access_endpoint_not_logged_in()
+    # def test_delete_not_empty_space(self)
 
-
-    @classmethod
-    def tearDownClass(cls):
-        delete_db_file()
+    # def test_try_access_endpoints_not_logged_in(self)
