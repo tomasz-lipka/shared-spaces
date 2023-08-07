@@ -1,1 +1,8 @@
+Activating virtual environment
+
 . .venv/bin/activate
++-------------------------------------------------+
+Testing
+execute from ../project
+
+python -m unittest
