@@ -2,7 +2,7 @@ from unittest import TestCase
 from test.helper import register, login, register_and_login, client, delete_all_records_from_db
 
 
-class TestUserController(TestCase):
+class TestAuth(TestCase):
 
     def setUp(self):
         delete_all_records_from_db()

@@ -67,8 +67,10 @@ def create_space(name):
     }
     return client.post('/spaces', json=data)
 
-
-def create_space_by_other_user(space_name):
-    register_and_login("other-usr")
-    create_space(space_name)
+def logout():
     client.get('/logout')
+
+# def create_space_by_other_user(space_name):
+#     register_and_login("other-usr")
+#     create_space(space_name)
+#     client.get('/logout')

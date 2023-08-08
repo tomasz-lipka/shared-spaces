@@ -42,8 +42,6 @@ def create_assignment(user_id, space_id):
         validate_user(current_user.get_id()), space)
     validate_admin(admin_assignment)
     validate_no_assignment(validate_user(user_id), space)
-    if not isinstance(user_id, int):
-        raise ServiceException('"user id" must be type int')
 
     repository.add(Assignment(user_id, space_id))
 
