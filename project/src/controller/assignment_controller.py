@@ -18,7 +18,7 @@ def get_spaces():
     Returns: JSON
     """
     assignments = service.get_users_assignments()
-    json_serializable_list = [assignment.to_dict() for assignment in assignments]
+    json_serializable_list = [assignment.spaces_to_dict() for assignment in assignments]
     return json.dumps(json_serializable_list)
 
 

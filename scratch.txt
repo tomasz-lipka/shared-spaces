@@ -5,4 +5,8 @@ Activating virtual environment
 Testing
 execute from ../project
 
+all classes:
 python -m unittest
+
+single class
+python -m unittest test.test_assignment_controller
