@@ -1,6 +1,6 @@
 import os
 from flask_login import LoginManager
-from sqlalchemy import MetaData, Table, text
+from sqlalchemy import MetaData, Table
 
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository, engine
 from src.model.user import User
@@ -61,16 +61,5 @@ def register_and_login(usr_login):
     return login(usr_login)
 
 
-def create_space(name):
-    data = {
-        "name": name
-    }
-    return client.post('/spaces', json=data)
-
 def logout():
     client.get('/logout')
-
-# def create_space_by_other_user(space_name):
-#     register_and_login("other-usr")
-#     create_space(space_name)
-#     client.get('/logout')

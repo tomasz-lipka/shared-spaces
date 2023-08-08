@@ -1,17 +1,4 @@
-import json
-from unittest import TestCase
-from test.helper import register_and_login, register, create_space, delete_all_records_from_db, client, login, logout
 
-
-class TestAdmin(TestCase):
-
-    def setUp(self):
-        delete_all_records_from_db()
-        register_and_login("usr")
-
-# ------------ SPACE TESTS ------------
-
-# ------------ MEMBER TESTS ------------
 
 
 def test_add_member(self):
