@@ -3,7 +3,6 @@ from flask_login import current_user, login_required
 from ..repository.sql_alchemy_repository import SqlAlchemyRepository
 from ..exception.service_exception import ServiceException
 from ..model.space import Space
-# import service.assignment_service as assignment_service
 from  ..service import assignment_service as assignment_service
 from ..service.validator_helper import *
 

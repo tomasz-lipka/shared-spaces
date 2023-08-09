@@ -34,12 +34,10 @@ class TestDeleteSpace(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User not admin')
 
-    # TODO
     def test_not_empty(self):
         register('member')
         create_space_as_admin('space-1')
         add_member(1, 1)
-
         response = client.delete('/spaces/1')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'Space not empty')

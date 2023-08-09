@@ -61,13 +61,11 @@ def validate_admin(assignment):
 
 
 def contains_only_owner(space):
-    """
-    Checks if space is empty (except owner himself)
-    Returns: boolean
-    """
     assignments = repository.get_all_by_filter(
         Assignment, Assignment.space_id == space.id)
-    return len(assignments) == 1
+    if len(assignments) != 1:
+        raise ServiceException('Space not empty')
+    return True
 
 
 def validate_share(share_id):
@@ -80,4 +78,3 @@ def validate_share(share_id):
 def validate_share_owner(share, user_id):
     if not share.user_id == user_id:
         raise ServiceException('User doesn\'t own this share')
-
