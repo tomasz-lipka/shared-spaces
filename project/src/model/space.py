@@ -14,9 +14,6 @@ class Space(Base):
     def __init__(self, name):
         self.name = name
 
-    def __str__(self):
-        return f"Space(id='{self.id}', name={self.name})"
-
     def to_dict(self):
         """Returns dictionary for json serialization"""
         return {

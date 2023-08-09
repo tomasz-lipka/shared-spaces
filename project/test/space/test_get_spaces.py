@@ -1,13 +1,13 @@
 import json
 from unittest import TestCase
-from test.helper import register_and_login, delete_all_records_from_db, client, create_space, create_space_as_not_member
+from test.helper import register_and_login, set_up, client, create_space, create_space_as_not_member
 # OK
 
 
 class TestGetSpaces(TestCase):
 
     def setUp(self):
-        delete_all_records_from_db()
+        set_up()
 
     def test_not_logged_in(self):
         response = client.get('/spaces')

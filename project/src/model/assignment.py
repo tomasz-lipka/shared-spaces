@@ -21,17 +21,6 @@ class Assignment(Base):
         self.user_id = user_id
         self.space_id = space_id
 
-    def __str__(self):
-        return f"Assignment(id='{self.id}', user='{self.user}', space='{self.space}', is_admin='{self.is_admin}')"
-
-    def to_dict(self):
-        """Returns dictionary for json serialization"""
-        return {
-            'user': self.user.to_dict(),
-            'space': self.space.to_dict(),
-            'is_admin': self.is_admin
-        }
-
     def spaces_to_dict(self):
         """Returns dictionary for json serialization"""
         return {

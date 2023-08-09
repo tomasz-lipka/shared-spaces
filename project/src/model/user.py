@@ -17,12 +17,9 @@ class User(Base, UserMixin):
         self.login = login
         self.password = password
 
-    def __str__(self):
-        return f"User(id='{self.id}', login={self.login}, password={self.password})"
-
     def to_dict(self):
         """Returns dictionary for json serialization"""
         return {
             'id': self.id,
-            'login': self.login 
+            'login': self.login
         }

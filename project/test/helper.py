@@ -39,6 +39,11 @@ def delete_all_records_from_db():
             connection.execute(table.delete())
 
 
+def set_up():
+    logout()
+    delete_all_records_from_db()
+
+
 def register(usr_login):
     data = {
         "login": usr_login,

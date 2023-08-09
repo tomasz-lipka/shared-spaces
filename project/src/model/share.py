@@ -23,9 +23,6 @@ class Share(Base):
         self.user_id = user_id
         self.text = text
 
-    def __str__(self):
-        return f"Share(id='{self.id}', space={self.space}, user={self.user}, text={self.text}, timestamp={self.timestamp})"
-
     def to_dict(self):
         """Returns dictionary for json serialization"""
         return {

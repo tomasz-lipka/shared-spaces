@@ -11,6 +11,8 @@ repository = SqlAlchemyRepository()
 
 def login(login, password):
     """Logs user in"""
+    if current_user.is_authenticated:
+        raise ServiceException('Already logged in')
     user = get_verified_user(login, password)
     if not user:
         raise ServiceException('Wrong login and/or password')
@@ -19,6 +21,8 @@ def login(login, password):
 
 def create_user(login, password, confirm_password):
     """Creates a new user"""
+    if current_user.is_authenticated:
+        raise ServiceException('Already logged in')
     if password != confirm_password:
         raise ServiceException('Passwords don\'t match')
     if repository.get_first_by_filter(User, User.login == login):

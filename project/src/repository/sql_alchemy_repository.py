@@ -9,7 +9,7 @@ from ..model.assignment import Assignment
 from ..model.share import Share
 
 
-engine = create_engine('sqlite:///my_db.sqlite')
+engine = create_engine('sqlite:///test_db.sqlite')
 
 # Creates schema in database
 Base.metadata.create_all(engine)
@@ -50,7 +50,3 @@ class SqlAlchemyRepository(Repository):
     def get_all_by_filter(self, model, query_filter):
         """Returns all found entities of given model using a query filter"""
         return session.query(model).filter(query_filter).all()
-
-    def get_all(self, reference_object):
-        """Returns all entities associated to a given reference object"""
-        pass

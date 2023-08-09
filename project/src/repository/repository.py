@@ -27,7 +27,3 @@ class Repository(ABC):
     @abstractmethod
     def get_all_by_filter(self, model, query_filter):
         """Returns all found entities of given model using a query filter"""
-
-    @abstractmethod
-    def get_all(self, reference_object):
-        """Returns all entities associated to a given reference object"""

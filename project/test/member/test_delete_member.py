@@ -1,12 +1,12 @@
 import json
 from unittest import TestCase
-from test.helper import delete_all_records_from_db, client, register, create_space_as_admin, add_member, register_and_login, logout, create_space_as_member
+from test.helper import set_up, client, register, create_space_as_admin, add_member, register_and_login, logout, create_space_as_member
 # OK
 
 class TestDeleteMember(TestCase):
 
     def setUp(self):
-        delete_all_records_from_db()
+        set_up()
 
     def test_not_logged_in(self):
         response = client.delete('/spaces/1/members/1')

@@ -1,13 +1,13 @@
 import json
 from unittest import TestCase
 import datetime
-from test.helper import delete_all_records_from_db, client, create_space_as_admin, create_share, register_and_login, logout
+from test.helper import set_up, client, create_space_as_admin, create_share, register_and_login, logout
 # OK
 
 class TestGetShare(TestCase):
 
     def setUp(self):
-        delete_all_records_from_db()
+        set_up()
 
     def test_not_logged_in(self):
         response = client.get('/shares/1')
