@@ -25,8 +25,6 @@ python -m unittest test.test_assignment_controller
 
 TEST WITH COVERAGE
 
-run with cooverage
-
 coverage run -m unittest
 
 coverage html
