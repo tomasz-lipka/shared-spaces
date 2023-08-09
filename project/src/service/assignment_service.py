@@ -57,6 +57,20 @@ def delete_assignment_by_user_id_space_id(space_id, user_id):
     repository.delete_by_id(Assignment, assignment.id)
 
 
+@login_required
+def change_admin_permission(space_id, user_id, is_admin):
+    space = validate_space(space_id)
+    admin_assignment = validate_assignment(
+        validate_user(current_user.get_id()), space)
+    validate_admin(admin_assignment)
+    assignment = validate_assignment(validate_user(user_id), space)
+    if not isinstance(is_admin, bool):
+        raise ServiceException('"is admin" must be type boolean')
+
+    assignment.is_admin = is_admin
+    repository.add(assignment)
+
+
 def create_assignment_with_admin(space_id):
     """
     Creates a new Assignment. Grants admin role to logged in user
@@ -73,16 +87,3 @@ def delete_assignment(assignment):
     Returns: nothing
     """
     repository.delete_by_id(Assignment, assignment.id)
-
-
-def change_admin_permission(space_id, user_id, is_admin):
-    space = validate_space(space_id)
-    admin_assignment = validate_assignment(
-        validate_user(current_user.get_id()), space)
-    validate_admin(admin_assignment)
-    assignment = validate_assignment(validate_user(user_id), space)
-    if not isinstance(is_admin, bool):
-        raise ServiceException('"is admin" must be type boolean')
-    
-    assignment.is_admin = is_admin
-    repository.add(assignment)

@@ -14,7 +14,6 @@ def create_share(space_id, text):
         validate_user(current_user.get_id()),
         validate_space(space_id)
     )
-
     repository.add(Share(space_id, current_user.get_id(), text))
 
 

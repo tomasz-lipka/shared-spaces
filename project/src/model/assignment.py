@@ -38,3 +38,10 @@ class Assignment(Base):
             'space': self.space.to_dict(),
             'is_admin': self.is_admin
         }
+
+    def users_to_dict(self):
+        """Returns dictionary for json serialization"""
+        return {
+            'user': self.user.to_dict(),
+            'is_admin': self.is_admin
+        }

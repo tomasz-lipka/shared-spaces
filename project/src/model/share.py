@@ -35,3 +35,12 @@ class Share(Base):
             'text': self.text,
             'timestamp': self.timestamp.isoformat()
         }
+
+    def shares_to_dict(self):
+        """Returns dictionary for json serialization"""
+        return {
+            'id': self.id,
+            'user': self.user.to_dict(),
+            'text': self.text,
+            'timestamp': self.timestamp.isoformat()
+        }

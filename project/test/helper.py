@@ -63,3 +63,43 @@ def register_and_login(usr_login):
 
 def logout():
     client.get('/logout')
+
+
+def create_space(space_name):
+    data = {
+        "name": space_name
+    }
+    return client.post('/spaces', json=data)
+
+
+def create_space_as_admin(space_name):
+    register_and_login('admin')
+    return create_space(space_name)
+
+
+def create_space_as_not_member():
+    create_space_as_admin('space-1')
+    logout()
+    register_and_login('not-member')
+
+
+def add_member(space_id, user_id):
+    data = {
+        "user-id": user_id
+    }
+    return client.post(f'/spaces/{space_id}/members', json=data)
+
+
+def create_space_as_member(space_name):
+    register('member')
+    create_space_as_admin(space_name)
+    add_member(1, 1)
+    logout()
+    login('member')
+
+
+def create_share(space_id):
+    data = {
+        "text": "Lorem ipsum"
+    }
+    return client.post(f'/spaces/{space_id}/shares', json=data)

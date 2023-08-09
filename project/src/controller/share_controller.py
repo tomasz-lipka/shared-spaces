@@ -2,7 +2,6 @@ from flask import Blueprint, request, make_response
 import json
 
 from ..exception.service_exception import ServiceException
-# import service.share_service as service
 from ..service import share_service as service
 
 share_controller = Blueprint('share_controller', __name__)
@@ -33,7 +32,7 @@ def get_share(share_id):
 def get_shares(space_id):
     try:
         shares = service.get_shares_by_space_id(space_id)
-        json_serializable_list = [share.to_dict() for share in shares]
+        json_serializable_list = [share.shares_to_dict() for share in shares]
         return json.dumps(json_serializable_list)
     except ServiceException as exc:
         return make_response(str(exc), 400)
