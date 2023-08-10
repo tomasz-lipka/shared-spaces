@@ -1,7 +1,6 @@
 import json
 from unittest import TestCase
 from test.helper import register_and_login, set_up, client, create_space_as_admin, create_space_as_member
-# OK
 
 
 class TestRenameSpace(TestCase):

@@ -38,11 +38,11 @@ def create_assignment(user_id, space_id):
     Returns: nothing
     """
     space = validate_space(space_id)
-    admin_assignment = validate_assignment(
+    caller_assignment = validate_assignment(
         space,
         validate_user(current_user.get_id())
     )
-    validate_admin(admin_assignment)
+    validate_admin(caller_assignment)
     validate_no_assignment(
         space,
         validate_user(user_id)
@@ -52,29 +52,32 @@ def create_assignment(user_id, space_id):
 
 
 @login_required
-def delete_assignment_by_user_id_space_id(space_id, user_id):
+def delete_assignment_by_space_id_user_id(space_id, user_id):
     space = validate_space(space_id)
-    admin_assignment = validate_assignment(
-        space,
-        validate_user(current_user.get_id())
-    )
-    validate_admin(admin_assignment)
-    assignment = validate_assignment(
+    to_be_deleted_assignment = validate_assignment(
         space,
         validate_user(user_id)
     )
-
-    repository.delete_by_id(Assignment, assignment.id)
-
-
-@login_required
-def change_admin_permission(space_id, user_id, is_admin):
-    space = validate_space(space_id)
-    admin_assignment = validate_assignment(
+    caller_assignment = validate_assignment(
         space,
         validate_user(current_user.get_id())
     )
-    validate_admin(admin_assignment)
+    if to_be_deleted_assignment == caller_assignment:
+        if caller_assignment.is_admin:
+            raise ServiceException('Can\'t leave space when you\'re an admin')
+    else:
+        validate_admin(caller_assignment)
+    repository.delete_by_id(Assignment, to_be_deleted_assignment.id)
+
+
+@ login_required
+def change_admin_permission(space_id, user_id, is_admin):
+    space = validate_space(space_id)
+    caller_assignment = validate_assignment(
+        space,
+        validate_user(current_user.get_id())
+    )
+    validate_admin(caller_assignment)
     assignment = validate_assignment(
         space,
         validate_user(user_id)

@@ -2,7 +2,7 @@ import json
 from unittest import TestCase
 import datetime
 from test.helper import set_up, client, create_share, logout, register_and_login, create_space, register, add_member, login, create_space_as_not_member
-# OK
+ 
 
 class TestGetShares(TestCase):
 

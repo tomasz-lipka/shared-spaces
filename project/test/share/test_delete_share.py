@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import set_up, client, create_space_as_admin, create_share, logout, register_and_login
-# OK
+ 
 
 class TestDeleteShare(TestCase):
 

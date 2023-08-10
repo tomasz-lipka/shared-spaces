@@ -1,7 +1,6 @@
 import json
 from unittest import TestCase
 from test.helper import set_up, client, create_space, create_space_as_admin
-# OK
 
 
 class TestCreateSpace(TestCase):

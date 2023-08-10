@@ -2,8 +2,6 @@ import json
 from unittest import TestCase
 from test.helper import set_up, client, register, create_space_as_admin, add_member, register_and_login, logout, create_space_as_member
 
-# OK
-
 
 class TestChangeAdmin(TestCase):
 

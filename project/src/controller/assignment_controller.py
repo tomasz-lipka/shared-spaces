@@ -2,7 +2,6 @@ from flask import Blueprint, request, make_response
 import json
 
 from ..exception.service_exception import ServiceException
-# import service.assignment_service as service
 from ..service import assignment_service as service
 
 
@@ -58,7 +57,7 @@ def post_member(space_id):
 @assignment_controller.route('/spaces/<int:space_id>/members/<int:user_id>', methods=["DELETE"])
 def delete_member(space_id, user_id):
     try:
-        service.delete_assignment_by_user_id_space_id(space_id, user_id)
+        service.delete_assignment_by_space_id_user_id(space_id, user_id)
         return make_response('Member deleted', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)

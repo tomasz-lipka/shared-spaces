@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import set_up, client, create_space_as_admin, register_and_login, create_share, create_space_as_not_member
-# OK
+ 
 
 class TestCreateShare(TestCase):
 

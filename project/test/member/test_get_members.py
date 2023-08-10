@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import set_up, client, register, create_space_as_admin, add_member, register_and_login, create_space_as_not_member, create_space
-# OK
+ 
 
 class TestGetMembers(TestCase):
 
