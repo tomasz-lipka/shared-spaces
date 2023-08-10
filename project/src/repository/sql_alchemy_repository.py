@@ -37,7 +37,7 @@ class SqlAlchemyRepository(Repository):
 
     def get_by_id(self, model, id):
         """Returns an entity of given model from repo by id"""
-        return session.query(model).get(id)
+        return session.get(model, id)
 
     def get_first_by_filter(self, model, query_filter):
         """Returns first found entity of given model using a query filter"""
