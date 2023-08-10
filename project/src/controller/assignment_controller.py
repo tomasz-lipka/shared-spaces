@@ -5,7 +5,6 @@ from ..exception.service_exception import ServiceException
 from ..service import assignment_service as service
 
 
-
 assignment_controller = Blueprint('assignment_controller', __name__)
 
 
@@ -17,7 +16,8 @@ def get_spaces():
     Returns: JSON
     """
     assignments = service.get_users_assignments()
-    json_serializable_list = [assignment.spaces_to_dict() for assignment in assignments]
+    json_serializable_list = [assignment.spaces_to_dict()
+                              for assignment in assignments]
     return json.dumps(json_serializable_list)
 
 
@@ -31,10 +31,12 @@ def get_members(space_id):
     """
     try:
         assignments = service.get_assignments_by_space_id(space_id)
-        json_serializable_list = [assignment.users_to_dict() for assignment in assignments]
+        json_serializable_list = [assignment.users_to_dict()
+                                  for assignment in assignments]
         return json.dumps(json_serializable_list)
     except ServiceException as exc:
         return make_response(str(exc), 400)
+
 
 @assignment_controller.route('/spaces/<int:space_id>/members', methods=["POST"])
 def post_member(space_id):
@@ -46,7 +48,7 @@ def post_member(space_id):
     """
     try:
         data = request.json
-        service.create_assignment(data['user-id'], space_id)
+        service.create_assignment(space_id, data['user-id'])
         return make_response('Member added', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)
@@ -73,4 +75,3 @@ def put_admin(space_id, user_id):
         return make_response(str(exc), 400)
     except KeyError as key_err:
         return make_response('Invalid payload :' + str(key_err), 400)
-    

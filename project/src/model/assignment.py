@@ -10,16 +10,16 @@ class Assignment(Base):
     __tablename__ = 'assignments'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     space_id = Column(Integer, ForeignKey('spaces.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     is_admin = Column(Boolean, default=False)
 
-    user = relationship('User')
     space = relationship('Space')
+    user = relationship('User')
 
-    def __init__(self, user_id, space_id):
-        self.user_id = user_id
+    def __init__(self, space_id, user_id):
         self.space_id = space_id
+        self.user_id = user_id
 
     def spaces_to_dict(self):
         """Returns dictionary for json serialization"""

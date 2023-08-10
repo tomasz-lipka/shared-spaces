@@ -31,7 +31,7 @@ def get_assignments_by_space_id(space_id):
 
 
 @login_required
-def create_assignment(user_id, space_id):
+def create_assignment(space_id, user_id):
     """
     Creates Assignment. Assignment with given space_id and user_id musn't exist. User and Space must exist
     Logged in user must be: member, admin
@@ -48,7 +48,7 @@ def create_assignment(user_id, space_id):
         validate_user(user_id)
     )
 
-    repository.add(Assignment(user_id, space_id))
+    repository.add(Assignment(space_id, user_id))
 
 
 @login_required
@@ -94,7 +94,7 @@ def create_assignment_with_admin(space_id):
     Creates a new Assignment. Grants admin role to logged in user
     Returns: nothing
     """
-    assignment = Assignment(current_user.get_id(), space_id)
+    assignment = Assignment(space_id, current_user.get_id())
     assignment.is_admin = True
     repository.add(assignment)
 
