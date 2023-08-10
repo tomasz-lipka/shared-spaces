@@ -28,3 +28,7 @@ TEST WITH COVERAGE
 coverage run -m unittest
 
 coverage html
+
++--------------------------------------------------+
+LYNTING
+pylint assignment_service.py
