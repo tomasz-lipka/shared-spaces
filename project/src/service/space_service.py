@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from ..repository.sql_alchemy_repository import SqlAlchemyRepository
 from ..exception.service_exception import ServiceException
 from ..model.space import Space
-from  ..service import assignment_service as assignment_service
+from ..service import assignment_service as assignment_service
 from ..service.validator_helper import *
 
 repository = SqlAlchemyRepository()
@@ -26,7 +26,10 @@ def get_space_by_space_id(space_id):
     Returns: Space object
     """
     space = validate_space(space_id)
-    validate_assignment(validate_user(current_user.get_id()), space)
+    validate_assignment(
+        space,
+        validate_user(current_user.get_id())
+    )
     return space
 
 
@@ -39,7 +42,10 @@ def delete_space_by_space_id(space_id):
     Returns: nothing
     """
     space = validate_space(space_id)
-    assignment = validate_assignment(validate_user(current_user.get_id()), space)
+    assignment = validate_assignment(
+        space,
+        validate_user(current_user.get_id())
+    )
     validate_admin(assignment)
     if contains_only_owner(space):
         assignment_service.delete_assignment(assignment)
@@ -54,7 +60,10 @@ def rename_space(space_id, new_name):
     Returns: nothing
     """
     space = validate_space(space_id)
-    assignment = validate_assignment(validate_user(current_user.get_id()), space)
+    assignment = validate_assignment(
+        space,
+        validate_user(current_user.get_id())
+    )
     validate_admin(assignment)
 
     space.name = new_name

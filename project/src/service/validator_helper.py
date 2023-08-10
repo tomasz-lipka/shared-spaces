@@ -30,7 +30,7 @@ def validate_user(user_id):
     return user
 
 
-def validate_assignment(user, space):
+def validate_assignment(space, user):
     """
     Checks if given user-space pair exists
     Returns: Assignment
@@ -42,7 +42,7 @@ def validate_assignment(user, space):
     return assignment
 
 
-def validate_no_assignment(user, space):
+def validate_no_assignment(space, user):
     """
     Checks if given user-space pair doesn't exists
     Returns: nothing

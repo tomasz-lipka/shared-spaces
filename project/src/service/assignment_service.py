@@ -26,7 +26,7 @@ def get_assignments_by_space_id(space_id):
     """
     user = validate_user(current_user.get_id())
     space = validate_space(space_id)
-    validate_assignment(user, space)
+    validate_assignment(space, user)
     return repository.get_all_by_filter(Assignment, Assignment.space_id == space.id)
 
 
@@ -39,9 +39,14 @@ def create_assignment(user_id, space_id):
     """
     space = validate_space(space_id)
     admin_assignment = validate_assignment(
-        validate_user(current_user.get_id()), space)
+        space,
+        validate_user(current_user.get_id())
+    )
     validate_admin(admin_assignment)
-    validate_no_assignment(validate_user(user_id), space)
+    validate_no_assignment(
+        space,
+        validate_user(user_id)
+    )
 
     repository.add(Assignment(user_id, space_id))
 
@@ -50,9 +55,14 @@ def create_assignment(user_id, space_id):
 def delete_assignment_by_user_id_space_id(space_id, user_id):
     space = validate_space(space_id)
     admin_assignment = validate_assignment(
-        validate_user(current_user.get_id()), space)
+        space,
+        validate_user(current_user.get_id())
+    )
     validate_admin(admin_assignment)
-    assignment = validate_assignment(validate_user(user_id), space)
+    assignment = validate_assignment(
+        space,
+        validate_user(user_id)
+    )
 
     repository.delete_by_id(Assignment, assignment.id)
 
@@ -61,9 +71,14 @@ def delete_assignment_by_user_id_space_id(space_id, user_id):
 def change_admin_permission(space_id, user_id, is_admin):
     space = validate_space(space_id)
     admin_assignment = validate_assignment(
-        validate_user(current_user.get_id()), space)
+        space,
+        validate_user(current_user.get_id())
+    )
     validate_admin(admin_assignment)
-    assignment = validate_assignment(validate_user(user_id), space)
+    assignment = validate_assignment(
+        space,
+        validate_user(user_id)
+    )
     if not isinstance(is_admin, bool):
         raise ServiceException('"is admin" must be type boolean')
 
