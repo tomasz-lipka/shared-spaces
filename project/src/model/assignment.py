@@ -1,3 +1,6 @@
+"""
+Module containing the Assignment model class.
+"""
 from sqlalchemy import Column, Integer, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from ..model.base import Base
@@ -5,7 +8,10 @@ from ..model.base import Base
 
 class Assignment(Base):
     """
-    Model of the assignment entity. It assigns users to their spaces and grants admin roles
+    Model class representing the assignment entity.
+
+    This class defines the structure of the Assignment entity, which represents the assignment
+    of users to their respective spaces and grants admin roles within those spaces.
     """
     __tablename__ = 'assignments'
 
@@ -22,14 +28,22 @@ class Assignment(Base):
         self.user_id = user_id
 
     def spaces_to_dict(self):
-        """Returns dictionary for json serialization"""
+        """
+        Convert an Assignment object to a dictionary representation.
+        Returns:
+            dict: A dictionary containing 'space' and 'is_admin' information.
+        """
         return {
             'space': self.space.to_dict(),
             'is_admin': self.is_admin
         }
 
     def users_to_dict(self):
-        """Returns dictionary for json serialization"""
+        """
+        Convert an Assignment object to a dictionary representation.
+        Returns:
+            dict: A dictionary containing 'user' and 'is_admin' information.
+        """
         return {
             'user': self.user.to_dict(),
             'is_admin': self.is_admin
