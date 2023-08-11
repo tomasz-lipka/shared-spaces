@@ -1,3 +1,6 @@
+"""
+Module containing the User model class.
+"""
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String
 from ..model.base import Base
@@ -5,8 +8,10 @@ from ..model.base import Base
 
 class User(Base, UserMixin):
     """
-    Model of the user entity
+    Model class representing individual users.
+    It inherits from Flask-Login's UserMixin to provide user authentication functionality.
     """
+
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -18,7 +23,11 @@ class User(Base, UserMixin):
         self.password = password
 
     def to_dict(self):
-        """Returns dictionary for json serialization"""
+        """
+        Convert an User object to a dictionary representation.
+        Returns:
+            dict: A dictionary containing 'id' and 'login' information.
+        """
         return {
             'id': self.id,
             'login': self.login

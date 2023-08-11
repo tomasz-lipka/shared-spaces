@@ -1,3 +1,6 @@
+"""
+Module containing the Share model class.
+"""
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from ..model.base import Base
@@ -5,7 +8,8 @@ from ..model.base import Base
 
 class Share(Base):
     """
-    Model of the share entity
+    This class defines the structure of the Share entity,
+    which represents shared content within spaces.
     """
     __tablename__ = 'shares'
 
@@ -24,7 +28,11 @@ class Share(Base):
         self.text = text
 
     def to_dict(self):
-        """Returns dictionary for json serialization"""
+        """
+        Convert a Share object to a dictionary representation.
+        Returns:
+            dict: A dictionary containing share fields, 'space' and 'user' information.
+        """
         return {
             'id': self.id,
             'space': self.space.to_dict(),
@@ -34,7 +42,11 @@ class Share(Base):
         }
 
     def shares_to_dict(self):
-        """Returns dictionary for json serialization"""
+        """
+        Convert a Share object to a dictionary representation.
+        Returns:
+            dict: A dictionary containing share fields and 'user' information.
+        """
         return {
             'id': self.id,
             'user': self.user.to_dict(),

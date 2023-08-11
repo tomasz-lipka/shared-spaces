@@ -1,3 +1,6 @@
+"""
+Module containing the SqlAlchemyRepository class.
+"""
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -19,34 +22,47 @@ session = Session()
 
 
 class SqlAlchemyRepository(Repository):
-    """Implementation of the Repository abstract class"""
+    """
+    Concrete implementation of the Repository abstract class using SQLAlchemy.
+    This class provides methods for adding, deleting, and retrieving objects 
+    from a database using SQLAlchemy.
+    """
 
-    def add(self, object):
-        """Add or update entity in repo and return its ID"""
-        session.add(object)
+    def add(self, obj):
+        session.add(obj)
         session.commit()
-        session.refresh(object)
-        return object.id
+        session.refresh(obj)
+        return obj.id
 
-    def delete_by_id(self, model, id):
-        """Deletes an entity from repo by ID"""
-        object = self.get_by_id(model, id)
-        if object:
-            session.delete(object)
+    def delete_by_id(self, model, obj_id):
+        """
+        Implementation of the respective repository abstract class method.
+        """
+        obj = self.get_by_id(model, obj_id)
+        if obj:
+            session.delete(obj)
             session.commit()
 
-    def get_by_id(self, model, id):
-        """Returns an entity of given model from repo by id"""
-        return session.get(model, id)
+    def get_by_id(self, model, obj_id):
+        """
+        Implementation of the respective repository abstract class method.
+        """
+        return session.get(model, obj_id)
 
     def get_first_by_filter(self, model, query_filter):
-        """Returns first found entity of given model using a query filter"""
+        """
+        Implementation of the respective repository abstract class method.
+        """
         return session.query(model).filter(query_filter).first()
 
     def get_first_by_two_filters(self, model, query_filter1, query_filter2):
-        """Returns first found entity of given model using two query filters"""
+        """
+        Implementation of the respective repository abstract class method.
+        """
         return session.query(model).filter(query_filter1).filter(query_filter2).first()
 
     def get_all_by_filter(self, model, query_filter):
-        """Returns all found entities of given model using a query filter"""
+        """
+        Implementation of the respective repository abstract class method.
+        """
         return session.query(model).filter(query_filter).all()
