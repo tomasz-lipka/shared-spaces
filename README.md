@@ -32,3 +32,8 @@ coverage html
 +--------------------------------------------------+
 LYNTING
 pylint assignment_service.py
+
+
+## Test coverage at 99%
+Coverage report
+![coverage-report](./readme/image/coverage-report.jpg)
