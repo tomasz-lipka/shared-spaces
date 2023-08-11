@@ -1,7 +1,10 @@
+"""
+Module containing the user controller blueprint with REST endpoints 
+for managing user related operations.
+"""
 from flask import Blueprint, request, make_response
 
 from ..exception.service_exception import ServiceException
-# import service.user_service as service
 from ..service import user_service as service
 
 user_controller = Blueprint('user_controller', __name__)
@@ -10,9 +13,10 @@ user_controller = Blueprint('user_controller', __name__)
 @user_controller.route('/login', methods=["POST"])
 def login():
     """
-    Endpoint 
-    Logs user in
-    Returns: nothing
+    Log the user in.
+    Accepts a JSON payload with 'login' and 'password'.
+    Returns:
+        str: Response message.
     """
     try:
         data = request.json
@@ -27,9 +31,10 @@ def login():
 @user_controller.route('/register', methods=["POST"])
 def register():
     """
-    Endpoint 
-    Registers a new user
-    Returns: nothing
+    Register a new user.
+    Accepts a JSON payload with 'login', 'password', and 'confirm-password'.
+    Returns:
+        str: Response message.
     """
     try:
         data = request.json
@@ -45,9 +50,9 @@ def register():
 @user_controller.route('/logout')
 def logout():
     """
-    Endpoint 
-    Logs user out
-    Returns: nothing
+    Log the user out.
+    Returns:
+        str: Response message.
     """
     service.logout()
     return make_response('Logged out', 200)
@@ -56,9 +61,10 @@ def logout():
 @user_controller.route('/change-password', methods=["POST"])
 def change_password():
     """
-    Endpoint
-    Changes users password
-    Returns: nothing
+    Change user password.
+    Accepts a JSON payload with 'old-password', 'new-password', and 'confirm-password'.
+    Returns:
+        str: Response message.
     """
     try:
         data = request.json
