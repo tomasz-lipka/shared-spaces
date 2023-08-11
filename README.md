@@ -36,4 +36,4 @@ pylint assignment_service.py
 
 ## Test coverage at 99%
 Coverage report
-![coverage-report](./readme/image/coverage-report.jpg)
+![coverage-report](./readme/images/coverage-report.jpg)
