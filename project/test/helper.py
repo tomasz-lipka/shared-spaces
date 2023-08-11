@@ -1,38 +1,29 @@
-import os
 from flask_login import LoginManager
 from sqlalchemy import MetaData, Table
 
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository, engine
 from src.model.user import User
-from app import create_app
+from app import app
 
 
-def set_up_flask():
-    app = create_app()
-    app.config['TESTING'] = True
-    client = app.test_client()
+app.config['TESTING'] = True
+client = app.test_client()
 
-    login_manager = LoginManager()
-    login_manager.init_app(app)
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        return SqlAlchemyRepository().get_by_id(User, user_id)
-
-    return client
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
-client = set_up_flask()
+@login_manager.user_loader
+def load_user(user_id):
+    return SqlAlchemyRepository().get_by_id(User, user_id)
 
 
 def delete_all_records_from_db():
     metadata = MetaData()
     metadata.reflect(bind=engine)
 
-    # Get a list of all tables in the database
     table_names = metadata.tables.keys()
 
-    # Delete all records from each table
     with engine.begin() as connection:
         for table_name in table_names:
             table = Table(table_name, metadata, autoload=True)

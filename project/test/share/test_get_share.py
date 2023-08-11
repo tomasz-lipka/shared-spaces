@@ -1,8 +1,7 @@
 import json
 from unittest import TestCase
-import datetime
 from test.helper import set_up, client, create_space_as_admin, create_share, register_and_login, logout
- 
+
 
 class TestGetShare(TestCase):
 

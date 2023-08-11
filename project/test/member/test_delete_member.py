@@ -11,7 +11,6 @@ class TestDeleteMember(TestCase):
     def test_not_logged_in(self):
         response = client.delete('/spaces/1/members/1')
         self.assertEqual(response.status_code, 401)
-#
 
     def test_del_other_member_as_admin(self):
         register('member')
