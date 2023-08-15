@@ -23,6 +23,7 @@ def lambda_handler(event, context):
             if not actual_bucket:
                 actual_bucket = add_random_suffix(bucket_name)
                 create_unique_bucket(actual_bucket)
+                
             copy_object(actual_bucket, object_key)
             delete_object_from_temp(object_key)
 
