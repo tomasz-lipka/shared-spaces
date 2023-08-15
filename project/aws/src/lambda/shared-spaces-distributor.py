@@ -8,16 +8,20 @@ s3_client = boto3.client("s3")
 
 
 def lambda_handler(event, context):
-    create_unique_s3_bucket(3, "a_324S..d%#--s3alias")
+    try:
+        # create_unique_bucket(3, "a_324S..d%#--s3alias")
+        copy_object(event, "shared-spaces-temp", "id-3-a324sds3alias-849")
+    except botocore.exceptions.ClientError as e:
+        print("Error Message: {}".format(e))
 
 
-def create_unique_s3_bucket(space_id, space_name):
+def create_unique_bucket(space_id, space_name):
     while True:
-        if create_s3_bucket(space_id, space_name):
+        if create_bucket(space_id, space_name):
             break
 
 
-def create_s3_bucket(space_id, space_name):
+def create_bucket(space_id, space_name):
     try:
         bucket_name = (
             "id-"
@@ -49,3 +53,12 @@ def transform_string(input):
 
 def get_random_3_digit_number():
     return random.randint(100, 999)
+
+
+def copy_object(event, source_bucket, destination_bucket):
+    for record in event["Records"]:
+        object_key = record["s3"]["object"]["key"]
+        copy_source = {"Bucket": source_bucket, "Key": object_key}
+        s3_client.copy_object(
+            CopySource=copy_source, Bucket=destination_bucket, Key=object_key
+        )
