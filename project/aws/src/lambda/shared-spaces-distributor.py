@@ -4,6 +4,8 @@ import boto3
 import random
 from botocore.exceptions import ClientError
 
+s3_client = boto3.client("s3")
+
 
 def lambda_handler(event, context):
     create_unique_s3_bucket(3, "a_324S..d%#--s3alias")
@@ -11,7 +13,7 @@ def lambda_handler(event, context):
 
 def create_unique_s3_bucket(space_id, space_name):
     while True:
-        if create_s3_bucket(space_id, space_nam):
+        if create_s3_bucket(space_id, space_name):
             break
 
 
@@ -25,7 +27,6 @@ def create_s3_bucket(space_id, space_name):
             + "-"
             + str(get_random_3_digit_number())
         )
-        s3_client = boto3.client("s3")
         s3_client.create_bucket(Bucket=bucket_name)
         return True
     except ClientError as e:
