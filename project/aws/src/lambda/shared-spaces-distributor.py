@@ -24,6 +24,7 @@ def lambda_handler(event, context):
                 actual_bucket = add_random_suffix(bucket_name)
                 create_unique_bucket(actual_bucket)
             copy_object(actual_bucket, object_key)
+            delete_object_from_temp(object_key)
 
     except ClientError as e:
         print("Error Message: {}".format(e))
@@ -53,6 +54,10 @@ def copy_object(destination_bucket, object_key):
     s3_client.copy_object(
         CopySource=copy_source, Bucket=destination_bucket, Key=object_key
     )
+    
+    
+def delete_object_from_temp(object_key):
+    s3_client.delete_object(Bucket=source_bucket, Key=object_key)
 
 
 def find_bucket(bucket_name):
