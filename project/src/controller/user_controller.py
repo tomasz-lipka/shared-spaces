@@ -3,17 +3,12 @@ Module containing the user controller blueprint with REST endpoints
 for managing user related operations.
 """
 from flask import Blueprint, request, make_response
-import boto3
-import os
 
 from ..exception.service_exception import ServiceException
 from ..service import user_service as service
 
 user_controller = Blueprint('user_controller', __name__)
 
-AWS_ACCESS_KEY_ID = '*****'
-AWS_SECRET_ACCESS_KEY = '******'
-S3_BUCKET_NAME = 'shared-spaces-temp'
 
 @user_controller.route('/login', methods=["POST"])
 def login():
@@ -80,24 +75,4 @@ def change_password():
         return make_response(str(exc), 400)
     except KeyError as key_err:
         return make_response('Invalid payload :' + str(key_err), 400)
-
-
-
-@user_controller.route('/upload', methods=['POST'])
-def upload_image():
-    try:
-        file = request.files['file']
-        if file:
-            s3 = boto3.client(
-                's3',
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY
-            )
-            key = f"{file.filename}"
-            s3.upload_fileobj(file, S3_BUCKET_NAME, key)
-            return 'File uploaded successfully', 200
-        else:
-            return 'No file provided', 400
-    except Exception as e:
-        return str(e), 500
     
