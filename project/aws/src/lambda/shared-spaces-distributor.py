@@ -9,7 +9,6 @@ from botocore.exceptions import ClientError
 
 s3_client = boto3.client("s3")
 source_bucket = "shared-spaces-temp"
-bucket_prefix = "space-id-"
 
 
 def lambda_handler(event, context):
@@ -23,7 +22,7 @@ def lambda_handler(event, context):
             if not actual_bucket:
                 actual_bucket = add_random_suffix(bucket_name)
                 create_unique_bucket(actual_bucket)
-                
+
             copy_object(actual_bucket, object_key)
             delete_object_from_temp(object_key)
 
@@ -51,12 +50,13 @@ def get_random():
 
 
 def copy_object(destination_bucket, object_key):
-    copy_source = {"Bucket": source_bucket, "Key": object_key}
     s3_client.copy_object(
-        CopySource=copy_source, Bucket=destination_bucket, Key=object_key
+        CopySource={"Bucket": source_bucket, "Key": object_key},
+        Bucket=destination_bucket,
+        Key=get_share_id(object_key),
     )
-    
-    
+
+
 def delete_object_from_temp(object_key):
     s3_client.delete_object(Bucket=source_bucket, Key=object_key)
 
@@ -71,7 +71,7 @@ def find_bucket(bucket_name):
 
 
 def create_bucket_name(space_id):
-    return bucket_prefix + str(space_id)
+    return "space-id-" + str(space_id)
 
 
 def add_random_suffix(bucket_name):
@@ -80,3 +80,7 @@ def add_random_suffix(bucket_name):
 
 def get_space_id(object_key):
     return object_key.split("-")[0]
+
+
+def get_share_id(object_key):
+    return object_key.split("-")[1]
