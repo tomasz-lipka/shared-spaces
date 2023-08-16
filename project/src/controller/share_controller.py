@@ -7,6 +7,7 @@ from flask import Blueprint, request, make_response
 
 from ..exception.service_exception import ServiceException
 from ..service import share_service as service
+from ..service import aws_service
 
 share_controller = Blueprint('share_controller', __name__)
 
@@ -14,20 +15,29 @@ share_controller = Blueprint('share_controller', __name__)
 @share_controller.route('/spaces/<int:space_id>/shares', methods=["POST"])
 def post_share(space_id):
     """
-    Create a new share within a space. Accept JSON payload with 'text'.
+    Create a new share in a space and optionally upload an image.
     Args:
         space_id (int): ID of the target space.
     Returns:
         str: Response message.
     """
+    if not 'text' in request.form:
+        return make_response("Invalid payload: 'text'", 400)
     try:
-        data = request.json
-        service.create_share(space_id, data['text'])
+        share_id = service.create_share(
+            space_id,
+            request.form['text']
+        )
+        if 'file' in request.files:
+            aws_service.upload_image(
+                request.files['file'],
+                space_id,
+                share_id
+            )
+            return make_response('Share with image created', 200)
         return make_response('Share created', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)
-    except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 400)
 
 
 @share_controller.route('/shares/<int:share_id>')

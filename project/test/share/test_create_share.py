@@ -1,7 +1,6 @@
-import json
 from unittest import TestCase
-from test.helper import set_up, client, create_space_as_admin, register_and_login, create_share, create_space_as_not_member
- 
+from test.helper import set_up, client, create_space_as_admin, register_and_login, create_share, create_space_as_not_member, create_share_with_image
+
 
 class TestCreateShare(TestCase):
 
@@ -12,7 +11,7 @@ class TestCreateShare(TestCase):
         response = create_share(1)
         self.assertEqual(response.status_code, 401)
 
-    def test_normal_run(self):
+    def test_normal_run_no_image(self):
         create_space_as_admin('space-1')
         response = create_share(1)
         self.assertEqual(response.status_code, 200)
@@ -37,4 +36,10 @@ class TestCreateShare(TestCase):
         }
         response = client.post('/spaces/1/shares', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'text'")
+        self.assertEqual(response.data, b"Invalid payload: 'text'")
+
+    def test_normal_run_with_image(self):
+        create_space_as_admin('space-1')
+        response = create_share_with_image(1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Share with image created")

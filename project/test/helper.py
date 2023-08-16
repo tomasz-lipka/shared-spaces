@@ -98,4 +98,21 @@ def create_share(space_id):
     data = {
         "text": "Lorem ipsum"
     }
-    return client.post(f'/spaces/{space_id}/shares', json=data)
+    return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data')
+
+
+def create_share_with_image(space_id):
+    try:
+        with open('/workspaces/shared-spaces/project/test/test-image.jpg', 'rb') as image_file:
+            data = {
+                'text': "Lorem ipsum",
+                'file': (image_file, 'test-image.jpg')
+            }
+            response = client.post(
+                f'/spaces/{space_id}/shares',
+                data=data,
+                content_type='multipart/form-data'
+            )
+            return response
+    except FileNotFoundError:
+        print("Image file not found.")

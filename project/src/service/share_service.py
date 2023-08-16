@@ -27,12 +27,14 @@ def create_share(space_id, text):
     Args:
         space_id (int): ID of the target space.
         text (str): Text content of the share.
+    Returns:
+        int: The ID of the newly created share.
     """
     validate_assignment(
         validate_space(space_id),
         validate_user(current_user.get_id())
     )
-    repository.add(Share(space_id, current_user.get_id(), text))
+    return repository.add(Share(space_id, current_user.get_id(), text))
 
 
 @login_required

@@ -75,4 +75,3 @@ def change_password():
         return make_response(str(exc), 400)
     except KeyError as key_err:
         return make_response('Invalid payload :' + str(key_err), 400)
-    
