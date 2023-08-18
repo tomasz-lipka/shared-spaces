@@ -1,10 +1,9 @@
 import json
 from unittest import TestCase
 from test.helper import (
-    set_up, client, create_share, logout,
-    register_and_login, create_space,
-    register, add_member, login,
-    create_space_as_not_member
+    set_up, client, create_share, logout, register_and_login, create_space,
+    register, add_member, login, create_space_as_not_member,
+    delete_all_buckets, create_space_as_admin, create_share_with_image
 )
 
 
@@ -74,3 +73,51 @@ class TestGetShares(TestCase):
         response = client.get('/spaces/1/shares')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
+
+    def test_normal_run_with_image(self):
+        create_space_as_admin('space-1')
+        create_share_with_image(1)
+        create_share_with_image(1)
+
+        response = client.get('/spaces/1/shares')
+        expected_data = [
+            {
+                "id": 1,
+                "user": {
+                    "id": 1,
+                    "login": "admin"
+                },
+                "text": "Lorem ipsum",
+                # "timestamp":
+                # "media_url":
+            },
+            {
+                "id": 2,
+                "text": "Lorem ipsum",
+                "user": {
+                    "id": 1,
+                    "login": "admin"
+                },
+                # "timestamp":
+                # "media_url":
+            }
+        ]
+        data = json.loads(response.data)
+
+        self.assertIn('https://', data[0]["media_url"])
+        self.assertIn('.s3.amazonaws.co', data[0]["media_url"])
+        self.assertIn('space-id-1', data[0]["media_url"])
+        self.assertIn('1.jpg', data[0]["media_url"])
+
+        self.assertIn('https://', data[1]["media_url"])
+        self.assertIn('.s3.amazonaws.co', data[1]["media_url"])
+        self.assertIn('space-id-1', data[1]["media_url"])
+        self.assertIn('2.jpg', data[1]["media_url"])
+
+        for item in data:
+            item.pop("timestamp", None)
+            item.pop("media_url", None)
+        self.assertEqual(data, expected_data)
+        self.assertEqual(response.status_code, 200)
+
+        delete_all_buckets()

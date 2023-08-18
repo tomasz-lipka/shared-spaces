@@ -42,7 +42,7 @@ class AwsService(MediaService):
         return s3_client.generate_presigned_url(
             'get_object',
             Params={'Bucket': bucket, 'Key': key},
-            ExpiresIn=10
+            ExpiresIn=3
         )
 
     def delete_space_directory(self, space_id):
