@@ -11,6 +11,7 @@ from flask_login import current_user, login_required
 from ..repository.sql_alchemy_repository import SqlAlchemyRepository
 from ..model.space import Space
 from ..service import assignment_service
+from ..media.aws_service import AwsService
 from ..service.validator_helper import (
     validate_user,
     validate_space,
@@ -20,7 +21,7 @@ from ..service.validator_helper import (
 )
 
 repository = SqlAlchemyRepository()
-
+media_service = AwsService()
 
 @login_required
 def create_space(name):
@@ -66,6 +67,7 @@ def delete_space_by_space_id(space_id):
     if contains_only_owner(space):
         assignment_service.delete_assignment(assignment)
         repository.delete_by_id(Space, space_id)
+        media_service.delete_space_directory(space_id)
 
 
 @login_required
