@@ -1,8 +1,12 @@
 import json
 from unittest import TestCase
-import datetime
-from test.helper import set_up, client, create_share, logout, register_and_login, create_space, register, add_member, login, create_space_as_not_member
- 
+from test.helper import (
+    set_up, client, create_share, logout,
+    register_and_login, create_space,
+    register, add_member, login,
+    create_space_as_not_member
+)
+
 
 class TestGetShares(TestCase):
 
@@ -13,7 +17,7 @@ class TestGetShares(TestCase):
         response = client.get('/spaces/1/shares')
         self.assertEqual(response.status_code, 401)
 
-    def test_normal_run(self):
+    def test_normal_run_no_image(self):
         register_and_login('admin-1')
         create_space('space-1')
         create_share(1)
@@ -34,21 +38,23 @@ class TestGetShares(TestCase):
         expected_data = [
             {
                 "id": 2,
-                "text": "Lorem ipsum",
-                # "timestamp":,
                 "user": {
                     "id": 3,
                     "login": "admin-2"
-                }
+                },
+                "text": "Lorem ipsum",
+                # "timestamp":
+                "media_url": None
             },
             {
                 "id": 3,
                 "text": "Lorem ipsum",
-                # "timestamp":,
                 "user": {
                     "id": 2,
                     "login": "member-1"
-                }
+                },
+                # "timestamp":
+                "media_url": None
             }
         ]
         data = json.loads(response.data)

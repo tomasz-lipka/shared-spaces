@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 
 from ..repository.sql_alchemy_repository import SqlAlchemyRepository
 from ..model.share import Share
+from ..media.aws_service import AwsService
 from ..service.validator_helper import (
     validate_user,
     validate_space,
@@ -18,6 +19,7 @@ from ..service.validator_helper import (
 )
 
 repository = SqlAlchemyRepository()
+media_service = AwsService()
 
 
 @login_required
@@ -39,32 +41,22 @@ def create_share(space_id, text):
 
 @login_required
 def get_share_by_share_id(share_id):
-    """
-    Retrieve a share by its ID after owner validation.
-    Args:
-        share_id (int): ID of the target share.
-    Returns:
-        Share: The share object.
-    """
     share = validate_share(share_id)
     validate_share_owner(share, int(current_user.get_id()))
+    share.media_url = media_service.get_image(share.space_id, share.id)
     return share
 
 
 @login_required
 def get_shares_by_space_id(space_id):
-    """
-    Retrieve shares within a space after validations.
-    Args:
-        space_id (int): ID of the target space.
-    Returns:
-        List[Share]: List of shares within the space.
-    """
     validate_assignment(
         validate_space(space_id),
         validate_user(current_user.get_id())
     )
-    return repository.get_all_by_filter(Share, Share.space_id == space_id)
+    shares = repository.get_all_by_filter(Share, Share.space_id == space_id)
+    for share in shares:
+        share.media_url = media_service.get_image(share.space_id, share.id)
+    return shares
 
 
 @login_required
@@ -96,5 +88,4 @@ def edit_share(share_id, text):
         int(current_user.get_id())
     )
     share.text = text
-
     repository.add(share)

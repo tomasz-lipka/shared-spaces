@@ -15,7 +15,7 @@ class TestEditShare(TestCase):
         response = client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 401)
 
-    def test_normal_run(self):
+    def test_normal_run_no_image(self):
         create_space_as_admin('space-1')
         create_share(1)
         data = {
@@ -32,12 +32,13 @@ class TestEditShare(TestCase):
                 "id": 1,
                 "name": "space-1"
             },
-            "text": "Edit lorem ipsum",
             # "timestamp":,
             "user": {
                 "id": 1,
                 "login": "admin"
-            }
+            },
+            "text": "Edit lorem ipsum",
+            "media_url": None
         }
         data = json.loads(response.data)
         data.pop("timestamp", None)

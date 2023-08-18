@@ -1,5 +1,9 @@
 from unittest import TestCase
-from test.helper import set_up, client, create_space_as_admin, register_and_login, create_share, create_space_as_not_member, create_share_with_image
+from test.helper import (
+    set_up, client, create_space_as_admin, register_and_login,
+    create_share, create_space_as_not_member, create_share_with_image,
+    delete_all_buckets
+)
 
 
 class TestCreateShare(TestCase):
@@ -43,3 +47,5 @@ class TestCreateShare(TestCase):
         response = create_share_with_image(1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share with image created")
+
+        delete_all_buckets()

@@ -1,6 +1,8 @@
+import time
 from flask_login import LoginManager
 from sqlalchemy import MetaData, Table
 
+from src.media.aws_service import AwsService
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository, engine
 from src.model.user import User
 from app import app
@@ -113,6 +115,13 @@ def create_share_with_image(space_id):
                 data=data,
                 content_type='multipart/form-data'
             )
+            time.sleep(1)
             return response
     except FileNotFoundError:
         print("Image file not found.")
+
+
+def delete_all_buckets():
+    for i in range(1, 3):
+        AwsService().delete_space_directory(i)
+    time.sleep(5)

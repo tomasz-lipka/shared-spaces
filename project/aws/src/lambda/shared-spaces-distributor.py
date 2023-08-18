@@ -8,13 +8,18 @@ import random
 from botocore.exceptions import ClientError
 
 s3_client = boto3.client("s3")
-source_bucket = "shared-spaces-temp"
+sqs_client = boto3.client("sqs")
+
+SOURCE_BUCKET = "shared-spaces-temp"
+SQS_URL = "https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo"
 
 
 def lambda_handler(event, context):
     try:
         for record in event["Records"]:
-            object_key = record["s3"]["object"]["key"]
+            object_key = record["body"]
+            delete_message_from_sqs(record)
+
             space_id = get_space_id(object_key)
             bucket_name = create_bucket_name(space_id)
             actual_bucket = find_bucket(bucket_name)
@@ -51,14 +56,14 @@ def get_random():
 
 def copy_object(destination_bucket, object_key):
     s3_client.copy_object(
-        CopySource={"Bucket": source_bucket, "Key": object_key},
+        CopySource={"Bucket": SOURCE_BUCKET, "Key": object_key},
         Bucket=destination_bucket,
         Key=get_share_id(object_key),
     )
 
 
 def delete_object_from_temp(object_key):
-    s3_client.delete_object(Bucket=source_bucket, Key=object_key)
+    s3_client.delete_object(Bucket=SOURCE_BUCKET, Key=object_key)
 
 
 def find_bucket(bucket_name):
@@ -84,3 +89,7 @@ def get_space_id(object_key):
 
 def get_share_id(object_key):
     return object_key.split("-")[1]
+
+
+def delete_message_from_sqs(record):
+    sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=record["receiptHandle"])

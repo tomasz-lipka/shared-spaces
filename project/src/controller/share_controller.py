@@ -7,10 +7,10 @@ from flask import Blueprint, request, make_response
 
 from ..exception.service_exception import ServiceException
 from ..service import share_service as service
-from ..service import aws_service
+from ..media.aws_service import AwsService
 
 share_controller = Blueprint('share_controller', __name__)
-
+media_service = AwsService()
 
 @share_controller.route('/spaces/<int:space_id>/shares', methods=["POST"])
 def post_share(space_id):
@@ -29,7 +29,7 @@ def post_share(space_id):
             request.form['text']
         )
         if 'file' in request.files:
-            aws_service.upload_image(
+            media_service.upload_image(
                 request.files['file'],
                 space_id,
                 share_id
