@@ -1,10 +1,8 @@
 from unittest import TestCase
-import os
-import boto3
 from test.helper import (
-    register_and_login, set_up, client,
-    create_space_as_admin, create_space_as_member,
-    add_member, register, delete_all_buckets, create_share_with_image
+    register_and_login, set_up, client, create_space_as_admin,
+    create_space_as_member, add_member,
+    register, create_share_with_image, find_bucket
 )
 
 
@@ -52,13 +50,4 @@ class TestDeleteSpace(TestCase):
         create_share_with_image(1)
         client.delete('/spaces/1')
 
-        s3_client = boto3.client(
-            's3',
-            aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-        )
-        is_bucket = False
-        for bucket in s3_client.list_buckets()['Buckets']:
-            if bucket["Name"].startswith('space-id-1'):
-                is_bucket = True
-        self.assertFalse(is_bucket)
+        self.assertFalse(find_bucket('space-id-1'))

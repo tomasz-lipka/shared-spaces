@@ -4,7 +4,7 @@ from test.helper import (
     set_up, client, create_space_as_admin,
     create_share, register_and_login, logout,
     delete_all_buckets, create_share_with_image,
-    create_space, register, login, add_member
+    create_space, register, login, add_member, find_bucket
 )
 
 
@@ -17,7 +17,7 @@ class TestGetShare(TestCase):
         response = client.get('/shares/1')
         self.assertEqual(response.status_code, 401)
 
-    def test_normal_run_no_image(self):
+    def test_normal_run(self):
         create_space_as_admin('space-1')
         response = create_share(1)
         response = client.get('/shares/1')
@@ -55,7 +55,7 @@ class TestGetShare(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
-    def test_normal_run_with_image(self):    
+    def test_normal_run_with_image(self):
         create_space_as_admin('space-1')
         create_share_with_image(1)
         create_space('space-2')
@@ -84,12 +84,12 @@ class TestGetShare(TestCase):
             # "media_url":
         }
         data = json.loads(response.data)
-    
+
         self.assertIn('https://', data["media_url"])
         self.assertIn('.s3.amazonaws.co', data["media_url"])
         self.assertIn('space-id-2', data["media_url"])
         self.assertIn('3.jpg', data["media_url"])
-        
+
         data.pop("timestamp", None)
         data.pop("media_url", None)
         self.assertEqual(data, expected_data)
@@ -97,3 +97,15 @@ class TestGetShare(TestCase):
 
         delete_all_buckets()
 
+    def test_not_owned_with_image(self):
+        create_space_as_admin('space-1')
+        create_share_with_image(1)
+        logout()
+        register_and_login('usr')
+        response = client.get('/shares/1')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b'User doesn\'t own this share')
+        self.assertTrue(find_bucket('space-id-1'))
+
+        delete_all_buckets()

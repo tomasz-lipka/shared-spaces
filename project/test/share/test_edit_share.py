@@ -15,7 +15,7 @@ class TestEditShare(TestCase):
         response = client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 401)
 
-    def test_normal_run_no_image(self):
+    def test_normal_run(self):
         create_space_as_admin('space-1')
         create_share(1)
         data = {

@@ -16,7 +16,7 @@ class TestGetShares(TestCase):
         response = client.get('/spaces/1/shares')
         self.assertEqual(response.status_code, 401)
 
-    def test_normal_run_no_image(self):
+    def test_normal_run(self):
         register_and_login('admin-1')
         create_space('space-1')
         create_share(1)

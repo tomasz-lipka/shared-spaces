@@ -22,6 +22,7 @@ from src.controller.user_controller import user_controller
 from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
+# from src.controller.image_controller import image_controller
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.model.user import User
 
@@ -31,6 +32,7 @@ app.register_blueprint(user_controller)
 app.register_blueprint(space_controller)
 app.register_blueprint(assignment_controller)
 app.register_blueprint(share_controller)
+# app.register_blueprint(image_controller)
 # Generates a 32-byte (64-character) random hex string
 app.config["SECRET_KEY"] = secrets.token_hex(32)
 

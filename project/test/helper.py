@@ -1,6 +1,8 @@
 import time
 from flask_login import LoginManager
 from sqlalchemy import MetaData, Table
+import boto3
+import os
 
 from src.media.aws_service import AwsService
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository, engine
@@ -125,3 +127,15 @@ def delete_all_buckets():
     for i in range(1, 3):
         AwsService().delete_space_directory(i)
     time.sleep(5)
+
+
+def find_bucket(bucket_name):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
+    )
+    for bucket in s3_client.list_buckets()['Buckets']:
+        if bucket["Name"].startswith(bucket_name):
+            return True
+    return False
