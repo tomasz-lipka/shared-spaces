@@ -75,4 +75,4 @@ class TestEditShare(TestCase):
         }
         response = client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'text'")
+        self.assertEqual(response.data, b"Invalid payload: 'text'")

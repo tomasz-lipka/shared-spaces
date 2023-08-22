@@ -67,7 +67,7 @@ class TestChangePwd(TestCase):
         }
         response = client.post('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'old-password'")
+        self.assertEqual(response.data, b"Invalid payload: 'old-password'")
 
     def test_wrong_json_key_new_pwd(self):
         register_and_login('usr')
@@ -78,7 +78,7 @@ class TestChangePwd(TestCase):
         }
         response = client.post('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'new-password'")
+        self.assertEqual(response.data, b"Invalid payload: 'new-password'")
 
     def test_wrong_json_key_confirm_pwd(self):
         register_and_login('usr')
@@ -89,4 +89,4 @@ class TestChangePwd(TestCase):
         }
         response = client.post('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'confirm-password'")
+        self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")

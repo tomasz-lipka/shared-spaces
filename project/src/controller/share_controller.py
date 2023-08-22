@@ -105,4 +105,4 @@ def put_share(share_id):
     except ServiceException as exc:
         return make_response(str(exc), 400)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 400)
+        return make_response('Invalid payload: ' + str(key_err), 400)

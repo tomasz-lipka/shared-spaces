@@ -23,7 +23,7 @@ def post_space():
         service.create_space(data['name'])
         return make_response('Space created', 200)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 400)
+        return make_response('Invalid payload: ' + str(key_err), 400)
 
 
 @space_controller.route('/spaces/<int:space_id>')
@@ -74,4 +74,4 @@ def rename(space_id):
     except ServiceException as exc:
         return make_response(str(exc), 400)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 400)
+        return make_response('Invalid payload: ' + str(key_err), 400)

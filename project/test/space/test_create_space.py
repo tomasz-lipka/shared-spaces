@@ -23,4 +23,4 @@ class TestCreateSpace(TestCase):
         }
         response = client.post('/spaces', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'name'")
+        self.assertEqual(response.data, b"Invalid payload: 'name'")

@@ -70,4 +70,4 @@ class TestAddMember(TestCase):
         response = client.post('/spaces/1/members', json=data)
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'user-id'")
+        self.assertEqual(response.data, b"Invalid payload: 'user-id'")

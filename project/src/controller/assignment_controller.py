@@ -59,7 +59,7 @@ def post_member(space_id):
     except ServiceException as exc:
         return make_response(str(exc), 400)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 400)
+        return make_response('Invalid payload: ' + str(key_err), 400)
 
 
 @assignment_controller.route('/spaces/<int:space_id>/members/<int:user_id>', methods=["DELETE"])
@@ -97,4 +97,4 @@ def put_admin(space_id, user_id):
     except ServiceException as exc:
         return make_response(str(exc), 400)
     except KeyError as key_err:
-        return make_response('Invalid payload :' + str(key_err), 400)
+        return make_response('Invalid payload: ' + str(key_err), 400)

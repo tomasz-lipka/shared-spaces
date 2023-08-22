@@ -41,7 +41,7 @@ class TestLogin(TestCase):
         }
         response = client.post('/login', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'login'")
+        self.assertEqual(response.data, b"Invalid payload: 'login'")
 
     def test_wrong_json_key_password(self):
         register('usr')
@@ -51,7 +51,7 @@ class TestLogin(TestCase):
         }
         response = client.post('/login', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'password'")
+        self.assertEqual(response.data, b"Invalid payload: 'password'")
 
     def test_when_already_logged_in(self):
         register_and_login('usr')

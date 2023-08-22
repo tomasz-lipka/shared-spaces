@@ -57,4 +57,4 @@ class TestRenameSpace(TestCase):
         }
         response = client.put('/spaces/1', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload :'new-name'")
+        self.assertEqual(response.data, b"Invalid payload: 'new-name'")
