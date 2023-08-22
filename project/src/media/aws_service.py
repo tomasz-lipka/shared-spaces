@@ -67,8 +67,8 @@ class AwsService(MediaService):
             ExpiresIn=3
         )
 
-    def delete_space_directory(self, space_id):
-        bucket = self.find_bucket(space_id)
+    def delete_space_directory(self, space):
+        bucket = self.find_bucket(space.id)
         if not bucket:
             return
 

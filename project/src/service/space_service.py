@@ -67,7 +67,7 @@ def delete_space_by_space_id(space_id):
     if contains_only_owner(space):
         assignment_service.delete_assignment(assignment)
         repository.delete_by_id(Space, space_id)
-        media_service.delete_space_directory(space_id)
+        media_service.delete_space_directory(space)
 
 
 @login_required

@@ -18,6 +18,6 @@ class MediaService(ABC):
 
     @abstractmethod
     @login_required
-    def delete_space_directory(self, space_id):
+    def delete_space_directory(self, space):
         """
         """
