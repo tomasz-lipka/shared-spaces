@@ -43,7 +43,7 @@ def create_share(space_id, text):
 def get_share_by_share_id(share_id):
     share = validate_share(share_id)
     validate_share_owner(share, int(current_user.get_id()))
-    share.media_url = media_service.get_image(share.space_id, share.id)
+    share.media_url = media_service.get_image(share)
     return share
 
 
@@ -55,7 +55,7 @@ def get_shares_by_space_id(space_id):
     )
     shares = repository.get_all_by_filter(Share, Share.space_id == space_id)
     for share in shares:
-        share.media_url = media_service.get_image(share.space_id, share.id)
+        share.media_url = media_service.get_image(share)
     return shares
 
 

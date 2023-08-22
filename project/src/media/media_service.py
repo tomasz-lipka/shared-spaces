@@ -12,7 +12,7 @@ class MediaService(ABC):
 
     @abstractmethod
     @login_required
-    def get_image(self, space_id, share_id):
+    def get_image(self, share):
         """
         """
 

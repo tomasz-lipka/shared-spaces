@@ -49,11 +49,11 @@ class AwsService(MediaService):
         )
         self.send_file_name_to_sqs(object_key)
 
-    def get_image(self, space_id, share_id):
-        bucket = self.find_bucket(space_id)
+    def get_image(self, share):
+        bucket = self.find_bucket(share.space_id)
         if not bucket:
             return None
-        key = str(share_id) + '.jpg'
+        key = str(share.id) + '.jpg'
 
         try:
             s3_client.get_object(Bucket=bucket, Key=key)
