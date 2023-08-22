@@ -4,9 +4,9 @@ from sqlalchemy import MetaData, Table
 import boto3
 import os
 
-from src.media.aws_service import AwsService
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository, engine
 from src.model.user import User
+from src.media import aws_service
 from app import app
 
 
@@ -15,6 +15,12 @@ client = app.test_client()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
+)
 
 
 @login_manager.user_loader
@@ -124,17 +130,20 @@ def create_share_with_image(space_id):
 
 
 def delete_all_buckets():
-    for i in range(1, 3):
-        AwsService().delete_space_directory(i)
+    for bucket in s3_client.list_buckets()['Buckets']:
+        if bucket["Name"].startswith('space-id-'):
+            response = s3_client.list_objects_v2(Bucket=bucket["Name"])
+            if 'Contents' in response:
+                objects = response['Contents']
+                for obj in objects:
+                    s3_client.delete_object(
+                        Bucket=bucket["Name"], Key=obj['Key'])
+            s3_client.delete_bucket(Bucket=bucket["Name"])
+
     time.sleep(5)
 
 
 def find_bucket(bucket_name):
-    s3_client = boto3.client(
-        's3',
-        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-    )
     for bucket in s3_client.list_buckets()['Buckets']:
         if bucket["Name"].startswith(bucket_name):
             return True

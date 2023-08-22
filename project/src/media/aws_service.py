@@ -6,7 +6,7 @@ import botocore.exceptions
 from ..media.media_service import MediaService
 
 
-S3_BUCKET = 'shared-spaces-temp'
+S3_TEMP_BUCKET = 'shared-spaces-temp'
 FILE_FORMAT = '.jpg'
 QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo'
 s3_client = boto3.client(
@@ -16,13 +16,23 @@ s3_client = boto3.client(
 )
 
 
+def create_temp_bucket():
+    for bucket in s3_client.list_buckets()['Buckets']:
+        if bucket["Name"] == S3_TEMP_BUCKET:
+            return
+    s3_client.create_bucket(Bucket=S3_TEMP_BUCKET)
+
+
+create_temp_bucket()
+
+
 class AwsService(MediaService):
 
     def upload_image(self, file, space_id, share_id):
         object_key = str(space_id) + '-' + str(share_id) + FILE_FORMAT
         s3_client.upload_fileobj(
             file,
-            S3_BUCKET,
+            S3_TEMP_BUCKET,
             object_key
         )
         self.send_file_name_to_sqs(object_key)
