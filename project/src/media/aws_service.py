@@ -1,9 +1,15 @@
 import os
 import datetime
+from flask_login import current_user
 import boto3
 import botocore.exceptions
 
 from ..media.media_service import MediaService
+from ..service.validator_helper import (
+    validate_space,
+    validate_share,
+    validate_share_owner
+)
 
 
 S3_TEMP_BUCKET = 'shared-spaces-temp'
@@ -29,7 +35,13 @@ create_temp_bucket()
 class AwsService(MediaService):
 
     def upload_image(self, file, space_id, share_id):
-        object_key = str(space_id) + '-' + str(share_id) + FILE_FORMAT
+        space = validate_space(space_id)
+        share = validate_share(share_id)
+        validate_share_owner(
+            share,
+            int(current_user.get_id())
+        )
+        object_key = str(space.id) + '-' + str(share.id) + FILE_FORMAT
         s3_client.upload_fileobj(
             file,
             S3_TEMP_BUCKET,
