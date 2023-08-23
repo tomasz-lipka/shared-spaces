@@ -21,7 +21,7 @@ from ..service.validator_helper import (
 )
 
 repository = SqlAlchemyRepository()
-media_service = AwsService()
+media_service = AwsService('https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo')
 
 @login_required
 def create_space(name):

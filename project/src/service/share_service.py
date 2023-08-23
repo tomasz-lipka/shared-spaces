@@ -9,8 +9,8 @@ from flask_login import current_user, login_required
 from injector import inject
 
 from ..repository.repository import Repository
+from ..media.media_service import MediaService
 from ..model.share import Share
-from ..media.aws_service import AwsService
 from ..service.validator_helper import (
     validate_user,
     validate_space,
@@ -23,9 +23,9 @@ from ..service.validator_helper import (
 class ShareService():
 
     @inject
-    def __init__(self, repository: Repository):
+    def __init__(self, repository: Repository, media_service: MediaService):
         self.repository = repository
-        self.media_service = AwsService()
+        self.media_service = media_service
 
     @login_required
     def create_share(self, space_id, text):

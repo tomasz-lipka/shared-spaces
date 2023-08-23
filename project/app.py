@@ -25,6 +25,7 @@ from src.controller.share_controller import share_controller
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.model.user import User
 from appmodules import repository
+from appmodules import media_service
 
 app = Flask(__name__)
 app.register_blueprint(user_controller)
@@ -37,10 +38,17 @@ app.config["SECRET_KEY"] = secrets.token_hex(32)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-FlaskInjector(app=app, modules=[repository])
+FlaskInjector(app=app, modules=[repository, media_service])
 
 
 @login_manager.user_loader
 def load_user(user_id):
     """Request loader according to Flask-Login library"""
     return SqlAlchemyRepository().get_by_id(User, user_id)
+
+#
+#
+# create_temp_bucket()
+#
+#
+#  def create_db_schema(self):

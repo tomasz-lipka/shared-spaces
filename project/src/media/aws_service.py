@@ -12,27 +12,18 @@ from ..service.validator_helper import (
 )
 
 
-S3_TEMP_BUCKET = 'shared-spaces-temp'
-FILE_FORMAT = '.jpg'
-QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo'
-s3_client = boto3.client(
-    's3',
-    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-)
-
-
-def create_temp_bucket():
-    for bucket in s3_client.list_buckets()['Buckets']:
-        if bucket["Name"] == S3_TEMP_BUCKET:
-            return
-    s3_client.create_bucket(Bucket=S3_TEMP_BUCKET)
-
-
-create_temp_bucket()
-
-
 class AwsService(MediaService):
+
+    S3_TEMP_BUCKET = 'shared-spaces-temp'
+    FILE_FORMAT = '.jpg'
+
+    def __init__(self, queue_url):
+        self.queue_url = queue_url
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
+        )
 
     def upload_image(self, file, space_id, share_id):
         space = validate_space(space_id)
@@ -41,10 +32,10 @@ class AwsService(MediaService):
             share,
             int(current_user.get_id())
         )
-        object_key = str(space.id) + '-' + str(share.id) + FILE_FORMAT
-        s3_client.upload_fileobj(
+        object_key = str(space.id) + '-' + str(share.id) + self.FILE_FORMAT
+        self.s3_client.upload_fileobj(
             file,
-            S3_TEMP_BUCKET,
+            self.S3_TEMP_BUCKET,
             object_key
         )
         self.send_file_name_to_sqs(object_key)
@@ -56,12 +47,12 @@ class AwsService(MediaService):
         key = str(share.id) + '.jpg'
 
         try:
-            s3_client.get_object(Bucket=bucket, Key=key)
+            self.s3_client.get_object(Bucket=bucket, Key=key)
         except botocore.exceptions.ClientError as ex:
             if ex.response['Error']['Code'] == 'NoSuchKey':
                 return None
 
-        return s3_client.generate_presigned_url(
+        return self.s3_client.generate_presigned_url(
             'get_object',
             Params={'Bucket': bucket, 'Key': key},
             ExpiresIn=3
@@ -72,23 +63,29 @@ class AwsService(MediaService):
         if not bucket:
             return
 
-        response = s3_client.list_objects_v2(Bucket=bucket)
+        response = self.s3_client.list_objects_v2(Bucket=bucket)
         if 'Contents' in response:
             objects = response['Contents']
             for obj in objects:
-                s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
+                self.s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
 
-        s3_client.delete_bucket(Bucket=bucket)
+        self.s3_client.delete_bucket(Bucket=bucket)
 
     def find_bucket(self, space_id):
-        for bucket in s3_client.list_buckets()['Buckets']:
+        for bucket in self.s3_client.list_buckets()['Buckets']:
             if bucket["Name"].startswith('space-id-' + str(space_id)):
                 return bucket["Name"]
 
     def send_file_name_to_sqs(self, file_name):
         boto3.client('sqs', region_name='us-east-1').send_message(
-            QueueUrl=QUEUE_URL,
+            QueueUrl=self.queue_url,
             MessageBody=file_name,
             MessageGroupId='img',
             MessageDeduplicationId=str(datetime.datetime.now().timestamp())
         )
+
+    def create_temp_bucket(self):
+        for bucket in self.s3_client.list_buckets()['Buckets']:
+            if bucket["Name"] == self.S3_TEMP_BUCKET:
+                return
+        self.s3_client.create_bucket(Bucket=self.S3_TEMP_BUCKET)

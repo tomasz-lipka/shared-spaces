@@ -4,18 +4,21 @@ for managing shares within spaces.
 """
 import json
 from flask import Blueprint, request, make_response
+from injector import inject
 
 from ..exception.service_exception import ServiceException
 from ..service.share_service import ShareService
 from ..media.aws_service import AwsService
+
 from ..repository.sql_alchemy_repository import SqlAlchemyRepository
+from ..media.aws_service import MediaService
 
 share_controller = Blueprint('share_controller', __name__)
-media_service = AwsService()
-service = ShareService(SqlAlchemyRepository())
+service = ShareService(SqlAlchemyRepository(), AwsService('https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo'))
 
+@inject
 @share_controller.route('/spaces/<int:space_id>/shares', methods=["POST"])
-def post_share(space_id):
+def post_share(space_id, media_service: MediaService):
     """
     Create a new share in a space and optionally upload an image.
     Args:
