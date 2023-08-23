@@ -4,16 +4,18 @@ for managing space members, admin permissions and returns lists of spaces.
 """
 import json
 from flask import Blueprint, request, make_response
+from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..service import assignment_service as service
+from ..service.assignment_service import AssignmentService
 
 
 assignment_controller = Blueprint('assignment_controller', __name__)
 
 
+@inject
 @assignment_controller.route('/spaces')
-def get_spaces():
+def get_spaces(service: AssignmentService):
     """
     Get a list of spaces for the logged-in user.
     Returns:
@@ -25,8 +27,9 @@ def get_spaces():
     return json.dumps(json_serializable_list)
 
 
+@inject
 @assignment_controller.route('/spaces/<int:space_id>/members')
-def get_members(space_id):
+def get_members(space_id, service: AssignmentService):
     """
     Get a list of members in a space.
     Args:
@@ -43,8 +46,9 @@ def get_members(space_id):
         return make_response(str(exc), 400)
 
 
+@inject
 @assignment_controller.route('/spaces/<int:space_id>/members', methods=["POST"])
-def post_member(space_id):
+def post_member(space_id, service: AssignmentService):
     """
     Add a member to a space. Accept JSON payload with 'user-id'.
     Args:
@@ -62,8 +66,9 @@ def post_member(space_id):
         return make_response('Invalid payload: ' + str(key_err), 400)
 
 
+@inject
 @assignment_controller.route('/spaces/<int:space_id>/members/<int:user_id>', methods=["DELETE"])
-def delete_member(space_id, user_id):
+def delete_member(space_id, user_id, service: AssignmentService):
     """
     Delete a member from a space.
     Args:
@@ -79,8 +84,9 @@ def delete_member(space_id, user_id):
         return make_response(str(exc), 400)
 
 
+@inject
 @assignment_controller.route('/spaces/<int:space_id>/members/<int:user_id>', methods=["PUT"])
-def put_admin(space_id, user_id):
+def put_admin(space_id, user_id, service: AssignmentService):
     """
     Change the admin permission for a member in a space.
     Accept JSON payload with 'is-admin'.

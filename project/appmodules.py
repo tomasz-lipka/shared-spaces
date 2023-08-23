@@ -5,6 +5,7 @@ from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.media.aws_service import MediaService
 from src.media.aws_service import AwsService
 from src.service.share_service import ShareService
+from src.service.assignment_service import AssignmentService
 
 
 class AppModules(Module):
@@ -25,4 +26,8 @@ class AppModules(Module):
         binder.bind(
             ShareService,
             to=ShareService(self.sql_alchemy_repository, self.aws_service)
+        )
+        binder.bind(
+            AssignmentService,
+            to=AssignmentService(self.sql_alchemy_repository)
         )
