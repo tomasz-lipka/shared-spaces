@@ -5,11 +5,7 @@ import boto3
 import botocore.exceptions
 
 from ..media.media_service import MediaService
-from ..service.validator_helper import (
-    validate_space,
-    validate_share,
-    validate_share_owner
-)
+from ..service.validator_helper import ValidatorHelper
 
 
 class AwsService(MediaService):
@@ -17,18 +13,19 @@ class AwsService(MediaService):
     S3_TEMP_BUCKET = 'shared-spaces-temp'
     FILE_FORMAT = '.jpg'
 
-    def __init__(self, queue_url):
+    def __init__(self, queue_url, validator: ValidatorHelper):
         self.queue_url = queue_url
         self.s3_client = boto3.client(
             's3',
             aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
         )
+        self.validator = validator
 
     def upload_image(self, file, space_id, share_id):
-        space = validate_space(space_id)
-        share = validate_share(share_id)
-        validate_share_owner(
+        space = self.validator.validate_space(space_id)
+        share = self.validator.validate_share(share_id)
+        self.validator.validate_share_owner(
             share,
             int(current_user.get_id())
         )

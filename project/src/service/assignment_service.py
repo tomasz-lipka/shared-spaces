@@ -10,21 +10,16 @@ from injector import inject
 
 from ..repository.repository import Repository
 from ..model.assignment import Assignment
-from ..service.validator_helper import (
-    validate_user,
-    validate_space,
-    validate_assignment,
-    validate_admin,
-    validate_no_assignment
-)
+from ..service.validator_helper import ValidatorHelper
 from ..exception.service_exception import ServiceException
 
 
 class AssignmentService():
 
     @inject
-    def __init__(self, repository: Repository):
+    def __init__(self, repository: Repository,  validator: ValidatorHelper):
         self.repository = repository
+        self.validator = validator
 
     @login_required
     def get_users_assignments(self):
@@ -44,9 +39,9 @@ class AssignmentService():
         Returns:
             List[Assignment]: Assignments within the specified space.
         """
-        user = validate_user(current_user.get_id())
-        space = validate_space(space_id)
-        validate_assignment(space, user)
+        user = self.validator.validate_user(current_user.get_id())
+        space = self.validator.validate_space(space_id)
+        self.validator.validate_assignment(space, user)
         return self.repository.get_all_by_filter(
             Assignment,
             Assignment.space_id == space.id
@@ -60,15 +55,15 @@ class AssignmentService():
             space_id (int): ID of the target space.
             user_id (int): ID of the user to be assigned.
         """
-        space = validate_space(space_id)
-        caller_assignment = validate_assignment(
+        space = self.validator.validate_space(space_id)
+        caller_assignment = self.validator.validate_assignment(
             space,
-            validate_user(current_user.get_id())
+            self.validator.validate_user(current_user.get_id())
         )
-        validate_admin(caller_assignment)
-        validate_no_assignment(
+        self.validator.validate_admin(caller_assignment)
+        self.validator.validate_no_assignment(
             space,
-            validate_user(user_id)
+            self.validator.validate_user(user_id)
         )
         self.repository.add(Assignment(space_id, user_id))
 
@@ -80,21 +75,21 @@ class AssignmentService():
             space_id (int): ID of the target space.
             user_id (int): ID of the user associated with the assignment.
         """
-        space = validate_space(space_id)
-        to_be_deleted_assignment = validate_assignment(
+        space = self.validator.validate_space(space_id)
+        to_be_deleted_assignment = self.validator.validate_assignment(
             space,
-            validate_user(user_id)
+            self.validator.validate_user(user_id)
         )
-        caller_assignment = validate_assignment(
+        caller_assignment = self.validator.validate_assignment(
             space,
-            validate_user(current_user.get_id())
+            self.validator.validate_user(current_user.get_id())
         )
         if to_be_deleted_assignment == caller_assignment:
             if caller_assignment.is_admin:
                 raise ServiceException(
                     'Can\'t leave space when you\'re an admin')
         else:
-            validate_admin(caller_assignment)
+            self.validator.validate_admin(caller_assignment)
         self.repository.delete_by_id(Assignment, to_be_deleted_assignment.id)
 
     @login_required
@@ -106,15 +101,15 @@ class AssignmentService():
             user_id (int): ID of the user whose admin permission will be changed.
             is_admin (bool): New admin permission status for the user.
         """
-        space = validate_space(space_id)
-        caller_assignment = validate_assignment(
+        space = self.validator.validate_space(space_id)
+        caller_assignment = self.validator.validate_assignment(
             space,
-            validate_user(current_user.get_id())
+            self.validator.validate_user(current_user.get_id())
         )
-        validate_admin(caller_assignment)
-        assignment = validate_assignment(
+        self.validator.validate_admin(caller_assignment)
+        assignment = self.validator.validate_assignment(
             space,
-            validate_user(user_id)
+            self.validator.validate_user(user_id)
         )
         if not isinstance(is_admin, bool):
             raise ServiceException('"is admin" must be type boolean')

@@ -11,21 +11,17 @@ from injector import inject
 from ..repository.repository import Repository
 from ..media.media_service import MediaService
 from ..model.share import Share
-from ..service.validator_helper import (
-    validate_user,
-    validate_space,
-    validate_assignment,
-    validate_share,
-    validate_share_owner
-)
+from ..service.validator_helper import ValidatorHelper
 
 
 class ShareService():
 
     @inject
-    def __init__(self, repository: Repository, media_service: MediaService):
+    def __init__(self, repository: Repository,
+                 media_service: MediaService,  validator: ValidatorHelper):
         self.repository = repository
         self.media_service = media_service
+        self.validator = validator
 
     @login_required
     def create_share(self, space_id, text):
@@ -37,24 +33,24 @@ class ShareService():
         Returns:
             int: The ID of the newly created share.
         """
-        validate_assignment(
-            validate_space(space_id),
-            validate_user(current_user.get_id())
+        self.validator.validate_assignment(
+            self.validator.validate_space(space_id),
+            self.validator.validate_user(current_user.get_id())
         )
         return self.repository.add(Share(space_id, current_user.get_id(), text))
 
     @login_required
     def get_share_by_share_id(self, share_id):
-        share = validate_share(share_id)
-        validate_share_owner(share, int(current_user.get_id()))
+        share = self.validator.validate_share(share_id)
+        self.validator.validate_share_owner(share, int(current_user.get_id()))
         share.media_url = self.media_service.get_image(share)
         return share
 
     @login_required
     def get_shares_by_space_id(self, space_id):
-        validate_assignment(
-            validate_space(space_id),
-            validate_user(current_user.get_id())
+        self.validator.validate_assignment(
+            self.validator.validate_space(space_id),
+            self.validator.validate_user(current_user.get_id())
         )
         shares = self.repository.get_all_by_filter(
             Share, Share.space_id == space_id)
@@ -69,8 +65,8 @@ class ShareService():
         Args:
             share_id (int): ID of the target share.
         """
-        share = validate_share(share_id)
-        validate_share_owner(
+        share = self.validator.validate_share(share_id)
+        self.validator.validate_share_owner(
             share,
             int(current_user.get_id())
         )
@@ -84,8 +80,8 @@ class ShareService():
             share_id (int): ID of the target share.
             text (str): Updated text content of the share.
         """
-        share = validate_share(share_id)
-        validate_share_owner(
+        share = self.validator.validate_share(share_id)
+        self.validator.validate_share_owner(
             share,
             int(current_user.get_id())
         )

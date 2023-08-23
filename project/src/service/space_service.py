@@ -13,22 +13,19 @@ from ..repository.repository import Repository
 from ..media.media_service import MediaService
 from ..service.assignment_service import AssignmentService
 from ..model.space import Space
-from ..service.validator_helper import (
-    validate_user,
-    validate_space,
-    validate_assignment,
-    validate_admin,
-    contains_only_owner
-)
+from ..service.validator_helper import ValidatorHelper
 
 
 class SpaceService():
 
     @inject
-    def __init__(self, repository: Repository, media_service: MediaService, assignment_service: AssignmentService):
+    def __init__(self,
+                 repository: Repository, media_service: MediaService,
+                 assignment_service: AssignmentService, validator: ValidatorHelper):
         self.repository = repository
         self.media_service = media_service
         self.assignment_service = assignment_service
+        self.validator = validator
 
     @login_required
     def create_space(self, name):
@@ -49,10 +46,10 @@ class SpaceService():
         Returns:
             Space: The space object.
         """
-        space = validate_space(space_id)
-        validate_assignment(
+        space = self.validator.validate_space(space_id)
+        self.validator.validate_assignment(
             space,
-            validate_user(current_user.get_id())
+            self.validator.validate_user(current_user.get_id())
         )
         return space
 
@@ -63,13 +60,13 @@ class SpaceService():
         Args:
             space_id (int): ID of the target space.
         """
-        space = validate_space(space_id)
-        assignment = validate_assignment(
+        space = self.validator.validate_space(space_id)
+        assignment = self.validator.validate_assignment(
             space,
-            validate_user(current_user.get_id())
+            self.validator.validate_user(current_user.get_id())
         )
-        validate_admin(assignment)
-        if contains_only_owner(space):
+        self.validator.validate_admin(assignment)
+        if self.validator.contains_only_owner(space):
             self.assignment_service.delete_assignment(assignment)
             self.repository.delete_by_id(Space, space_id)
             self.media_service.delete_space_directory(space)
@@ -82,12 +79,12 @@ class SpaceService():
             space_id (int): ID of the target space.
             new_name (str): New name for the space.
         """
-        space = validate_space(space_id)
-        assignment = validate_assignment(
+        space = self.validator.validate_space(space_id)
+        assignment = self.validator.validate_assignment(
             space,
-            validate_user(current_user.get_id())
+            self.validator.validate_user(current_user.get_id())
         )
-        validate_admin(assignment)
+        self.validator.validate_admin(assignment)
 
         space.name = new_name
         self.repository.add(space)
