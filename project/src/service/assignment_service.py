@@ -97,7 +97,7 @@ class AssignmentService():
             validate_admin(caller_assignment)
         self.repository.delete_by_id(Assignment, to_be_deleted_assignment.id)
 
-    @ login_required
+    @login_required
     def change_admin_permission(self, space_id, user_id, is_admin):
         """
         Modify admin permission for a user within a space after validations.

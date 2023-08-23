@@ -109,12 +109,3 @@ class UserService():
         """
         return bcrypt.checkpw(password.encode('utf-8'), user.password)
 
-    def __get_user_by_user_id(self, user_id):
-        """
-        Retrieve a user by their ID.
-        Args:
-            user_id (int): ID of the target user.
-        Returns:
-            User: The user object.
-        """
-        return self.repository.get_by_id(User, user_id)
