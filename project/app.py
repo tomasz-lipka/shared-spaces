@@ -17,12 +17,16 @@ import secrets
 from flask import Flask
 from flask_injector import FlaskInjector
 from flask_login import LoginManager
+from injector import inject
 
 from src.controller.user_controller import user_controller
 from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
-from src.repository.sql_alchemy_repository import SqlAlchemyRepository
+
+# from src.repository.sql_alchemy_repository import SqlAlchemyRepository
+from src.repository.repository import Repository
+
 from src.model.user import User
 from appmodules import AppModules
 
@@ -40,10 +44,11 @@ login_manager.init_app(app)
 FlaskInjector(app=app, modules=[AppModules()])
 
 
+@inject
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id, repository: Repository):
     """Request loader according to Flask-Login library"""
-    return SqlAlchemyRepository().get_by_id(User, user_id)
+    return repository.get_by_id(User, user_id)
 
 #
 #

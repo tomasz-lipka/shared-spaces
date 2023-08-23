@@ -11,10 +11,12 @@ from src.service.validator_helper import ValidatorHelper
 
 class AppModules(Module):
 
+    SQS_URL = 'https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo'
+
     sql_alchemy_repository = SqlAlchemyRepository()
     validator = ValidatorHelper(sql_alchemy_repository)
     aws_service = AwsService(
-        'https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo',
+        SQS_URL,
         validator
     )
 
