@@ -3,15 +3,17 @@ Module containing the user controller blueprint with REST endpoints
 for managing user related operations.
 """
 from flask import Blueprint, request, make_response
+from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..service import user_service as service
+from ..service.user_service import UserService
 
 user_controller = Blueprint('user_controller', __name__)
 
 
+@inject
 @user_controller.route('/login', methods=["POST"])
-def login():
+def login(service: UserService):
     """
     Log the user in.
     Accepts a JSON payload with 'login' and 'password'.
@@ -28,8 +30,9 @@ def login():
         return make_response('Invalid payload: ' + str(key_err), 400)
 
 
+@inject
 @user_controller.route('/register', methods=["POST"])
-def register():
+def register(service: UserService):
     """
     Register a new user.
     Accepts a JSON payload with 'login', 'password', and 'confirm-password'.
@@ -47,8 +50,9 @@ def register():
         return make_response('Invalid payload: ' + str(key_err), 400)
 
 
+@inject
 @user_controller.route('/logout')
-def logout():
+def logout(service: UserService):
     """
     Log the user out.
     Returns:
@@ -58,8 +62,9 @@ def logout():
     return make_response('Logged out', 200)
 
 
+@inject
 @user_controller.route('/change-password', methods=["POST"])
-def change_password():
+def change_password(service: UserService):
     """
     Change user password.
     Accepts a JSON payload with 'old-password', 'new-password', and 'confirm-password'.
