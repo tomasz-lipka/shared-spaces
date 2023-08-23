@@ -130,17 +130,12 @@ def create_share_with_image(space_id):
 
 
 def delete_all_buckets():
-    for bucket in s3_client.list_buckets()['Buckets']:
-        if bucket["Name"].startswith('space-id-'):
-            response = s3_client.list_objects_v2(Bucket=bucket["Name"])
-            if 'Contents' in response:
-                objects = response['Contents']
-                for obj in objects:
-                    s3_client.delete_object(
-                        Bucket=bucket["Name"], Key=obj['Key'])
-            s3_client.delete_bucket(Bucket=bucket["Name"])
-
-    time.sleep(5)
+    while __is_only_temp_bucket():
+        for bucket in s3_client.list_buckets()['Buckets']:
+            if bucket["Name"].startswith('space-id-'):
+                __delete_objects_from_bucket(bucket)
+                s3_client.delete_bucket(Bucket=bucket["Name"])
+        print('try delete all buckets again')
 
 
 def find_bucket(bucket_name):
@@ -148,3 +143,16 @@ def find_bucket(bucket_name):
         if bucket["Name"].startswith(bucket_name):
             return True
     return False
+
+
+def __is_only_temp_bucket():
+    return len(s3_client.list_buckets()['Buckets']) > 1
+
+
+def __delete_objects_from_bucket(bucket):
+    response = s3_client.list_objects_v2(Bucket=bucket["Name"])
+    if 'Contents' in response:
+        objects = response['Contents']
+        for obj in objects:
+            s3_client.delete_object(
+                Bucket=bucket["Name"], Key=obj['Key'])
