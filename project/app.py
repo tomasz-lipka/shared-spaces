@@ -26,6 +26,7 @@ from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.model.user import User
 from appmodules import repository
 from appmodules import media_service
+from appmodules import share_service
 
 app = Flask(__name__)
 app.register_blueprint(user_controller)
@@ -38,7 +39,7 @@ app.config["SECRET_KEY"] = secrets.token_hex(32)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-FlaskInjector(app=app, modules=[repository, media_service])
+FlaskInjector(app=app, modules=[repository, media_service, share_service])
 
 
 @login_manager.user_loader

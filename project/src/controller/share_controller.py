@@ -1,5 +1,5 @@
 """
-Module containing the share controller blueprint with REST endpoints 
+Module containing the share controller blueprint with REST endpoints
 for managing shares within spaces.
 """
 import json
@@ -7,18 +7,15 @@ from flask import Blueprint, request, make_response
 from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..service.share_service import ShareService
-from ..media.aws_service import AwsService
-
-from ..repository.sql_alchemy_repository import SqlAlchemyRepository
 from ..media.aws_service import MediaService
+from ..service.share_service import ShareService
 
 share_controller = Blueprint('share_controller', __name__)
-service = ShareService(SqlAlchemyRepository(), AwsService('https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo'))
+
 
 @inject
 @share_controller.route('/spaces/<int:space_id>/shares', methods=["POST"])
-def post_share(space_id, media_service: MediaService):
+def post_share(space_id, media_service: MediaService, service: ShareService):
     """
     Create a new share in a space and optionally upload an image.
     Args:
@@ -45,8 +42,9 @@ def post_share(space_id, media_service: MediaService):
         return make_response(str(exc), 400)
 
 
+@inject
 @share_controller.route('/shares/<int:share_id>')
-def get_share(share_id):
+def get_share(share_id, service: ShareService):
     """
     Get details of a specific share by its share ID.
     Args:
@@ -61,8 +59,9 @@ def get_share(share_id):
         return make_response(str(exc), 400)
 
 
+@inject
 @share_controller.route('/spaces/<int:space_id>/shares')
-def get_shares(space_id):
+def get_shares(space_id, service: ShareService):
     """
     Get a list of shares within a space.
     Args:
@@ -78,8 +77,9 @@ def get_shares(space_id):
         return make_response(str(exc), 400)
 
 
+@inject
 @share_controller.route('/shares/<int:share_id>', methods=["DELETE"])
-def delete_share(share_id):
+def delete_share(share_id, service: ShareService):
     """
     Delete a share by its share ID.
     Args:
@@ -94,8 +94,9 @@ def delete_share(share_id):
         return make_response(str(exc), 400)
 
 
+@inject
 @share_controller.route('/shares/<int:share_id>', methods=["PUT"])
-def put_share(share_id):
+def put_share(share_id, service: ShareService):
     """
     Edit the content of a share by its share ID. Accepts a JSON payload with 'text'.
     Args:
