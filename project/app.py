@@ -24,9 +24,7 @@ from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.model.user import User
-from appmodules import repository
-from appmodules import media_service
-from appmodules import share_service
+from appmodules import AppModules
 
 app = Flask(__name__)
 app.register_blueprint(user_controller)
@@ -39,7 +37,7 @@ app.config["SECRET_KEY"] = secrets.token_hex(32)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-FlaskInjector(app=app, modules=[repository, media_service, share_service])
+FlaskInjector(app=app, modules=[AppModules()])
 
 
 @login_manager.user_loader
