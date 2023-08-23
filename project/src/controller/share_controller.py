@@ -6,11 +6,13 @@ import json
 from flask import Blueprint, request, make_response
 
 from ..exception.service_exception import ServiceException
-from ..service import share_service as service
+from ..service.share_service import ShareService
 from ..media.aws_service import AwsService
+from ..repository.sql_alchemy_repository import SqlAlchemyRepository
 
 share_controller = Blueprint('share_controller', __name__)
 media_service = AwsService()
+service = ShareService(SqlAlchemyRepository())
 
 @share_controller.route('/spaces/<int:space_id>/shares', methods=["POST"])
 def post_share(space_id):
