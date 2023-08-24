@@ -1,8 +1,6 @@
 # This lambda function copies an incoming object from a temp bucket to a destination bucket.
 # Every space has its own destination bucket.
 # The incoming object must be named following the convention: <space_id>-<share_id>
-import re
-import json
 import boto3
 import random
 from botocore.exceptions import ClientError
@@ -10,7 +8,7 @@ from botocore.exceptions import ClientError
 s3_client = boto3.client("s3")
 sqs_client = boto3.client("sqs")
 
-SOURCE_BUCKET = "shared-spaces-temp"
+S3_TEMP_BUCKET = "shared-spaces-temp"
 SQS_URL = "https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo"
 
 
@@ -56,14 +54,14 @@ def get_random():
 
 def copy_object(destination_bucket, object_key):
     s3_client.copy_object(
-        CopySource={"Bucket": SOURCE_BUCKET, "Key": object_key},
+        CopySource={"Bucket": S3_TEMP_BUCKET, "Key": object_key},
         Bucket=destination_bucket,
         Key=get_share_id(object_key),
     )
 
 
 def delete_object_from_temp(object_key):
-    s3_client.delete_object(Bucket=SOURCE_BUCKET, Key=object_key)
+    s3_client.delete_object(Bucket=S3_TEMP_BUCKET, Key=object_key)
 
 
 def find_bucket(bucket_name):

@@ -14,7 +14,7 @@ s3_client = boto3.client(
 
 
 def get_app():
-    app = create_app('test-app-config.py')
+    app = create_app('test-app.config')
     app.config['TESTING'] = True
     return app
 
