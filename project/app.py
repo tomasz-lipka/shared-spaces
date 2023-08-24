@@ -17,13 +17,14 @@ import secrets
 from flask import Flask
 from flask_injector import FlaskInjector
 from flask_login import LoginManager
+from injector import Injector
+
 
 from src.controller.user_controller import user_controller
 from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
-from src.repository.sql_alchemy_repository import SqlAlchemyRepository
-
+from src.repository.sql_alchemy_repository import Repository
 from src.model.user import User
 from appmodules import AppModules
 
@@ -38,7 +39,10 @@ def create_app(config_filename):
     app.register_blueprint(assignment_controller)
     app.register_blueprint(share_controller)
 
-    FlaskInjector(app=app, modules=[AppModules(app.config['DATABASE_URL'])])
+    app_modules = [AppModules(app.config['DATABASE_URL'])]
+
+    FlaskInjector(app=app, modules=app_modules)
+    injector = Injector(app_modules)
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -46,11 +50,11 @@ def create_app(config_filename):
     @login_manager.user_loader
     def load_user(user_id):
         """Request loader according to Flask-Login library"""
-        return SqlAlchemyRepository(app.config['DATABASE_URL']).get_by_id(User, user_id)
+        return injector.get(Repository).get_by_id(User, user_id)
 
     return app
 
-# --app 'hello:create_app("dev")'
+
 #
 #
 #  create_temp_bucket()
