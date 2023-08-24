@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_share, register_and_login, create_space,
     register, add_member, login, create_space_as_not_member,
-    delete_all_buckets, create_space_as_admin, create_share_with_image
+    create_space_as_admin, create_share_with_image
 )
 
 
@@ -126,4 +126,4 @@ class TestGetShares(TestCase):
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 
-        delete_all_buckets()
+        self.client.delete('/spaces/1')

@@ -2,7 +2,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin,
     create_share, register_and_login,
-    create_share_with_image, find_bucket, delete_all_buckets
+    create_share_with_image, find_bucket, login
 )
 
 
@@ -60,4 +60,6 @@ class TestDeleteShare(TestCase):
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket('space-id-1'))
 
-        delete_all_buckets()
+        logout(self.client)
+        login(self.client, 'admin')
+        self.client.delete('/spaces/1')

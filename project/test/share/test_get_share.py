@@ -2,8 +2,7 @@ import json
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin,
-    create_share, register_and_login,
-    delete_all_buckets, create_share_with_image,
+    create_share, register_and_login, create_share_with_image,
     create_space, register, login, add_member, find_bucket
 )
 
@@ -101,7 +100,11 @@ class TestGetShare(TestCase):
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 
-        delete_all_buckets()
+        logout(self.client)
+        login(self.client, 'admin')
+        self.client.delete('/spaces/2/members/2')
+        self.client.delete('/spaces/1')
+        self.client.delete('/spaces/2')
 
     def test_not_owned_with_image(self):
         create_space_as_admin(self.client, 'space-1')
@@ -114,4 +117,6 @@ class TestGetShare(TestCase):
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket('space-id-1'))
 
-        delete_all_buckets()
+        logout(self.client)
+        login(self.client, 'admin')
+        self.client.delete('/spaces/1')

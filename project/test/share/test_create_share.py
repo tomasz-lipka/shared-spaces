@@ -2,7 +2,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin, register_and_login,
     create_share, create_space_as_not_member, create_share_with_image,
-    delete_all_buckets, find_bucket
+    find_bucket
 )
 
 
@@ -53,8 +53,7 @@ class TestCreateShare(TestCase):
         response = create_share_with_image(self.client, 1)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share with image created")
-
-        delete_all_buckets()
+        self.client.delete('/spaces/1')
 
     def test_not_logged_in_with_image(self):
         response = create_share_with_image(self.client, 1)
