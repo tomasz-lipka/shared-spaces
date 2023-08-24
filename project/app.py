@@ -6,9 +6,11 @@ It registers blueprints for user, space, assignment, and share controllers.
 It also initializes the Flask-Login extension for user authentication and provides the LoginManager.
 
 The application uses SQLAlchemy for database operations.
+And Amazon Web Services: SQS, Lambda and S3 Buckets to maintain images.
 
 Usage:
     To start the Flask application, run this script.
+    flask --app 'app:create_app("<your-file>.config")' run
 
 Author:
     Tomasz Lipka
