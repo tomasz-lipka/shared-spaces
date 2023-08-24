@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import (
-    set_up, client, create_share, logout, register_and_login, create_space,
+    get_app, logout, purge_db, create_share, register_and_login, create_space,
     register, add_member, login, create_space_as_not_member,
     delete_all_buckets, create_space_as_admin, create_share_with_image
 )
@@ -9,31 +9,37 @@ from test.helper import (
 
 class TestGetShares(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = get_app()
+        cls.client = cls.app.test_client()
+
     def setUp(self):
-        set_up()
+        logout(self.client)
+        purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = client.get('/spaces/1/shares')
+        response = self.client.get('/spaces/1/shares')
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        register_and_login('admin-1')
-        create_space('space-1')
-        create_share(1)
-        logout()
+        register_and_login(self.client, 'admin-1')
+        create_space(self.client, 'space-1')
+        create_share(self.client, 1)
+        logout(self.client)
 
-        register('member-1')
+        register(self.client, 'member-1')
 
-        register_and_login('admin-2')
-        create_space('space-2')
-        create_share(2)
-        add_member(2, 2)
-        logout()
+        register_and_login(self.client, 'admin-2')
+        create_space(self.client, 'space-2')
+        create_share(self.client, 2)
+        add_member(self.client, 2, 2)
+        logout(self.client)
 
-        login('member-1')
-        create_share(2)
+        login(self.client, 'member-1')
+        create_share(self.client, 2)
 
-        response = client.get('/spaces/2/shares')
+        response = self.client.get('/spaces/2/shares')
         expected_data = [
             {
                 "id": 2,
@@ -63,23 +69,23 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        register_and_login('usr')
-        response = client.get('/spaces/999/shares')
+        register_and_login(self.client, 'usr')
+        response = self.client.get('/spaces/999/shares')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_member(self):
-        create_space_as_not_member()
-        response = client.get('/spaces/1/shares')
+        create_space_as_not_member(self.client)
+        response = self.client.get('/spaces/1/shares')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_normal_run_with_image(self):
-        create_space_as_admin('space-1')
-        create_share_with_image(1)
-        create_share_with_image(1)
+        create_space_as_admin(self.client, 'space-1')
+        create_share_with_image(self.client, 1)
+        create_share_with_image(self.client, 1)
 
-        response = client.get('/spaces/1/shares')
+        response = self.client.get('/spaces/1/shares')
         expected_data = [
             {
                 "id": 1,

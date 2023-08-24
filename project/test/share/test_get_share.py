@@ -1,8 +1,8 @@
 import json
 from unittest import TestCase
 from test.helper import (
-    set_up, client, create_space_as_admin,
-    create_share, register_and_login, logout,
+    get_app, logout, purge_db, create_space_as_admin,
+    create_share, register_and_login,
     delete_all_buckets, create_share_with_image,
     create_space, register, login, add_member, find_bucket
 )
@@ -10,17 +10,23 @@ from test.helper import (
 
 class TestGetShare(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = get_app()
+        cls.client = cls.app.test_client()
+
     def setUp(self):
-        set_up()
+        logout(self.client)
+        purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = client.get('/shares/1')
+        response = self.client.get('/shares/1')
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        create_space_as_admin('space-1')
-        response = create_share(1)
-        response = client.get('/shares/1')
+        create_space_as_admin(self.client, 'space-1')
+        response = create_share(self.client, 1)
+        response = self.client.get('/shares/1')
         expected_data = {
             "id": 1,
             "space": {
@@ -41,34 +47,34 @@ class TestGetShare(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_exist(self):
-        register_and_login('usr')
-        response = client.get('/shares/999')
+        register_and_login(self.client, 'usr')
+        response = self.client.get('/shares/999')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned(self):
-        create_space_as_admin('space-1')
-        create_share(1)
-        logout()
-        register_and_login('usr')
-        response = client.get('/shares/1')
+        create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1)
+        logout(self.client)
+        register_and_login(self.client, 'usr')
+        response = self.client.get('/shares/1')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
     def test_normal_run_with_image(self):
-        create_space_as_admin('space-1')
-        create_share_with_image(1)
-        create_space('space-2')
-        logout()
-        register('usr')
-        login('admin')
-        add_member(2, 2)
-        logout()
-        login('usr')
-        create_share_with_image(2)
-        create_share_with_image(2)
+        create_space_as_admin(self.client, 'space-1')
+        create_share_with_image(self.client, 1)
+        create_space(self.client, 'space-2')
+        logout(self.client)
+        register(self.client, 'usr')
+        login(self.client, 'admin')
+        add_member(self.client, 2, 2)
+        logout(self.client)
+        login(self.client, 'usr')
+        create_share_with_image(self.client, 2)
+        create_share_with_image(self.client, 2)
 
-        response = client.get('/shares/3')
+        response = self.client.get('/shares/3')
         expected_data = {
             "id": 3,
             "space": {
@@ -98,11 +104,11 @@ class TestGetShare(TestCase):
         delete_all_buckets()
 
     def test_not_owned_with_image(self):
-        create_space_as_admin('space-1')
-        create_share_with_image(1)
-        logout()
-        register_and_login('usr')
-        response = client.get('/shares/1')
+        create_space_as_admin(self.client, 'space-1')
+        create_share_with_image(self.client, 1)
+        logout(self.client)
+        register_and_login(self.client, 'usr')
+        response = self.client.get('/shares/1')
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')

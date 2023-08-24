@@ -1,26 +1,36 @@
 import json
 from unittest import TestCase
-from test.helper import set_up, client, register, create_space_as_admin, add_member, register_and_login, create_space_as_not_member, create_space
- 
+from test.helper import (
+    get_app, logout, purge_db, register, create_space_as_admin,
+    add_member, register_and_login,
+    create_space_as_not_member, create_space
+)
+
 
 class TestGetMembers(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = get_app()
+        cls.client = cls.app.test_client()
+
     def setUp(self):
-        set_up()
+        logout(self.client)
+        purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = client.get('/spaces/1/members')
+        response = self.client.get('/spaces/1/members')
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        register('member-1')
-        register('member-2')
-        create_space_as_admin('space-1')
-        create_space('space-2')
-        add_member(1, 1)
-        add_member(2, 2)
+        register(self.client, 'member-1')
+        register(self.client, 'member-2')
+        create_space_as_admin(self.client, 'space-1')
+        create_space(self.client, 'space-2')
+        add_member(self.client, 1, 1)
+        add_member(self.client, 2, 2)
 
-        response = client.get('/spaces/1/members')
+        response = self.client.get('/spaces/1/members')
         expected_data = [
             {
                 "is_admin": True,
@@ -42,13 +52,13 @@ class TestGetMembers(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        register_and_login('admin')
-        response = client.get('/spaces/999/members')
+        register_and_login(self.client, 'admin')
+        response = self.client.get('/spaces/999/members')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_member(self):
-        create_space_as_not_member()
-        response = client.get('/spaces/1/members')
+        create_space_as_not_member(self.client)
+        response = self.client.get('/spaces/1/members')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')

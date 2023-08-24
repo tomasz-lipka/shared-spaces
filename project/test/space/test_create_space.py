@@ -1,19 +1,24 @@
-import json
 from unittest import TestCase
-from test.helper import set_up, client, create_space, create_space_as_admin
+from test.helper import get_app, logout, purge_db, create_space, create_space_as_admin
 
 
 class TestCreateSpace(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = get_app()
+        cls.client = cls.app.test_client()
+
     def setUp(self):
-        set_up()
+        logout(self.client)
+        purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = create_space("space-1")
+        response = create_space(self.client, "space-1")
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        response = create_space_as_admin('space-1')
+        response = create_space_as_admin(self.client, 'space-1')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Space created")
 
@@ -21,6 +26,6 @@ class TestCreateSpace(TestCase):
         data = {
             "wrong": "space"
         }
-        response = client.post('/spaces', json=data)
+        response = self.client.post('/spaces', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'name'")

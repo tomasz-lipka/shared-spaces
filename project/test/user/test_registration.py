@@ -1,14 +1,20 @@
 from unittest import TestCase
-from test.helper import set_up, client, register, register_and_login
+from test.helper import get_app, logout, purge_db, register, register_and_login
 
 
 class TestRegistration(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = get_app()
+        cls.client = cls.app.test_client()
+
     def setUp(self):
-        set_up()
+        logout(self.client)
+        purge_db(self.app)
 
     def test_normal_run(self):
-        response = register("usr")
+        response = register(self.client, "usr")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"User created")
 
@@ -18,13 +24,13 @@ class TestRegistration(TestCase):
             "password": "pwd",
             "confirm-password": "other_pwd"
         }
-        response = client.post('/register', json=data)
+        response = self.client.post('/register', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Passwords don\'t match")
 
     def test_user_already_exists(self):
-        register("usr")
-        response = register("usr")
+        register(self.client, "usr")
+        response = register(self.client, "usr")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"User already exists")
 
@@ -34,7 +40,7 @@ class TestRegistration(TestCase):
             "password": "pwd",
             "confirm-password": "other_pwd"
         }
-        response = client.post('/register', json=data)
+        response = self.client.post('/register', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'login'")
 
@@ -44,7 +50,7 @@ class TestRegistration(TestCase):
             "wrong": "pwd",
             "confirm-password": "other_pwd"
         }
-        response = client.post('/register', json=data)
+        response = self.client.post('/register', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'password'")
 
@@ -54,12 +60,12 @@ class TestRegistration(TestCase):
             "password": "pwd",
             "wrong": "other_pwd"
         }
-        response = client.post('/register', json=data)
+        response = self.client.post('/register', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")
 
     def test_already_logged_in(self):
-        register_and_login('usr')
-        response = register('other-usr')
+        register_and_login(self.client, 'usr')
+        response = register(self.client, 'other-usr')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'Already logged in')

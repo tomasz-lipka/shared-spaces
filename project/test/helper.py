@@ -5,10 +5,6 @@ from sqlalchemy import MetaData, Table
 
 from app import create_app
 
-app = create_app('test-app-config.py')
-app.config['TESTING'] = True
-client = app.test_client()
-
 
 s3_client = boto3.client(
     's3',
@@ -17,12 +13,13 @@ s3_client = boto3.client(
 )
 
 
-def set_up():
-    logout()
-    purge_db()
+def get_app():
+    app = create_app('test-app-config.py')
+    app.config['TESTING'] = True
+    return app
 
 
-def purge_db():
+def purge_db(app):
     metadata = MetaData()
     metadata.reflect(bind=app.engine)
 
@@ -34,7 +31,7 @@ def purge_db():
             connection.execute(table.delete())
 
 
-def register(usr_login):
+def register(client, usr_login):
     data = {
         "login": usr_login,
         "password": "pwd",
@@ -43,7 +40,7 @@ def register(usr_login):
     return client.post('/register', json=data)
 
 
-def login(usr_login):
+def login(client, usr_login):
     data = {
         "login": usr_login,
         "password": "pwd"
@@ -51,56 +48,56 @@ def login(usr_login):
     return client.post('/login', json=data)
 
 
-def register_and_login(usr_login):
-    register(usr_login)
-    return login(usr_login)
+def register_and_login(client, usr_login):
+    register(client, usr_login)
+    return login(client, usr_login)
 
 
-def logout():
+def logout(client):
     client.get('/logout')
 
 
-def create_space(space_name):
+def create_space(client, space_name):
     data = {
         "name": space_name
     }
     return client.post('/spaces', json=data)
 
 
-def create_space_as_admin(space_name):
-    register_and_login('admin')
-    return create_space(space_name)
+def create_space_as_admin(client, space_name):
+    register_and_login(client, 'admin')
+    return create_space(client, space_name)
 
 
-def create_space_as_not_member():
-    create_space_as_admin('space-1')
-    logout()
-    register_and_login('not-member')
+def create_space_as_not_member(client):
+    create_space_as_admin(client, 'space-1')
+    logout(client)
+    register_and_login(client, 'not-member')
 
 
-def add_member(space_id, user_id):
+def add_member(client, space_id, user_id):
     data = {
         "user-id": user_id
     }
     return client.post(f'/spaces/{space_id}/members', json=data)
 
 
-def create_space_as_member(space_name):
-    register('member')
-    create_space_as_admin(space_name)
-    add_member(1, 1)
-    logout()
-    login('member')
+def create_space_as_member(client, space_name):
+    register(client, 'member')
+    create_space_as_admin(client, space_name)
+    add_member(client, 1, 1)
+    logout(client)
+    login(client, 'member')
 
 
-def create_share(space_id):
+def create_share(client, space_id):
     data = {
         "text": "Lorem ipsum"
     }
     return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data')
 
 
-def create_share_with_image(space_id):
+def create_share_with_image(client, space_id):
     try:
         with open('/workspaces/shared-spaces/project/test/test-image.jpg', 'rb') as image_file:
             data = {

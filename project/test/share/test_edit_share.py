@@ -1,31 +1,40 @@
 import json
 from unittest import TestCase
-from test.helper import set_up, client, create_space_as_admin, create_share, logout, register_and_login
+from test.helper import (
+    get_app, logout, purge_db, create_space_as_admin,
+    create_share, register_and_login
+)
 
 
 class TestEditShare(TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = get_app()
+        cls.client = cls.app.test_client()
+
     def setUp(self):
-        set_up()
+        logout(self.client)
+        purge_db(self.app)
 
     def test_not_logged_in(self):
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        create_space_as_admin('space-1')
-        create_share(1)
+        create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1)
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share edited")
 
-        response = client.get('/shares/1')
+        response = self.client.get('/shares/1')
         expected_data = {
             "id": 1,
             "space": {
@@ -46,33 +55,33 @@ class TestEditShare(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_owned(self):
-        create_space_as_admin('space-1')
-        create_share(1)
-        logout()
-        register_and_login('usr')
+        create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1)
+        logout(self.client)
+        register_and_login(self.client, 'usr')
 
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
     def test_not_exist(self):
-        register_and_login('usr')
+        register_and_login(self.client, 'usr')
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'No such share')
 
     def test_wrong_json_key(self):
-        create_space_as_admin('space-1')
-        create_share(1)
+        create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1)
         data = {
             "wrong": "Edit lorem ipsum"
         }
-        response = client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'text'")
