@@ -39,7 +39,7 @@ def create_app(config_filename):
     app.register_blueprint(assignment_controller)
     app.register_blueprint(share_controller)
 
-    app_modules = [AppModules(app.config['DATABASE_URL'])]
+    app_modules = [AppModules(app)]
 
     FlaskInjector(app=app, modules=app_modules)
     injector = Injector(app_modules)

@@ -10,11 +10,11 @@ from ..service.validator_helper import ValidatorHelper
 
 class AwsService(MediaService):
 
-    S3_TEMP_BUCKET = 'shared-spaces-temp'
     FILE_FORMAT = '.jpg'
 
-    def __init__(self, queue_url, validator: ValidatorHelper):
+    def __init__(self, queue_url, s3_temp_bucket, validator: ValidatorHelper, ):
         self.queue_url = queue_url
+        self.s3_temp_bucket = s3_temp_bucket
         self.s3_client = boto3.client(
             's3',
             aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
@@ -32,7 +32,7 @@ class AwsService(MediaService):
         object_key = str(space.id) + '-' + str(share.id) + self.FILE_FORMAT
         self.s3_client.upload_fileobj(
             file,
-            self.S3_TEMP_BUCKET,
+            self.s3_temp_bucket,
             object_key
         )
         self.send_file_name_to_sqs(object_key)
@@ -83,6 +83,6 @@ class AwsService(MediaService):
 
     def create_temp_bucket(self):
         for bucket in self.s3_client.list_buckets()['Buckets']:
-            if bucket["Name"] == self.S3_TEMP_BUCKET:
+            if bucket["Name"] == self.s3_temp_bucket:
                 return
-        self.s3_client.create_bucket(Bucket=self.S3_TEMP_BUCKET)
+        self.s3_client.create_bucket(Bucket=self.s3_temp_bucket)
