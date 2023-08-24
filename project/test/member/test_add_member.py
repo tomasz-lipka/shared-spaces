@@ -1,6 +1,9 @@
-import json
 from unittest import TestCase
-from test.helper import set_up, client, add_member, register, register_and_login, create_space, create_space_as_member, create_space_as_admin
+from test.helper import (
+    set_up, client, add_member,
+    register, register_and_login,
+    create_space_as_member, create_space_as_admin
+)
 
 
 class TestAddMember(TestCase):
