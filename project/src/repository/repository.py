@@ -12,6 +12,16 @@ class Repository(ABC):
     """
 
     @abstractmethod
+    def __init__(self, repository_url):
+        """
+        # 
+        # 
+        TODO
+        # 
+        # 
+        """
+
+    @abstractmethod
     def add(self, obj):
         """
          Abstract method to add or update an object to the database.

@@ -2,7 +2,9 @@
 Enhanced version of the application to share thoughts between family members and friends
 
 +-------------------------------------------------+
-
+USAGE:
+flask --app 'app:create_app("test-app-config.py")' run
++-------------------------------------------------+
 ACTIVATING VIRTUAL ENV
 
 . .venv/bin/activate

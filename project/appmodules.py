@@ -13,15 +13,14 @@ class AppModules(Module):
 
     SQS_URL = 'https://sqs.us-east-1.amazonaws.com/869305664526/shared-spaces.fifo'
 
-    sql_alchemy_repository = SqlAlchemyRepository()
-    validator = ValidatorHelper(sql_alchemy_repository)
-    aws_service = AwsService(
-        SQS_URL,
-        validator
-    )
-
     def __init__(self, repo_url):
         self.repo_url = repo_url
+        self.sql_alchemy_repository = SqlAlchemyRepository(repo_url)
+        self.validator = ValidatorHelper(self.sql_alchemy_repository)
+        self.aws_service = AwsService(
+            self.SQS_URL,
+            self.validator
+        )
 
     def configure(self, binder):
         binder.bind(

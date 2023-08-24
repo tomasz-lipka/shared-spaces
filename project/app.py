@@ -46,14 +46,13 @@ def create_app(config_filename):
     @login_manager.user_loader
     def load_user(user_id):
         """Request loader according to Flask-Login library"""
-        return SqlAlchemyRepository().get_by_id(User, user_id)
+        return SqlAlchemyRepository(app.config['DATABASE_URL']).get_by_id(User, user_id)
 
     return app
 
-
+# --app 'hello:create_app("dev")'
 #
 #
 #  create_temp_bucket()
 #
 #
-

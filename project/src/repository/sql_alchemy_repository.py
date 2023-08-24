@@ -12,9 +12,6 @@ from ..model.assignment import Assignment
 from ..model.share import Share
 
 
-engine = create_engine('sqlite:///test_db.sqlite')
-
-
 class SqlAlchemyRepository(Repository):
     """
     Concrete implementation of the Repository abstract class using SQLAlchemy.
@@ -22,9 +19,10 @@ class SqlAlchemyRepository(Repository):
     from a database using SQLAlchemy.
     """
 
-    def __init__(self):
-        self.__create_schema()
-        Session = sessionmaker(bind=engine)
+    def __init__(self, repository_url):
+        self.engine = create_engine(repository_url)
+        self.__create_schema(self.engine)
+        Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
     def add(self, obj):
@@ -66,5 +64,5 @@ class SqlAlchemyRepository(Repository):
         """
         return self.session.query(model).filter(query_filter).all()
 
-    def __create_schema(self):
+    def __create_schema(self, engine):
         Base.metadata.create_all(engine)

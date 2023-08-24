@@ -1,9 +1,7 @@
 import time
-from sqlalchemy import MetaData, Table
 import boto3
 import os
 
-from src.repository.sql_alchemy_repository import engine
 from app import create_app
 
 app = create_app('test-app-config.py')
@@ -17,25 +15,9 @@ s3_client = boto3.client(
     aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
 )
 
-# 
-# TODO
-def delete_all_records_from_db():
-    metadata = MetaData()
-    metadata.reflect(bind=engine)
-
-    table_names = metadata.tables.keys()
-
-    with engine.begin() as connection:
-        for table_name in table_names:
-            table = Table(table_name, metadata, autoload=True)
-            connection.execute(table.delete())
-# 
-# 
-
 
 def set_up():
     logout()
-    delete_all_records_from_db()
 
 
 def register(usr_login):
