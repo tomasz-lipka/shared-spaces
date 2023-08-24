@@ -17,42 +17,43 @@ import secrets
 from flask import Flask
 from flask_injector import FlaskInjector
 from flask_login import LoginManager
-from injector import inject
 
 from src.controller.user_controller import user_controller
 from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
-
-# from src.repository.sql_alchemy_repository import SqlAlchemyRepository
-from src.repository.repository import Repository
+from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 
 from src.model.user import User
 from appmodules import AppModules
 
-app = Flask(__name__)
-app.register_blueprint(user_controller)
-app.register_blueprint(space_controller)
-app.register_blueprint(assignment_controller)
-app.register_blueprint(share_controller)
 
-app.config["SECRET_KEY"] = secrets.token_hex(32)
+def create_app(config_filename):
+    app = Flask(__name__)
+    app.config.from_pyfile(config_filename)
+    app.config["SECRET_KEY"] = secrets.token_hex(32)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+    app.register_blueprint(user_controller)
+    app.register_blueprint(space_controller)
+    app.register_blueprint(assignment_controller)
+    app.register_blueprint(share_controller)
 
-FlaskInjector(app=app, modules=[AppModules()])
+    FlaskInjector(app=app, modules=[AppModules(app.config['DATABASE_URL'])])
 
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
-@inject
-@login_manager.user_loader
-def load_user(user_id, repository: Repository):
-    """Request loader according to Flask-Login library"""
-    return repository.get_by_id(User, user_id)
+    @login_manager.user_loader
+    def load_user(user_id):
+        """Request loader according to Flask-Login library"""
+        return SqlAlchemyRepository().get_by_id(User, user_id)
+
+    return app
+
 
 #
 #
-# create_temp_bucket()
+#  create_temp_bucket()
 #
 #
 #  def create_db_schema(self):

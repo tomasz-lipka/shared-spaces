@@ -1,20 +1,15 @@
 import time
-from flask_login import LoginManager
 from sqlalchemy import MetaData, Table
 import boto3
 import os
 
-from src.repository.sql_alchemy_repository import SqlAlchemyRepository, engine
-from src.model.user import User
-from src.media import aws_service
-from app import app
+from src.repository.sql_alchemy_repository import engine
+from app import create_app
 
-
+app = create_app('test-app-config.py')
 app.config['TESTING'] = True
 client = app.test_client()
 
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 s3_client = boto3.client(
     's3',
@@ -22,12 +17,8 @@ s3_client = boto3.client(
     aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
 )
 
-
-@login_manager.user_loader
-def load_user(user_id):
-    return SqlAlchemyRepository().get_by_id(User, user_id)
-
-
+# 
+# TODO
 def delete_all_records_from_db():
     metadata = MetaData()
     metadata.reflect(bind=engine)
@@ -38,6 +29,8 @@ def delete_all_records_from_db():
         for table_name in table_names:
             table = Table(table_name, metadata, autoload=True)
             connection.execute(table.delete())
+# 
+# 
 
 
 def set_up():

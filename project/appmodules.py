@@ -20,6 +20,9 @@ class AppModules(Module):
         validator
     )
 
+    def __init__(self, repo_url):
+        self.repo_url = repo_url
+
     def configure(self, binder):
         binder.bind(
             Repository,
