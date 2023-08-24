@@ -1,6 +1,7 @@
 import time
 import boto3
 import os
+from sqlalchemy import MetaData, Table
 
 from app import create_app
 
@@ -18,6 +19,19 @@ s3_client = boto3.client(
 
 def set_up():
     logout()
+    purge_db()
+
+
+def purge_db():
+    metadata = MetaData()
+    metadata.reflect(bind=app.engine)
+
+    table_names = metadata.tables.keys()
+
+    with app.engine.begin() as connection:
+        for table_name in table_names:
+            table = Table(table_name, metadata, autoload=True)
+            connection.execute(table.delete())
 
 
 def register(usr_login):

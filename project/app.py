@@ -43,6 +43,7 @@ def create_app(config_filename):
 
     FlaskInjector(app=app, modules=app_modules)
     injector = Injector(app_modules)
+    repository = injector.get(Repository)
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -50,7 +51,9 @@ def create_app(config_filename):
     @login_manager.user_loader
     def load_user(user_id):
         """Request loader according to Flask-Login library"""
-        return injector.get(Repository).get_by_id(User, user_id)
+        return repository.get_by_id(User, user_id)
+
+    app.engine = repository.engine
 
     return app
 
