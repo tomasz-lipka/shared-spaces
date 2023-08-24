@@ -14,12 +14,6 @@ from ..model.share import Share
 
 engine = create_engine('sqlite:///test_db.sqlite')
 
-# Creates schema in database
-Base.metadata.create_all(engine)
-
-Session = sessionmaker(bind=engine)
-session = Session()
-
 
 class SqlAlchemyRepository(Repository):
     """
@@ -28,10 +22,15 @@ class SqlAlchemyRepository(Repository):
     from a database using SQLAlchemy.
     """
 
+    def __init__(self):
+        self.__create_schema()
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
+
     def add(self, obj):
-        session.add(obj)
-        session.commit()
-        session.refresh(obj)
+        self.session.add(obj)
+        self.session.commit()
+        self.session.refresh(obj)
         return obj.id
 
     def delete_by_id(self, model, obj_id):
@@ -40,29 +39,32 @@ class SqlAlchemyRepository(Repository):
         """
         obj = self.get_by_id(model, obj_id)
         if obj:
-            session.delete(obj)
-            session.commit()
+            self.session.delete(obj)
+            self.session.commit()
 
     def get_by_id(self, model, obj_id):
         """
         Implementation of the respective repository abstract class method.
         """
-        return session.get(model, obj_id)
+        return self.session.get(model, obj_id)
 
     def get_first_by_filter(self, model, query_filter):
         """
         Implementation of the respective repository abstract class method.
         """
-        return session.query(model).filter(query_filter).first()
+        return self.session.query(model).filter(query_filter).first()
 
     def get_first_by_two_filters(self, model, query_filter1, query_filter2):
         """
         Implementation of the respective repository abstract class method.
         """
-        return session.query(model).filter(query_filter1).filter(query_filter2).first()
+        return self.session.query(model).filter(query_filter1).filter(query_filter2).first()
 
     def get_all_by_filter(self, model, query_filter):
         """
         Implementation of the respective repository abstract class method.
         """
-        return session.query(model).filter(query_filter).all()
+        return self.session.query(model).filter(query_filter).all()
+
+    def __create_schema(self):
+        Base.metadata.create_all(engine)
