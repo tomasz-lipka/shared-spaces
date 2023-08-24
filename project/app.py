@@ -25,6 +25,7 @@ from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
 from src.repository.sql_alchemy_repository import Repository
+from src.media.aws_service import MediaService
 from src.model.user import User
 from appmodules import AppModules
 
@@ -46,6 +47,7 @@ def create_app(config_filename):
     repository = injector.get(Repository)
 
     repository.create_schema()
+    injector.get(MediaService).create_temp_directory()
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -58,10 +60,3 @@ def create_app(config_filename):
     app.engine = repository.engine
 
     return app
-
-
-#
-#
-#  create_temp_bucket()
-#
-#

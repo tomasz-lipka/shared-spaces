@@ -81,7 +81,7 @@ class AwsService(MediaService):
             MessageDeduplicationId=str(datetime.datetime.now().timestamp())
         )
 
-    def create_temp_bucket(self):
+    def create_temp_directory(self):
         for bucket in self.s3_client.list_buckets()['Buckets']:
             if bucket["Name"] == self.s3_temp_bucket:
                 return

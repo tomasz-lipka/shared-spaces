@@ -21,3 +21,8 @@ class MediaService(ABC):
     def delete_space_directory(self, space):
         """
         """
+
+    @abstractmethod
+    def create_temp_directory(self):
+        """
+        """
