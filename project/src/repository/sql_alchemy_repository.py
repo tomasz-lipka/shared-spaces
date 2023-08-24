@@ -21,7 +21,6 @@ class SqlAlchemyRepository(Repository):
 
     def __init__(self, repository_url):
         self.engine = create_engine(repository_url)
-        self.__create_schema(self.engine)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
@@ -64,5 +63,5 @@ class SqlAlchemyRepository(Repository):
         """
         return self.session.query(model).filter(query_filter).all()
 
-    def __create_schema(self, engine):
-        Base.metadata.create_all(engine)
+    def create_schema(self):
+        Base.metadata.create_all(self.engine)

@@ -81,3 +81,8 @@ class Repository(ABC):
         Returns:
             list: A list of retrieved objects.
         """
+
+    @abstractmethod
+    def create_schema(self):
+        """
+        """

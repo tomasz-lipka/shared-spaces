@@ -45,6 +45,8 @@ def create_app(config_filename):
     injector = Injector(app_modules)
     repository = injector.get(Repository)
 
+    repository.create_schema()
+
     login_manager = LoginManager()
     login_manager.init_app(app)
 
