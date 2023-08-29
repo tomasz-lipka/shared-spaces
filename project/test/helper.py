@@ -100,12 +100,12 @@ def create_share(client, space_id):
     return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data')
 
 
-def create_share_with_image(client, space_id):
+def create_share_with_image(client, space_id, img_url):
     try:
-        with open('/workspaces/shared-spaces/project/test/test-image.jpg', 'rb') as image_file:
+        with open(img_url, 'rb') as image_file:
             data = {
                 'text': "Lorem ipsum",
-                'file': (image_file, 'test-image.jpg')
+                'file': (image_file, 'img')
             }
             response = client.post(
                 f'/spaces/{space_id}/shares',

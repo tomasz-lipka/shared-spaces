@@ -24,7 +24,7 @@ class TestGetShare(TestCase):
 
     def test_normal_run(self):
         create_space_as_admin(self.client, 'space-1')
-        response = create_share(self.client, 1)
+        create_share(self.client, 1)
         response = self.client.get('/shares/1')
         expected_data = {
             "id": 1,
@@ -62,7 +62,8 @@ class TestGetShare(TestCase):
 
     def test_normal_run_with_image(self):
         create_space_as_admin(self.client, 'space-1')
-        create_share_with_image(self.client, 1)
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
         create_space(self.client, 'space-2')
         logout(self.client)
         register(self.client, 'usr')
@@ -70,8 +71,10 @@ class TestGetShare(TestCase):
         add_member(self.client, 2, 2)
         logout(self.client)
         login(self.client, 'usr')
-        create_share_with_image(self.client, 2)
-        create_share_with_image(self.client, 2)
+        create_share_with_image(
+            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
+        create_share_with_image(
+            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg')
 
         response = self.client.get('/shares/3')
         expected_data = {
@@ -91,7 +94,7 @@ class TestGetShare(TestCase):
         data = json.loads(response.data)
 
         self.assertTrue(are_images_same(
-            data, '/workspaces/shared-spaces/project/test/test-image.jpg'))
+            data, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg'))
 
         data.pop("timestamp", None)
         data.pop("media_url", None)
@@ -106,7 +109,8 @@ class TestGetShare(TestCase):
 
     def test_not_owned_with_image(self):
         create_space_as_admin(self.client, 'space-1')
-        create_share_with_image(self.client, 1)
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
         logout(self.client)
         register_and_login(self.client, 'usr')
         response = self.client.get('/shares/1')

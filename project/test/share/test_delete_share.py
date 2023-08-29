@@ -51,7 +51,8 @@ class TestDeleteShare(TestCase):
 
     def test_not_owned_with_image(self):
         create_space_as_admin(self.client, 'space-1')
-        create_share_with_image(self.client, 1)
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
         logout(self.client)
         register_and_login(self.client, 'usr')
 

@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_share, register_and_login, create_space,
     register, add_member, login, create_space_as_not_member,
-    create_space_as_admin, create_share_with_image
+    create_space_as_admin, create_share_with_image, are_images_same
 )
 
 
@@ -82,8 +82,10 @@ class TestGetShares(TestCase):
 
     def test_normal_run_with_image(self):
         create_space_as_admin(self.client, 'space-1')
-        create_share_with_image(self.client, 1)
-        create_share_with_image(self.client, 1)
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
 
         response = self.client.get('/spaces/1/shares')
         expected_data = [
@@ -110,15 +112,11 @@ class TestGetShares(TestCase):
         ]
         data = json.loads(response.data)
 
-        self.assertIn('https://', data[0]["media_url"])
-        self.assertIn('.s3.amazonaws.co', data[0]["media_url"])
-        self.assertIn('test-space-id-1', data[0]["media_url"])
-        self.assertIn('1.jpg', data[0]["media_url"])
+        self.assertTrue(are_images_same(
+            data[0], '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg'))
 
-        self.assertIn('https://', data[1]["media_url"])
-        self.assertIn('.s3.amazonaws.co', data[1]["media_url"])
-        self.assertIn('test-space-id-1', data[1]["media_url"])
-        self.assertIn('2.jpg', data[1]["media_url"])
+        self.assertTrue(are_images_same(
+            data[1], '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg'))
 
         for item in data:
             item.pop("timestamp", None)
