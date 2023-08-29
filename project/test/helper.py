@@ -130,3 +130,21 @@ def are_images_same(data, test_img):
     image_bytes = BytesIO(response.content)
 
     return not ImageChops.difference(Image.open(test_img), Image.open(image_bytes)).getbbox()
+
+
+def edit_share_with_image(client, share_id, new_img_url):
+    try:
+        with open(new_img_url, 'rb') as image_file:
+            data = {
+                'text': "Lorem ipsum",
+                'file': (image_file, 'img')
+            }
+            response = client.put(
+                f'/shares/{share_id}',
+                data=data,
+                content_type='multipart/form-data'
+            )
+            time.sleep(1)
+            return response
+    except FileNotFoundError:
+        print("Image file not found.")

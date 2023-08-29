@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class MediaService(ABC):
 
     @abstractmethod
-    def upload_image(self, file, space_id, share_id):
+    def upload_image(self, file, share_id):
         """
         """
 

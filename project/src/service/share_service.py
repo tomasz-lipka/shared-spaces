@@ -86,4 +86,4 @@ class ShareService():
             int(current_user.get_id())
         )
         share.text = text
-        self.repository.add(share)
+        return self.repository.add(share)

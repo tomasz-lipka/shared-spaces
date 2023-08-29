@@ -2,7 +2,8 @@ import json
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin,
-    create_share, register_and_login
+    edit_share_with_image, create_share, register_and_login,
+    create_share_with_image, are_images_same
 )
 
 
@@ -21,7 +22,7 @@ class TestEditShare(TestCase):
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = self.client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', data=data)
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
@@ -30,7 +31,7 @@ class TestEditShare(TestCase):
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = self.client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', data=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share edited")
 
@@ -63,7 +64,7 @@ class TestEditShare(TestCase):
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = self.client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
@@ -72,7 +73,7 @@ class TestEditShare(TestCase):
         data = {
             "text": "Edit lorem ipsum"
         }
-        response = self.client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'No such share')
 
@@ -82,6 +83,23 @@ class TestEditShare(TestCase):
         data = {
             "wrong": "Edit lorem ipsum"
         }
-        response = self.client.put('/shares/1', json=data)
+        response = self.client.put('/shares/1', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'text'")
+
+# ------------------------------------------------------------------------------------
+    def test_normal_run_with_image(self):
+        create_space_as_admin(self.client, 'space-1')
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
+        response = edit_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Share edited")
+
+        response = self.client.get('/shares/1')
+        data = json.loads(response.data)
+        self.assertTrue(are_images_same(
+            data, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg'))
+
+        self.client.delete('/spaces/1')

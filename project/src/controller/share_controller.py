@@ -33,7 +33,6 @@ def post_share(space_id, media_service: MediaService, service: ShareService):
         if 'file' in request.files:
             media_service.upload_image(
                 request.files['file'],
-                space_id,
                 share_id
             )
             return make_response('Share with image created', 200)
@@ -96,17 +95,19 @@ def delete_share(share_id, service: ShareService):
 
 @inject
 @share_controller.route('/shares/<int:share_id>', methods=["PUT"])
-def put_share(share_id, service: ShareService):
-    """
-    Edit the content of a share by its share ID. Accepts a JSON payload with 'text'.
-    Args:
-        share_id (int): ID of the target share.
-    Returns:
-        str: Response message.
-    """
+def put_share(share_id, service: ShareService, media_service: MediaService):
+    if not 'text' in request.form:
+        return make_response("Invalid payload: 'text'", 400)
     try:
-        data = request.json
-        service.edit_share(share_id, data['text'])
+        share_id = service.edit_share(
+            share_id,
+            request.form['text']
+        )
+        if 'file' in request.files:
+            media_service.upload_image(
+                request.files['file'],
+                share_id
+            )
         return make_response('Share edited', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)

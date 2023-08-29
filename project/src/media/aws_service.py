@@ -26,15 +26,15 @@ class AwsService(MediaService):
         self.validator = validator
 
     @login_required
-    def upload_image(self, file, space_id, share_id):
-        space = self.validator.validate_space(space_id)
+    def upload_image(self, file, share_id):
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(
             share,
             int(current_user.get_id())
         )
 
-        object_key = str(space.id) + '-' + str(share.id) + self.FILE_FORMAT
+        object_key = str(share.space.id) + '-' + \
+            str(share.id) + self.FILE_FORMAT
         self.s3_client.upload_fileobj(
             file,
             self.s3_temp_bucket,
