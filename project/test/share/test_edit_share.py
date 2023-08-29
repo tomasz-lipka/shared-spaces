@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin,
     edit_share_with_image, create_share, register_and_login,
-    create_share_with_image, are_images_same
+    create_share_with_image, are_images_same, login
 )
 
 
@@ -87,7 +87,11 @@ class TestEditShare(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'text'")
 
-# ------------------------------------------------------------------------------------
+    def test_not_logged_in_with_image(self):
+        response = edit_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
+        self.assertEqual(response.status_code, 401)
+
     def test_normal_run_with_image(self):
         create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
@@ -101,5 +105,46 @@ class TestEditShare(TestCase):
         data = json.loads(response.data)
         self.assertTrue(are_images_same(
             data, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg'))
+        expected_data = {
+            "id": 1,
+            "space": {
+                "id": 1,
+                "name": "space-1"
+            },
+            # "timestamp":,
+            "user": {
+                "id": 1,
+                "login": "admin"
+            },
+            "text": "Edit lorem ipsum",
+            # "media_url":
+        }
+        data.pop("timestamp", None)
+        data.pop("media_url", None)
+        self.assertEqual(data, expected_data)
+        self.assertEqual(response.status_code, 200)
 
         self.client.delete('/spaces/1')
+
+    def test_not_owned_with_image(self):
+        create_space_as_admin(self.client, 'space-1')
+        create_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
+        logout(self.client)
+        register_and_login(self.client, 'usr')
+
+        response = edit_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b'User doesn\'t own this share')
+
+        logout(self.client)
+        login(self.client, 'admin')
+        self.client.delete('/spaces/1')
+
+    def test_not_exist_with_image(self):
+        register_and_login(self.client, 'usr')
+        response = edit_share_with_image(
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b'No such share')

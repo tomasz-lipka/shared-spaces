@@ -136,7 +136,7 @@ def edit_share_with_image(client, share_id, new_img_url):
     try:
         with open(new_img_url, 'rb') as image_file:
             data = {
-                'text': "Lorem ipsum",
+                'text': "Edit lorem ipsum",
                 'file': (image_file, 'img')
             }
             response = client.put(
