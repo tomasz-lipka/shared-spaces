@@ -56,4 +56,4 @@ class TestDeleteSpace(TestCase):
         create_share_with_image(self.client, 1)
         self.client.delete('/spaces/1')
 
-        self.assertFalse(find_bucket('space-id-1'))
+        self.assertFalse(find_bucket('test-space-id-1'))

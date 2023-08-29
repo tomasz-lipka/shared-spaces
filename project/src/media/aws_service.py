@@ -12,9 +12,10 @@ class AwsService(MediaService):
 
     FILE_FORMAT = '.jpg'
 
-    def __init__(self, queue_url, s3_temp_bucket, validator: ValidatorHelper, ):
+    def __init__(self, queue_url, s3_temp_bucket, mode, validator: ValidatorHelper, ):
         self.queue_url = queue_url
         self.s3_temp_bucket = s3_temp_bucket
+        self.mode = mode
         self.s3_client = boto3.client(
             's3',
             aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
@@ -35,10 +36,10 @@ class AwsService(MediaService):
             self.s3_temp_bucket,
             object_key
         )
-        self.send_file_name_to_sqs(object_key)
+        self.__send_file_name_to_sqs(object_key)
 
     def get_image(self, share):
-        bucket = self.find_bucket(share.space_id)
+        bucket = self.__find_bucket(share.space_id)
         if not bucket:
             return None
         key = str(share.id) + '.jpg'
@@ -56,7 +57,7 @@ class AwsService(MediaService):
         )
 
     def delete_space_directory(self, space):
-        bucket = self.find_bucket(space.id)
+        bucket = self.__find_bucket(space.id)
         if not bucket:
             return
 
@@ -68,16 +69,19 @@ class AwsService(MediaService):
 
         self.s3_client.delete_bucket(Bucket=bucket)
 
-    def find_bucket(self, space_id):
+    def __find_bucket(self, space_id):
+        prefix = 'space-id-'
+        if self.mode == 'test':
+            prefix = 'test-space-id-'
         for bucket in self.s3_client.list_buckets()['Buckets']:
-            if bucket["Name"].startswith('space-id-' + str(space_id)):
+            if bucket["Name"].startswith(prefix + str(space_id)):
                 return bucket["Name"]
 
-    def send_file_name_to_sqs(self, file_name):
+    def __send_file_name_to_sqs(self, file_name):
         boto3.client('sqs', region_name='us-east-1').send_message(
             QueueUrl=self.queue_url,
             MessageBody=file_name,
-            MessageGroupId='img',
+            MessageGroupId=self.mode,
             MessageDeduplicationId=str(datetime.datetime.now().timestamp())
         )
 

@@ -16,10 +16,11 @@ def lambda_handler(event, context):
     try:
         for record in event["Records"]:
             object_key = record["body"]
+            mode = record["attributes"]["MessageGroupId"]
             delete_message_from_sqs(record)
 
             space_id = get_space_id(object_key)
-            bucket_name = create_bucket_name(space_id)
+            bucket_name = create_bucket_name(space_id, mode)
             actual_bucket = find_bucket(bucket_name)
 
             if not actual_bucket:
@@ -73,8 +74,11 @@ def find_bucket(bucket_name):
     return None
 
 
-def create_bucket_name(space_id):
-    return "space-id-" + str(space_id)
+def create_bucket_name(space_id, mode):
+    prefix = 'space-id-'
+    if mode == 'test':
+        prefix = 'test-space-id-'
+    return prefix + str(space_id)
 
 
 def add_random_suffix(bucket_name):
@@ -90,4 +94,5 @@ def get_share_id(object_key):
 
 
 def delete_message_from_sqs(record):
-    sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=record["receiptHandle"])
+    sqs_client.delete_message(
+        QueueUrl=SQS_URL, ReceiptHandle=record["receiptHandle"])

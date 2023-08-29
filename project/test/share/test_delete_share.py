@@ -58,7 +58,7 @@ class TestDeleteShare(TestCase):
         response = self.client.delete('/shares/1')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')
-        self.assertTrue(find_bucket('space-id-1'))
+        self.assertTrue(find_bucket('test-space-id-1'))
 
         logout(self.client)
         login(self.client, 'admin')

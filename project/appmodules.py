@@ -18,6 +18,7 @@ class AppModules(Module):
         self.aws_service = AwsService(
             app.config['SQS_URL'],
             app.config['S3_TEMP_BUCKET'],
+            app.config['MODE'],
             self.validator
         )
 

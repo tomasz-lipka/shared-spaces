@@ -1,4 +1,5 @@
 test_db.sqlite
+prod_db.sqlite
 
 ### Python ###
 __pycache__/

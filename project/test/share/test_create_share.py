@@ -58,18 +58,18 @@ class TestCreateShare(TestCase):
     def test_not_logged_in_with_image(self):
         response = create_share_with_image(self.client, 1)
         self.assertEqual(response.status_code, 401)
-        self.assertFalse(find_bucket('space-id-1'))
+        self.assertFalse(find_bucket('test-space-id-1'))
 
     def test_space_not_exist_with_image(self):
         register_and_login(self.client, 'admin')
         response = create_share_with_image(self.client, 999)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
-        self.assertFalse(find_bucket('space-id-999'))
+        self.assertFalse(find_bucket('test-space-id-999'))
 
     def test_not_member_with_image(self):
         create_space_as_not_member(self.client)
         response = create_share_with_image(self.client, 1)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
-        self.assertFalse(find_bucket('space-id-1'))
+        self.assertFalse(find_bucket('test-space-id-1'))

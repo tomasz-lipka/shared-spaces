@@ -92,7 +92,7 @@ class TestGetShare(TestCase):
 
         self.assertIn('https://', data["media_url"])
         self.assertIn('.s3.amazonaws.co', data["media_url"])
-        self.assertIn('space-id-2', data["media_url"])
+        self.assertIn('test-space-id-2', data["media_url"])
         self.assertIn('3.jpg', data["media_url"])
 
         data.pop("timestamp", None)
@@ -115,7 +115,7 @@ class TestGetShare(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User doesn\'t own this share')
-        self.assertTrue(find_bucket('space-id-1'))
+        self.assertTrue(find_bucket('test-space-id-1'))
 
         logout(self.client)
         login(self.client, 'admin')

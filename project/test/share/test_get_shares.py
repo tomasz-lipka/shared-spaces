@@ -112,12 +112,12 @@ class TestGetShares(TestCase):
 
         self.assertIn('https://', data[0]["media_url"])
         self.assertIn('.s3.amazonaws.co', data[0]["media_url"])
-        self.assertIn('space-id-1', data[0]["media_url"])
+        self.assertIn('test-space-id-1', data[0]["media_url"])
         self.assertIn('1.jpg', data[0]["media_url"])
 
         self.assertIn('https://', data[1]["media_url"])
         self.assertIn('.s3.amazonaws.co', data[1]["media_url"])
-        self.assertIn('space-id-1', data[1]["media_url"])
+        self.assertIn('test-space-id-1', data[1]["media_url"])
         self.assertIn('2.jpg', data[1]["media_url"])
 
         for item in data:

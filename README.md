@@ -3,7 +3,7 @@ Enhanced version of the application to share thoughts between family members and
 
 +-------------------------------------------------+
 USAGE:
-flask --app 'app:create_app("test-app-config.py")' run
+flask --app 'app:create_app("<your-file>.config")' run
 +-------------------------------------------------+
 ACTIVATING VIRTUAL ENV
 
