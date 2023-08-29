@@ -1,8 +1,9 @@
 import os
 import datetime
-from flask_login import current_user
+from flask_login import current_user, login_required
 import boto3
 import botocore.exceptions
+
 
 from ..media.media_service import MediaService
 from ..service.validator_helper import ValidatorHelper
@@ -24,6 +25,7 @@ class AwsService(MediaService):
         )
         self.validator = validator
 
+    @login_required
     def upload_image(self, file, space_id, share_id):
         space = self.validator.validate_space(space_id)
         share = self.validator.validate_share(share_id)
@@ -40,6 +42,7 @@ class AwsService(MediaService):
         )
         self.__send_file_name_to_sqs(object_key)
 
+    @login_required
     def get_image(self, share):
         bucket = self.__find_bucket(share.space_id)
         if not bucket:
@@ -54,6 +57,7 @@ class AwsService(MediaService):
 
         return self.__generate_presigned_url(bucket, key)
 
+    @login_required
     def delete_space_directory(self, space):
         bucket = self.__find_bucket(space.id)
         if not bucket:
@@ -62,6 +66,7 @@ class AwsService(MediaService):
             self.s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
         self.s3_client.delete_bucket(Bucket=bucket)
 
+    @login_required
     def get_all_media_urls(self, space_id):
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(
@@ -71,9 +76,10 @@ class AwsService(MediaService):
 
         bucket = self.__find_bucket(space.id)
         media_urls = []
-        for obj in self.__get_all_objects(bucket):
-            media_urls.append(
-                self.__generate_presigned_url(bucket, obj['Key']))
+        if bucket:
+            for obj in self.__get_all_objects(bucket):
+                media_urls.append(
+                    self.__generate_presigned_url(bucket, obj['Key']))
         return media_urls
 
     def create_temp_directory(self):
