@@ -1,7 +1,10 @@
+from io import BytesIO
+import os
 import time
 import boto3
-import os
 from sqlalchemy import MetaData, Table
+from PIL import Image, ImageChops
+import requests
 
 from app import create_app
 
@@ -120,3 +123,10 @@ def find_bucket(bucket_name):
         if bucket["Name"].startswith(bucket_name):
             return True
     return False
+
+
+def are_images_same(data, test_img):
+    response = requests.get(data["media_url"])
+    image_bytes = BytesIO(response.content)
+
+    return not ImageChops.difference(Image.open(test_img), Image.open(image_bytes)).getbbox()

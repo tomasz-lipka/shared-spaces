@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin,
     create_share, register_and_login, create_share_with_image,
-    create_space, register, login, add_member, find_bucket
+    create_space, register, login, add_member, find_bucket, are_images_same
 )
 
 
@@ -90,10 +90,8 @@ class TestGetShare(TestCase):
         }
         data = json.loads(response.data)
 
-        self.assertIn('https://', data["media_url"])
-        self.assertIn('.s3.amazonaws.co', data["media_url"])
-        self.assertIn('test-space-id-2', data["media_url"])
-        self.assertIn('3.jpg', data["media_url"])
+        self.assertTrue(are_images_same(
+            data, '/workspaces/shared-spaces/project/test/test-image.jpg'))
 
         data.pop("timestamp", None)
         data.pop("media_url", None)
