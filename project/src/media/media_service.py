@@ -23,6 +23,12 @@ class MediaService(ABC):
         """
 
     @abstractmethod
+    @login_required
+    def get_all_media_urls(self, space_id):
+        """
+        """
+
+    @abstractmethod
     def create_temp_directory(self):
         """
         """

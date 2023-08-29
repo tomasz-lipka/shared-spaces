@@ -26,6 +26,7 @@ from src.controller.user_controller import user_controller
 from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
+from src.controller.image_controller import image_controller
 from src.repository.sql_alchemy_repository import Repository
 from src.media.aws_service import MediaService
 from src.model.user import User
@@ -41,6 +42,7 @@ def create_app(config_filename):
     app.register_blueprint(space_controller)
     app.register_blueprint(assignment_controller)
     app.register_blueprint(share_controller)
+    app.register_blueprint(image_controller)
 
     app_modules = [AppModules(app)]
 

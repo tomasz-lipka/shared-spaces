@@ -11,6 +11,7 @@ from ..service.validator_helper import ValidatorHelper
 class AwsService(MediaService):
 
     FILE_FORMAT = '.jpg'
+    MEDIA_URL_EXPIRES_IN = 3
 
     def __init__(self, queue_url, s3_temp_bucket, mode, validator: ValidatorHelper, ):
         self.queue_url = queue_url
@@ -30,6 +31,7 @@ class AwsService(MediaService):
             share,
             int(current_user.get_id())
         )
+
         object_key = str(space.id) + '-' + str(share.id) + self.FILE_FORMAT
         self.s3_client.upload_fileobj(
             file,
@@ -42,7 +44,7 @@ class AwsService(MediaService):
         bucket = self.__find_bucket(share.space_id)
         if not bucket:
             return None
-        key = str(share.id) + '.jpg'
+        key = str(share.id) + self.FILE_FORMAT
 
         try:
             self.s3_client.get_object(Bucket=bucket, Key=key)
@@ -50,24 +52,35 @@ class AwsService(MediaService):
             if ex.response['Error']['Code'] == 'NoSuchKey':
                 return None
 
-        return self.s3_client.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': bucket, 'Key': key},
-            ExpiresIn=3
-        )
+        return self.__generate_presigned_url(bucket, key)
 
     def delete_space_directory(self, space):
         bucket = self.__find_bucket(space.id)
         if not bucket:
             return
-
-        response = self.s3_client.list_objects_v2(Bucket=bucket)
-        if 'Contents' in response:
-            objects = response['Contents']
-            for obj in objects:
-                self.s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
-
+        for obj in self.__get_all_objects(bucket):
+            self.s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
         self.s3_client.delete_bucket(Bucket=bucket)
+
+    def get_all_media_urls(self, space_id):
+        space = self.validator.validate_space(space_id)
+        self.validator.validate_assignment(
+            space,
+            self.validator.validate_user(current_user.get_id())
+        )
+
+        bucket = self.__find_bucket(space.id)
+        media_urls = []
+        for obj in self.__get_all_objects(bucket):
+            media_urls.append(
+                self.__generate_presigned_url(bucket, obj['Key']))
+        return media_urls
+
+    def create_temp_directory(self):
+        for bucket in self.s3_client.list_buckets()['Buckets']:
+            if bucket["Name"] == self.s3_temp_bucket:
+                return
+        self.s3_client.create_bucket(Bucket=self.s3_temp_bucket)
 
     def __find_bucket(self, space_id):
         prefix = 'space-id-'
@@ -85,8 +98,14 @@ class AwsService(MediaService):
             MessageDeduplicationId=str(datetime.datetime.now().timestamp())
         )
 
-    def create_temp_directory(self):
-        for bucket in self.s3_client.list_buckets()['Buckets']:
-            if bucket["Name"] == self.s3_temp_bucket:
-                return
-        self.s3_client.create_bucket(Bucket=self.s3_temp_bucket)
+    def __get_all_objects(self, bucket):
+        response = self.s3_client.list_objects_v2(Bucket=bucket)
+        if 'Contents' in response:
+            return response['Contents']
+
+    def __generate_presigned_url(self, bucket, key):
+        return self.s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': bucket, 'Key': key},
+            ExpiresIn=self.MEDIA_URL_EXPIRES_IN
+        )
