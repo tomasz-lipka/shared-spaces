@@ -14,6 +14,7 @@ from ..media.media_service import MediaService
 from ..service.assignment_service import AssignmentService
 from ..model.space import Space
 from ..service.validator_helper import ValidatorHelper
+from ..service.input_validator import validate_usr_input
 
 
 class SpaceService():
@@ -34,6 +35,7 @@ class SpaceService():
         Args:
             name (str): Name of the new space.
         """
+        validate_usr_input(name, 'Name', 10)
         self.validator.validate_not_null(name, 'Name')
         space_id = self.repository.add(Space(name))
         self.assignment_service.create_assignment_with_admin(space_id)

@@ -42,3 +42,30 @@ class TestCreateSpace(TestCase):
         response = self.client.post('/spaces', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Name must be provided")
+
+    def test_empty_name(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "name": "   "
+        }
+        response = self.client.post('/spaces', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name cannot be empty")
+
+    def test_min_char_name(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "name": "a"
+        }
+        response = self.client.post('/spaces', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name min 3 characters")
+
+    def test_max_char_name(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "name": "name name name name name"
+        }
+        response = self.client.post('/spaces', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name max 10 characters")
