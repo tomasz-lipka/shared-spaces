@@ -80,3 +80,14 @@ class TestAddMember(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'user-id'")
+
+    def test_null_json_value(self):
+        register(self.client, 'member')
+        create_space_as_admin(self.client, "space-1")
+        data = {
+            "user-id": None
+        }
+        response = self.client.post('/spaces/1/members', json=data)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"User id must be provided")

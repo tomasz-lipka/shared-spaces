@@ -55,6 +55,7 @@ class AssignmentService():
             space_id (int): ID of the target space.
             user_id (int): ID of the user to be assigned.
         """
+        self.validator.validate_not_null(user_id, 'User id')
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,
@@ -101,6 +102,7 @@ class AssignmentService():
             user_id (int): ID of the user whose admin permission will be changed.
             is_admin (bool): New admin permission status for the user.
         """
+        self.validator.validate_not_null(is_admin, 'Is admin')
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,

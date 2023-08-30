@@ -120,3 +120,7 @@ class ValidatorHelper():
         """
         if not share.user_id == user_id:
             raise ServiceException('User doesn\'t own this share')
+
+    def validate_not_null(self, usr_input, input_name):
+        if usr_input is None:
+            raise ServiceException(f"{input_name} must be provided")

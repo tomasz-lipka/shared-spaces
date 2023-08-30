@@ -119,3 +119,14 @@ class TestChangeAdmin(TestCase):
         response = self.client.put('/spaces/1/members/1', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'is-admin'")
+
+    def test_null_json_value(self):
+        register(self.client, 'member')
+        create_space_as_admin(self.client, 'space-1')
+        response = add_member(self.client, 1, 1)
+        data = {
+            "is-admin": None
+        }
+        response = self.client.put('/spaces/1/members/1', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Is admin must be provided")
