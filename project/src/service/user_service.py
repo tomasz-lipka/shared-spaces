@@ -12,14 +12,16 @@ from injector import inject
 
 from ..exception.service_exception import ServiceException
 from ..repository.repository import Repository
+from ..service.validator_helper import ValidatorHelper
 from ..model.user import User
 
 
 class UserService():
 
     @inject
-    def __init__(self, repository: Repository):
+    def __init__(self, repository: Repository, validator: ValidatorHelper):
         self.repository = repository
+        self.validator = validator
 
     def login(self, user_login, password):
         """
@@ -28,6 +30,8 @@ class UserService():
             user_login (str): User's login identifier.
             password (str): User's password.
         """
+        self.validator.validate_not_null(user_login, 'Login')
+        self.validator.validate_not_null(password, 'Password')
         if current_user.is_authenticated:
             raise ServiceException('Already logged in')
         user = self.__get_verified_user(user_login, password)
@@ -108,4 +112,3 @@ class UserService():
             bool: True if the password matches, False otherwise.
         """
         return bcrypt.checkpw(password.encode('utf-8'), user.password)
-

@@ -71,3 +71,23 @@ class TestLogin(TestCase):
         response = login(self.client, 'other-usr')
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b'Already logged in')
+
+    def test_null_json_value_login(self):
+        register(self.client, 'usr')
+        data = {
+            "login": None,
+            "password": 'pwd'
+        }
+        response = self.client.post('/login', json=data)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data, b"Login must be provided")
+
+    def test_null_json_value_pwd(self):
+        register(self.client, 'usr')
+        data = {
+            "login": 'usr',
+            "password": None
+        }
+        response = self.client.post('/login', json=data)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data, b"Password must be provided")
