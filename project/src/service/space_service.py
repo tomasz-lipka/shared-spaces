@@ -34,6 +34,7 @@ class SpaceService():
         Args:
             name (str): Name of the new space.
         """
+        self.validator.validate_not_null(name, 'Name')
         space_id = self.repository.add(Space(name))
         self.assignment_service.create_assignment_with_admin(space_id)
 
@@ -79,6 +80,7 @@ class SpaceService():
             space_id (int): ID of the target space.
             new_name (str): New name for the space.
         """
+        self.validator.validate_not_null(new_name, 'New name')
         space = self.validator.validate_space(space_id)
         assignment = self.validator.validate_assignment(
             space,

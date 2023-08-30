@@ -1,5 +1,8 @@
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, create_space, create_space_as_admin
+from test.helper import (
+    get_app, logout, purge_db, create_space,
+    create_space_as_admin, register_and_login
+)
 
 
 class TestCreateSpace(TestCase):
@@ -23,9 +26,19 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.data, b"Space created")
 
     def test_wrong_json_key(self):
+        register_and_login(self.client, 'usr')
         data = {
             "wrong": "space"
         }
         response = self.client.post('/spaces', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'name'")
+
+    def test_null_json_value(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "name": None
+        }
+        response = self.client.post('/spaces', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name must be provided")

@@ -26,6 +26,8 @@ def post_space(service: SpaceService):
         return make_response('Space created', 200)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
+    except ServiceException as exc:
+        return make_response(str(exc), 400)
 
 
 @inject

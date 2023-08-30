@@ -68,3 +68,12 @@ class TestRenameSpace(TestCase):
         response = self.client.put('/spaces/1', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'new-name'")
+
+    def test_null_json_value(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "new-name": None
+        }
+        response = self.client.put('/spaces/1', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"New name must be provided")
