@@ -129,3 +129,25 @@ class TestChangePwd(TestCase):
         response = self.client.post('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Confirm password must be provided")
+
+    def test_empty_new_pwd(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "old-password": "pwd",
+            "new-password": "   ",
+            "confirm-password": "new_pwd"
+        }
+        response = self.client.post('/change-password', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"New password cannot be empty")
+
+    def test_min_char_new_pwd(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "old-password": "pwd",
+            "new-password": "a",
+            "confirm-password": "new_pwd"
+        }
+        response = self.client.post('/change-password', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"New password min 3 characters")

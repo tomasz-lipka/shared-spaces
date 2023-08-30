@@ -99,3 +99,53 @@ class TestRegistration(TestCase):
         response = self.client.post('/register', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Confirm password must be provided")
+
+    def test_empty_login(self):
+        data = {
+            "login": "   ",
+            "password": "pwd",
+            "confirm-password": 'pwd'
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Login cannot be empty")
+
+    def test_min_char_login(self):
+        data = {
+            "login": "a",
+            "password": "pwd",
+            "confirm-password": "pwd"
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Login min 3 characters")
+
+    def test_max_char_login(self):
+        data = {
+            "login": "login login login login login",
+            "password": "pwd",
+            "confirm-password": "pwd"
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Login max 15 characters")
+
+    def test_empty_pwd(self):
+        data = {
+            "login": "usr",
+            "password": "   ",
+            "confirm-password": "pwd"
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Password cannot be empty")
+
+    def test_min_char_pwd(self):
+        data = {
+            "login": "usr",
+            "password": "p",
+            "confirm-password": "pwd"
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Password min 3 characters")

@@ -13,10 +13,13 @@ from injector import inject
 from ..exception.service_exception import ServiceException
 from ..repository.repository import Repository
 from ..service.validator_helper import ValidatorHelper
+from ..service.input_validator import validate_usr_input
 from ..model.user import User
 
 
 class UserService():
+
+    MAX_PASSWORD_LEN = 99999
 
     @inject
     def __init__(self, repository: Repository, validator: ValidatorHelper):
@@ -50,6 +53,8 @@ class UserService():
         self.validator.validate_not_null(user_login, 'Login')
         self.validator.validate_not_null(password, 'Password')
         self.validator.validate_not_null(confirm_password, 'Confirm password')
+        validate_usr_input(user_login, 'Login', 15)
+        validate_usr_input(password, 'Password', self.MAX_PASSWORD_LEN)
         if current_user.is_authenticated:
             raise ServiceException('Already logged in')
         if password != confirm_password:
@@ -76,6 +81,7 @@ class UserService():
         self.validator.validate_not_null(old_password, 'Old password')
         self.validator.validate_not_null(new_password, 'New password')
         self.validator.validate_not_null(confirm_password, 'Confirm password')
+        validate_usr_input(new_password, 'New password', self.MAX_PASSWORD_LEN)
         session_user = self.repository.get_by_id(User, current_user.get_id())
         if not self.__verify_password(session_user, old_password):
             raise ServiceException('Wrong password')
