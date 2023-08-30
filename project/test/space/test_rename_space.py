@@ -77,3 +77,30 @@ class TestRenameSpace(TestCase):
         response = self.client.put('/spaces/1', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New name must be provided")
+
+    def test_empty_name(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "new-name": "   "
+        }
+        response = self.client.put('/spaces/1', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name cannot be empty")
+
+    def test_min_char_name(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "new-name": "a"
+        }
+        response = self.client.put('/spaces/1', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name min 3 characters")
+
+    def test_max_char_name(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "new-name": "name name name name name"
+        }
+        response = self.client.put('/spaces/1', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Name max 15 characters")

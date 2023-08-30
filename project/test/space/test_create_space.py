@@ -68,4 +68,4 @@ class TestCreateSpace(TestCase):
         }
         response = self.client.post('/spaces', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Name max 10 characters")
+        self.assertEqual(response.data, b"Name max 15 characters")

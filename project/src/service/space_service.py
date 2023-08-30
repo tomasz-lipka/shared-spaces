@@ -19,6 +19,8 @@ from ..service.input_validator import validate_usr_input
 
 class SpaceService():
 
+    MAX_NAME_LEN = 15
+
     @inject
     def __init__(self,
                  repository: Repository, media_service: MediaService,
@@ -35,8 +37,8 @@ class SpaceService():
         Args:
             name (str): Name of the new space.
         """
-        validate_usr_input(name, 'Name', 10)
         self.validator.validate_not_null(name, 'Name')
+        validate_usr_input(name, 'Name', self.MAX_NAME_LEN)
         space_id = self.repository.add(Space(name))
         self.assignment_service.create_assignment_with_admin(space_id)
 
@@ -83,6 +85,7 @@ class SpaceService():
             new_name (str): New name for the space.
         """
         self.validator.validate_not_null(new_name, 'New name')
+        validate_usr_input(new_name, 'Name', self.MAX_NAME_LEN)
         space = self.validator.validate_space(space_id)
         assignment = self.validator.validate_assignment(
             space,

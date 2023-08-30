@@ -17,6 +17,8 @@ from ..service.input_validator import validate_usr_input
 
 class ShareService():
 
+    MAX_TEXT_LEN = 200
+
     @inject
     def __init__(self, repository: Repository,
                  media_service: MediaService,  validator: ValidatorHelper):
@@ -34,7 +36,7 @@ class ShareService():
         Returns:
             int: The ID of the newly created share.
         """
-        validate_usr_input(text, 'Text', 200)
+        validate_usr_input(text, 'Text', self.MAX_TEXT_LEN)
         self.validator.validate_assignment(
             self.validator.validate_space(space_id),
             self.validator.validate_user(current_user.get_id())
@@ -82,7 +84,7 @@ class ShareService():
             share_id (int): ID of the target share.
             text (str): Updated text content of the share.
         """
-        validate_usr_input(text, 'Text', 200)
+        validate_usr_input(text, 'Text', self.MAX_TEXT_LEN)
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(
             share,
