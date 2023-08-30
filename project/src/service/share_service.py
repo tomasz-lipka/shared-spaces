@@ -12,6 +12,7 @@ from ..repository.repository import Repository
 from ..media.media_service import MediaService
 from ..model.share import Share
 from ..service.validator_helper import ValidatorHelper
+from ..service.input_validator import validate_usr_input
 
 
 class ShareService():
@@ -33,6 +34,7 @@ class ShareService():
         Returns:
             int: The ID of the newly created share.
         """
+        validate_usr_input(text, 'Text', 200)
         self.validator.validate_assignment(
             self.validator.validate_space(space_id),
             self.validator.validate_user(current_user.get_id())

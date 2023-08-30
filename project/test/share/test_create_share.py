@@ -44,7 +44,7 @@ class TestCreateShare(TestCase):
         data = {
             "wrong": "Lorem ipsum"
         }
-        response = self.client.post('/spaces/1/shares', json=data)
+        response = self.client.post('/spaces/1/shares', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Text must be provided")
 
@@ -83,6 +83,33 @@ class TestCreateShare(TestCase):
         data = {
             "text": None
         }
-        response = self.client.post('/spaces/1/shares', json=data)
+        response = self.client.post('/spaces/1/shares', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Text must be provided")
+
+    def test_empty_text(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "text": "    "
+        }
+        response = self.client.post('/spaces/1/shares', data=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Text cannot be empty")
+
+    def test_min_char_text(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "text": "a"
+        }
+        response = self.client.post('/spaces/1/shares', data=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Text min 3 characters")
+
+    def test_max_char_text(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "text": "text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text "
+        }
+        response = self.client.post('/spaces/1/shares', data=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Text max 200 characters")
