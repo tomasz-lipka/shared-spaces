@@ -47,6 +47,9 @@ class UserService():
             password (str): User's password.
             confirm_password (str): Confirmation of the user's password.
         """
+        self.validator.validate_not_null(user_login, 'Login')
+        self.validator.validate_not_null(password, 'Password')
+        self.validator.validate_not_null(confirm_password, 'Confirm password')
         if current_user.is_authenticated:
             raise ServiceException('Already logged in')
         if password != confirm_password:

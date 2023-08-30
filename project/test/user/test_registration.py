@@ -69,3 +69,33 @@ class TestRegistration(TestCase):
         response = register(self.client, 'other-usr')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'Already logged in')
+
+    def test_null_json_value_login(self):
+        data = {
+            "login": None,
+            "password": "pwd",
+            "confirm-password": "other_pwd"
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Login must be provided")
+
+    def test_null_json_value_pwd(self):
+        data = {
+            "login": "usr",
+            "password": None,
+            "confirm-password": "other_pwd"
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Password must be provided")
+
+    def test_null_json_value_confirm_pwd(self):
+        data = {
+            "login": "usr",
+            "password": "pwd",
+            "confirm-password": None
+        }
+        response = self.client.post('/register', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Confirm password must be provided")
