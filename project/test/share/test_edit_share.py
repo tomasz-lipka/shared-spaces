@@ -85,7 +85,7 @@ class TestEditShare(TestCase):
         }
         response = self.client.put('/shares/1', data=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload: 'text'")
+        self.assertEqual(response.data, b"Text must be provided")
 
     def test_not_logged_in_with_image(self):
         response = edit_share_with_image(
@@ -148,3 +148,13 @@ class TestEditShare(TestCase):
             self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'No such share')
+
+    def test_null_json_value(self):
+        create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1)
+        data = {
+            "text": None
+        }
+        response = self.client.put('/shares/1', data=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Text must be provided")

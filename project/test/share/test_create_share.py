@@ -46,7 +46,7 @@ class TestCreateShare(TestCase):
         }
         response = self.client.post('/spaces/1/shares', json=data)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload: 'text'")
+        self.assertEqual(response.data, b"Text must be provided")
 
     def test_normal_run_with_image(self):
         create_space_as_admin(self.client, 'space-1')
@@ -77,3 +77,12 @@ class TestCreateShare(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
         self.assertFalse(find_bucket('test-space-id-1'))
+
+    def test_null_json_value(self):
+        create_space_as_admin(self.client, 'space-1')
+        data = {
+            "text": None
+        }
+        response = self.client.post('/spaces/1/shares', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Text must be provided")

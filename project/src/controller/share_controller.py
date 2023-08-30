@@ -24,7 +24,7 @@ def post_share(space_id, media_service: MediaService, service: ShareService):
         str: Response message.
     """
     if not 'text' in request.form:
-        return make_response("Invalid payload: 'text'", 400)
+        return make_response("Text must be provided", 400)
     try:
         share_id = service.create_share(
             space_id,
@@ -97,7 +97,7 @@ def delete_share(share_id, service: ShareService):
 @share_controller.route('/shares/<int:share_id>', methods=["PUT"])
 def put_share(share_id, service: ShareService, media_service: MediaService):
     if not 'text' in request.form:
-        return make_response("Invalid payload: 'text'", 400)
+        return make_response("Text must be provided", 400)
     try:
         share_id = service.edit_share(
             share_id,
