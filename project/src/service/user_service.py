@@ -73,6 +73,9 @@ class UserService():
             new_password (str): User's new desired password.
             confirm_password (str): Confirmation of the new password.
         """
+        self.validator.validate_not_null(old_password, 'Old password')
+        self.validator.validate_not_null(new_password, 'New password')
+        self.validator.validate_not_null(confirm_password, 'Confirm password')
         session_user = self.repository.get_by_id(User, current_user.get_id())
         if not self.__verify_password(session_user, old_password):
             raise ServiceException('Wrong password')

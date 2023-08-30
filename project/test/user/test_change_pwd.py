@@ -96,3 +96,36 @@ class TestChangePwd(TestCase):
         response = self.client.post('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")
+
+    def test_null_json_value_old_pwd(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "old-password": None,
+            "new-password": "new_pwd",
+            "confirm-password": "new_pwd"
+        }
+        response = self.client.post('/change-password', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Old password must be provided")
+
+    def test_null_json_value_new_pwd(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "old-password": "pwd",
+            "new-password": None,
+            "confirm-password": "new_pwd"
+        }
+        response = self.client.post('/change-password', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"New password must be provided")
+
+    def test_null_json_value_confirm_pwd(self):
+        register_and_login(self.client, 'usr')
+        data = {
+            "old-password": "pwd",
+            "new-password": "new_pwd",
+            "confirm-password": None
+        }
+        response = self.client.post('/change-password', json=data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Confirm password must be provided")
