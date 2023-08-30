@@ -82,6 +82,7 @@ class ShareService():
             share_id (int): ID of the target share.
             text (str): Updated text content of the share.
         """
+        validate_usr_input(text, 'Text', 200)
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(
             share,
