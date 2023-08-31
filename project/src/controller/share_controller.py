@@ -111,5 +111,3 @@ def put_share(share_id, service: ShareService, media_service: MediaService):
         return make_response('Share edited', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)
-    except KeyError as key_err:
-        return make_response('Invalid payload: ' + str(key_err), 400)
