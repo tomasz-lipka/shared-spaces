@@ -57,8 +57,7 @@ def post_member(space_id, service: AssignmentService):
         str: Response message.
     """
     try:
-        data = request.json
-        service.create_assignment(space_id, data['user-id'])
+        service.create_assignment(space_id, request.json['user-id'])
         return make_response('Member added', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)
@@ -97,8 +96,8 @@ def put_admin(space_id, user_id, service: AssignmentService):
         str: Response message.
     """
     try:
-        data = request.json
-        service.change_admin_permission(space_id, user_id, data['is-admin'])
+        service.change_admin_permission(
+            space_id, user_id, request.json['is-admin'])
         return make_response('Admin permission changed', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)

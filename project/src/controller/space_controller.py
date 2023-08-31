@@ -21,8 +21,7 @@ def post_space(service: SpaceService):
         str: Response message.
     """
     try:
-        data = request.json
-        service.create_space(data['name'])
+        service.create_space(request.json['name'])
         return make_response('Space created', 200)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
@@ -75,8 +74,7 @@ def rename(space_id, service: SpaceService):
         str: Response message.
     """
     try:
-        data = request.json
-        service.rename_space(space_id, data['new-name'])
+        service.rename_space(space_id, request.json['new-name'])
         return make_response('Space renamed', 200)
     except ServiceException as exc:
         return make_response(str(exc), 400)
