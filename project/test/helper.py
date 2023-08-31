@@ -101,21 +101,18 @@ def create_share(client, space_id):
 
 
 def create_share_with_image(client, space_id, img_url):
-    try:
-        with open(img_url, 'rb') as image_file:
-            data = {
-                'text': "Lorem ipsum",
-                'file': (image_file, 'img')
-            }
-            response = client.post(
-                f'/spaces/{space_id}/shares',
-                data=data,
-                content_type='multipart/form-data'
-            )
-            time.sleep(1)
-            return response
-    except FileNotFoundError:
-        print("Image file not found.")
+    with open(img_url, 'rb') as image_file:
+        data = {
+            'text': "Lorem ipsum",
+            'file': (image_file, 'img')
+        }
+        response = client.post(
+            f'/spaces/{space_id}/shares',
+            data=data,
+            content_type='multipart/form-data'
+        )
+        time.sleep(1)
+        return response
 
 
 def find_bucket(bucket_name):
@@ -133,18 +130,15 @@ def are_images_same(data, test_img):
 
 
 def edit_share_with_image(client, share_id, new_img_url):
-    try:
-        with open(new_img_url, 'rb') as image_file:
-            data = {
-                'text': "Edit lorem ipsum",
-                'file': (image_file, 'img')
-            }
-            response = client.put(
-                f'/shares/{share_id}',
-                data=data,
-                content_type='multipart/form-data'
-            )
-            time.sleep(1)
-            return response
-    except FileNotFoundError:
-        print("Image file not found.")
+    with open(new_img_url, 'rb') as image_file:
+        data = {
+            'text': "Edit lorem ipsum",
+            'file': (image_file, 'img')
+        }
+        response = client.put(
+            f'/shares/{share_id}',
+            data=data,
+            content_type='multipart/form-data'
+        )
+        time.sleep(1)
+        return response

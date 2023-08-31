@@ -2,7 +2,7 @@ from unittest import TestCase
 import json
 from test.helper import (
     get_app, logout, purge_db, create_share_with_image, register_and_login,
-    create_space_as_admin, are_images_same, create_space_as_not_member
+    create_space_as_admin, are_images_same, create_space_as_not_member, find_bucket
 )
 
 
@@ -55,3 +55,6 @@ class TestGetAllImages(TestCase):
         expected_data = []
         data = json.loads(response.data)
         self.assertEqual(data, expected_data)
+
+    def test_is_temp_bucket_created(self):
+        self.assertTrue(find_bucket('shared-spaces-temp'))
