@@ -18,6 +18,8 @@ assignment_controller = Blueprint('assignment_controller', __name__)
 def get_spaces(service: AssignmentService):
     """
     Get a list of spaces for the logged-in user.
+    Args:
+        service (AssignmentService): Instance of AssignmentService.
     Returns:
         str: JSON representation of the list of spaces.
     """
@@ -34,6 +36,7 @@ def get_members(space_id, service: AssignmentService):
     Get a list of members in a space.
     Args:
         space_id (int): ID of the target space.
+        service (AssignmentService): Instance of AssignmentService.
     Returns:
         str: JSON representation of the list of members.
     """
@@ -53,6 +56,7 @@ def post_member(space_id, service: AssignmentService):
     Add a member to a space. Accept JSON payload with 'user-id'.
     Args:
         space_id (int): ID of the target space.
+        service (AssignmentService): Instance of AssignmentService.
     Returns:
         str: Response message.
     """
@@ -73,6 +77,7 @@ def delete_member(space_id, user_id, service: AssignmentService):
     Args:
         space_id (int): ID of the target space.
         user_id (int): ID of the user to be removed from the space.
+        service (AssignmentService): Instance of AssignmentService.
     Returns:
         str: Response message.
     """
@@ -92,6 +97,7 @@ def put_admin(space_id, user_id, service: AssignmentService):
     Args:
         space_id (int): ID of the target space.
         user_id (int): ID of the user for whom the admin permission needs to be changed.
+        service (AssignmentService): Instance of AssignmentService.
     Returns:
         str: Response message.
     """

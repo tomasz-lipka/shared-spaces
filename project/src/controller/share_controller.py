@@ -20,6 +20,8 @@ def post_share(space_id, media_service: MediaService, service: ShareService):
     Create a new share in a space and optionally upload an image.
     Args:
         space_id (int): ID of the target space.
+        media_service (MediaService): Instance of MediaService.
+        service (ShareService): Instance of ShareService.
     Returns:
         str: Response message.
     """
@@ -48,6 +50,7 @@ def get_share(share_id, service: ShareService):
     Get details of a specific share by its share ID.
     Args:
         share_id (int): ID of the target share.
+        service (ShareService): Instance of ShareService.
     Returns:
         str: JSON representation of the share details.
     """
@@ -65,6 +68,7 @@ def get_shares(space_id, service: ShareService):
     Get a list of shares within a space.
     Args:
         space_id (int): ID of the target space.
+        service (ShareService): Instance of ShareService.
     Returns:
         str: JSON representation of the list of shares.
     """
@@ -83,6 +87,7 @@ def delete_share(share_id, service: ShareService):
     Delete a share by its share ID.
     Args:
         share_id (int): ID of the target share.
+        service (ShareService): Instance of ShareService.
     Returns:
         str: Response message.
     """
@@ -96,6 +101,15 @@ def delete_share(share_id, service: ShareService):
 @inject
 @share_controller.route('/shares/<int:share_id>', methods=["PUT"])
 def put_share(share_id, service: ShareService, media_service: MediaService):
+    """
+    Update a share's text and optionally upload an new image.
+    Args:
+        share_id (int): ID of the target share.
+        service (ShareService): Instance of ShareService.
+        media_service (MediaService): Instance of MediaService.
+    Returns:
+        str: Response message.
+    """
     if not 'text' in request.form:
         return make_response("Text must be provided", 400)
     try:

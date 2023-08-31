@@ -17,6 +17,8 @@ space_controller = Blueprint('space_controller', __name__)
 def post_space(service: SpaceService):
     """
     Create a new space. Accepts a JSON payload with 'name'.
+    Args:
+        service (SpaceService): Instance of SpaceService.
     Returns:
         str: Response message.
     """
@@ -36,6 +38,7 @@ def get_space(space_id, service: SpaceService):
     Get details of a space by its ID.
     Args:
         space_id (int): ID of the target space.
+        service (SpaceService): Instance of SpaceService.
     Returns:
         str: JSON representation of the space details.
     """
@@ -53,6 +56,7 @@ def delete_space(space_id, service: SpaceService):
     Delete a space by its ID.
     Args:
         space_id (int): ID of the target space.
+        service (SpaceService): Instance of SpaceService.
     Returns:
         str: Response message.
     """
@@ -70,6 +74,7 @@ def rename(space_id, service: SpaceService):
     Rename a space by its ID. Accepts a JSON payload with 'new-name'.
     Args:
         space_id (int): ID of the target space.
+        service (SpaceService): Instance of SpaceService.
     Returns:
         str: Response message.
     """

@@ -15,8 +15,9 @@ user_controller = Blueprint('user_controller', __name__)
 @user_controller.route('/login', methods=["POST"])
 def login(service: UserService):
     """
-    Log the user in.
-    Accepts a JSON payload with 'login' and 'password'.
+    Log the user in. Accepts a JSON payload with 'login' and 'password'.
+    Args:
+        service (UserService): Instance of UserService.
     Returns:
         str: Response message.
     """
@@ -34,8 +35,9 @@ def login(service: UserService):
 @user_controller.route('/register', methods=["POST"])
 def register(service: UserService):
     """
-    Register a new user.
-    Accepts a JSON payload with 'login', 'password', and 'confirm-password'.
+    Register a new user. Accepts a JSON payload with 'login', 'password', and 'confirm-password'.
+    Args:
+        service (UserService): Instance of UserService.
     Returns:
         str: Response message.
     """
@@ -55,6 +57,8 @@ def register(service: UserService):
 def logout(service: UserService):
     """
     Log the user out.
+    Args:
+        service (UserService): Instance of UserService.
     Returns:
         str: Response message.
     """
@@ -66,8 +70,10 @@ def logout(service: UserService):
 @user_controller.route('/change-password', methods=["POST"])
 def change_password(service: UserService):
     """
-    Change user password.
-    Accepts a JSON payload with 'old-password', 'new-password', and 'confirm-password'.
+    Change user password. Accepts a JSON payload with
+    'old-password', 'new-password', and 'confirm-password'.
+    Args:
+        service (UserService): Instance of UserService.
     Returns:
         str: Response message.
     """
