@@ -3,7 +3,7 @@ Module containing the ServiceValidator class.
 """
 from injector import inject
 
-from ...exception.service_exception import ServiceException
+from ...exception.service.service_exception import ServiceException
 from ...repository.repository import Repository
 from ...model.user import User
 from ...model.space import Space

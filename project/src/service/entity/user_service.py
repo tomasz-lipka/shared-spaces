@@ -5,7 +5,7 @@ import bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from injector import inject
 
-from ...exception.service_exception import ServiceException
+from ...exception.service.service_exception import ServiceException
 from ...repository.repository import Repository
 from ..helper.service_validator import ServiceValidator
 from ..helper.input_validator import validate_usr_input

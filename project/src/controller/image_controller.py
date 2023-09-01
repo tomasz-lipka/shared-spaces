@@ -6,7 +6,7 @@ import json
 from flask import Blueprint, make_response
 from injector import inject
 
-from ..exception.service_exception import ServiceException
+from ..exception.service.service_exception import ServiceException
 from ..service.image.image_service import ImageService
 
 image_controller = Blueprint('image_controller', __name__)
