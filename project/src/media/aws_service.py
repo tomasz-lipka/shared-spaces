@@ -1,3 +1,6 @@
+"""
+Module containing the AWSImageService class.
+"""
 import os
 import datetime
 from flask_login import current_user, login_required
@@ -10,6 +13,11 @@ from ..service.validator_helper import ValidatorHelper
 
 
 class AwsService(MediaService):
+    """
+    Concrete implementation of the ImageService abstract class using an AWS client.
+    This class provides methods for adding, deleting, and retrieving images 
+    to/from AWS and also managing AWS S3 buckets
+    """
 
     FILE_FORMAT = '.jpg'
     MEDIA_URL_EXPIRES_IN = 3
