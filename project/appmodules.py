@@ -9,7 +9,7 @@ from src.service.image.image_service import ImageService
 from src.service.image.aws_image_service import AwsImageService
 from src.service.entity.share_service import ShareService
 from src.service.entity.assignment_service import AssignmentService
-from src.service.validator_helper import ValidatorHelper
+from src.service.helper.validator_helper import ValidatorHelper
 
 
 class AppModules(Module):

@@ -6,7 +6,7 @@ from injector import inject
 
 from ...repository.repository import Repository
 from ...model.assignment import Assignment
-from ..validator_helper import ValidatorHelper
+from ..helper.validator_helper import ValidatorHelper
 from ...exception.service_exception import ServiceException
 
 

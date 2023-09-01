@@ -2,7 +2,7 @@
 Module for input validation functions. This module provides a set of 
 functions for validating user input, ensuring that it meets certain criteria.
 """
-from ..exception.service_exception import ServiceException
+from ...exception.service_exception import ServiceException
 
 MIN_LEN = 3
 

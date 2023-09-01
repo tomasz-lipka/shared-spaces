@@ -9,8 +9,8 @@ from ...repository.repository import Repository
 from ..image.image_service import ImageService
 from .assignment_service import AssignmentService
 from ...model.space import Space
-from ..validator_helper import ValidatorHelper
-from ..input_validator import validate_usr_input
+from ..helper.validator_helper import ValidatorHelper
+from ..helper.input_validator import validate_usr_input
 
 
 class SpaceService():

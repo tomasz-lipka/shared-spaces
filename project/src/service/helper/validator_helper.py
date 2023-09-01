@@ -3,12 +3,12 @@ Module containing the ValidatorHelper class.
 """
 from injector import inject
 
-from ..exception.service_exception import ServiceException
-from ..repository.repository import Repository
-from ..model.user import User
-from ..model.space import Space
-from ..model.assignment import Assignment
-from ..model.share import Share
+from ...exception.service_exception import ServiceException
+from ...repository.repository import Repository
+from ...model.user import User
+from ...model.space import Space
+from ...model.assignment import Assignment
+from ...model.share import Share
 
 
 class ValidatorHelper():
