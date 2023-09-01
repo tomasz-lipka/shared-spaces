@@ -1,5 +1,5 @@
 """
-Module containing the ValidatorHelper class.
+Module containing the ServiceValidator class.
 """
 from injector import inject
 
@@ -11,7 +11,7 @@ from ...model.assignment import Assignment
 from ...model.share import Share
 
 
-class ValidatorHelper():
+class ServiceValidator():
     """
     This class provides methods for validating user identities, space assignments, admin privileges,
     and ownership of shares. It interacts with the repository for database queries and raises

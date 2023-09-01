@@ -9,7 +9,7 @@ import botocore.exceptions
 
 
 from ..image.image_service import ImageService
-from ..helper.validator_helper import ValidatorHelper
+from ..helper.service_validator import ServiceValidator
 
 class AwsImageService(ImageService):
     """
@@ -21,7 +21,7 @@ class AwsImageService(ImageService):
     FILE_FORMAT = '.jpg'
     MEDIA_URL_EXPIRES_IN = 3
 
-    def __init__(self, queue_url, s3_temp_bucket, mode, validator: ValidatorHelper, ):
+    def __init__(self, queue_url, s3_temp_bucket, mode, validator: ServiceValidator, ):
         self.queue_url = queue_url
         self.s3_temp_bucket = s3_temp_bucket
         self.mode = mode

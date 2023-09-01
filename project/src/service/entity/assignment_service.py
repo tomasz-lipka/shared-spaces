@@ -6,7 +6,7 @@ from injector import inject
 
 from ...repository.repository import Repository
 from ...model.assignment import Assignment
-from ..helper.validator_helper import ValidatorHelper
+from ..helper.service_validator import ServiceValidator
 from ...exception.service_exception import ServiceException
 
 
@@ -17,7 +17,7 @@ class AssignmentService():
     extension for authentication and utilizes validation methods.
     """
     @inject
-    def __init__(self, repository: Repository,  validator: ValidatorHelper):
+    def __init__(self, repository: Repository,  validator: ServiceValidator):
         self.repository = repository
         self.validator = validator
 

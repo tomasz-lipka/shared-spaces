@@ -8,7 +8,7 @@ from injector import inject
 from ...repository.repository import Repository
 from ..image.image_service import ImageService
 from ...model.share import Share
-from ..helper.validator_helper import ValidatorHelper
+from ..helper.service_validator import ServiceValidator
 from ..helper.input_validator import validate_usr_input
 
 
@@ -23,7 +23,7 @@ class ShareService():
 
     @inject
     def __init__(self, repository: Repository,
-                 image_service: ImageService,  validator: ValidatorHelper):
+                 image_service: ImageService,  validator: ServiceValidator):
         self.repository = repository
         self.image_service = image_service
         self.validator = validator

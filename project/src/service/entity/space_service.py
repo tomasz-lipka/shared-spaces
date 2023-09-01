@@ -9,7 +9,7 @@ from ...repository.repository import Repository
 from ..image.image_service import ImageService
 from .assignment_service import AssignmentService
 from ...model.space import Space
-from ..helper.validator_helper import ValidatorHelper
+from ..helper.service_validator import ServiceValidator
 from ..helper.input_validator import validate_usr_input
 
 
@@ -26,7 +26,7 @@ class SpaceService():
     @inject
     def __init__(self,
                  repository: Repository, image_service: ImageService,
-                 assignment_service: AssignmentService, validator: ValidatorHelper):
+                 assignment_service: AssignmentService, validator: ServiceValidator):
         self.repository = repository
         self.image_service = image_service
         self.assignment_service = assignment_service

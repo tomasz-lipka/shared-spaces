@@ -7,7 +7,7 @@ from injector import inject
 
 from ...exception.service_exception import ServiceException
 from ...repository.repository import Repository
-from ..helper.validator_helper import ValidatorHelper
+from ..helper.service_validator import ServiceValidator
 from ..helper.input_validator import validate_usr_input
 from ...model.user import User
 
@@ -23,7 +23,7 @@ class UserService():
     MAX_PASSWORD_LEN = 99999
 
     @inject
-    def __init__(self, repository: Repository, validator: ValidatorHelper):
+    def __init__(self, repository: Repository, validator: ServiceValidator):
         self.repository = repository
         self.validator = validator
 

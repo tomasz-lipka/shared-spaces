@@ -9,7 +9,7 @@ from src.service.image.image_service import ImageService
 from src.service.image.aws_image_service import AwsImageService
 from src.service.entity.share_service import ShareService
 from src.service.entity.assignment_service import AssignmentService
-from src.service.helper.validator_helper import ValidatorHelper
+from src.service.helper.service_validator import ServiceValidator
 
 
 class AppModules(Module):
@@ -21,7 +21,7 @@ class AppModules(Module):
     def __init__(self, app):
         self.sql_alchemy_repository = SqlAlchemyRepository(
             app.config['DATABASE_URL'])
-        self.validator = ValidatorHelper(self.sql_alchemy_repository)
+        self.validator = ServiceValidator(self.sql_alchemy_repository)
         self.aws_image_service = AwsImageService(
             app.config['SQS_URL'],
             app.config['S3_TEMP_BUCKET'],
@@ -52,6 +52,6 @@ class AppModules(Module):
                                  )
         )
         binder.bind(
-            ValidatorHelper,
+            ServiceValidator,
             to=self.validator
         )
