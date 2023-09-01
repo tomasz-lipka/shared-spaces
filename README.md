@@ -13,5 +13,5 @@ Enhanced version of the application to share thoughts between family members and
 
 ## Tests
 Full test coverage achieved by over 140 integration tests
-<br/>
+<br/><br/>
 ![coverage-report](./readme/images/coverage-report.jpg)
