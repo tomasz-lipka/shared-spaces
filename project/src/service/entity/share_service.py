@@ -14,9 +14,9 @@ from ..helper.input_validator import validate_usr_input
 
 class ShareService():
     """
-    This class provides methods for creating, retrieving, editing, and deleting shares within spaces.
-    The methods are designed to work with Flask-Login for authentication. It utilizes validation
-    methods and makes use of ImageService to work with images.
+    This class provides methods for creating, retrieving, editing, and deleting shares 
+    within spaces. The methods are designed to work with Flask-Login for authentication. 
+    It utilizes validation methods and makes use of ImageService to work with images.
     """
 
     MAX_TEXT_LEN = 200
@@ -67,7 +67,8 @@ class ShareService():
         Args:
             space_id (int): The ID of the space for which shares should be retrieved.
         Returns:
-            list of Share: A list of Share objects representing the shares associated with the specified space, each with the image URL included.
+            list of Share: A list of Share objects representing the shares associated with the
+            specified space, each with the image URL included.
         """
         self.validator.validate_assignment(
             self.validator.validate_space(space_id),

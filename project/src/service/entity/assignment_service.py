@@ -28,7 +28,10 @@ class AssignmentService():
         Returns:
             List[Assignment]: User's assignment objects.
         """
-        return self.repository.get_all_by_filter(Assignment, Assignment.user_id == current_user.get_id())
+        return self.repository.get_all_by_filter(
+            Assignment,
+            Assignment.user_id == current_user.get_id()
+        )
 
     @login_required
     def get_assignments_by_space_id(self, space_id):

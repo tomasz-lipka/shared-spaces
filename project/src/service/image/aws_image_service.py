@@ -11,6 +11,7 @@ import botocore.exceptions
 from ..image.image_service import ImageService
 from ..helper.service_validator import ServiceValidator
 
+
 class AwsImageService(ImageService):
     """
     Concrete implementation of the ImageService abstract class using an AWS client.
@@ -102,6 +103,7 @@ class AwsImageService(ImageService):
         for bucket in self.s3_client.list_buckets()['Buckets']:
             if bucket["Name"].startswith(prefix + str(space_id)):
                 return bucket["Name"]
+        return None
 
     def __send_file_name_to_sqs(self, file_name):
         boto3.client('sqs', region_name='us-east-1').send_message(
@@ -115,6 +117,7 @@ class AwsImageService(ImageService):
         response = self.s3_client.list_objects_v2(Bucket=bucket)
         if 'Contents' in response:
             return response['Contents']
+        return []
 
     def __generate_presigned_url(self, bucket, key):
         return self.s3_client.generate_presigned_url(
