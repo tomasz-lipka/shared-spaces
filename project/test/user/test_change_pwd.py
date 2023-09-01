@@ -50,7 +50,7 @@ class TestChangePwd(TestCase):
             "confirm-password": "new_pwd"
         }
         response = self.client.post('/change-password', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b"Wrong password")
 
     def test_wrong_confirmation(self):

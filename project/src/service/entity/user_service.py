@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from injector import inject
 
 from ...exception.service.service_exception import ServiceException
+from ...exception.service.unauthorized_exception import UnauthorizedException
 from ...repository.repository import Repository
 from ..helper.service_validator import ServiceValidator
 from ..helper.input_validator import validate_usr_input
@@ -40,7 +41,7 @@ class UserService():
             raise ServiceException('Already logged in', 400)
         user = self.__get_verified_user(user_login, password)
         if not user:
-            raise ServiceException('Wrong login and/or password', 400)
+            raise UnauthorizedException('Wrong login and/or password')
         login_user(user)
 
     def create_user(self, user_login, password, confirm_password):
@@ -85,7 +86,7 @@ class UserService():
         validate_usr_input(new_password, 'New password', self.MAX_PASSWORD_LEN)
         session_user = self.repository.get_by_id(User, current_user.get_id())
         if not self.__verify_password(session_user, old_password):
-            raise ServiceException('Wrong password', 400)
+            raise UnauthorizedException('Wrong password')
         if new_password != confirm_password:
             raise ServiceException('New passwords don\'t match', 400)
         session_user.password = self.__get_hashed(new_password)

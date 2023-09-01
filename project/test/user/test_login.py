@@ -20,7 +20,7 @@ class TestLogin(TestCase):
 
     def test_wrong_login(self):
         response = login(self.client, 'wrong_login')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b"Wrong login and/or password")
 
     def test_wrong_pwd(self):
@@ -30,7 +30,7 @@ class TestLogin(TestCase):
             "password": "wrong_pwd"
         }
         response = self.client.post('/login', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b"Wrong login and/or password")
 
     def test_login_and_logout(self):
