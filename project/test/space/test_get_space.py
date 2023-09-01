@@ -36,7 +36,7 @@ class TestGetSpace(TestCase):
     def test_not_exist(self):
         register_and_login(self.client, 'usr')
         response = self.client.get('/spaces/999')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_member(self):

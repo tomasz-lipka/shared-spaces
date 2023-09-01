@@ -63,7 +63,7 @@ class TestChangeAdmin(TestCase):
             "is-admin": True
         }
         response = self.client.put('/spaces/999/members/1', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_member_not_exist(self):
@@ -72,7 +72,7 @@ class TestChangeAdmin(TestCase):
             "is-admin": True
         }
         response = self.client.put('/spaces/1/members/999', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"User with ID '999' doesn't exist")
 
     def test_member_from_other_space(self):

@@ -48,7 +48,7 @@ class TestRenameSpace(TestCase):
             "new-name": "space_new_name"
         }
         response = self.client.put('/spaces/999', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_admin(self):

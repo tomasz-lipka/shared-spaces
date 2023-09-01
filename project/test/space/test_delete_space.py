@@ -28,13 +28,13 @@ class TestDeleteSpace(TestCase):
         self.assertEqual(response.data, b"Space deleted")
 
         response = self.client.get('/spaces/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '1' doesn't exist")
 
     def test_not_exist(self):
         register_and_login(self.client, 'usr')
         response = self.client.delete('/spaces/999')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_admin(self):

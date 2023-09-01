@@ -74,7 +74,7 @@ class TestEditShare(TestCase):
             "text": "Edit lorem ipsum"
         }
         response = self.client.put('/shares/1', data=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 
     def test_wrong_json_key(self):
@@ -146,7 +146,7 @@ class TestEditShare(TestCase):
         register_and_login(self.client, 'usr')
         response = edit_share_with_image(
             self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 
     def test_null_json_value(self):

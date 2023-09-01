@@ -30,7 +30,7 @@ class TestCreateShare(TestCase):
     def test_space_not_exist(self):
         register_and_login(self.client, 'admin')
         response = create_share(self.client, 999)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_member(self):
@@ -66,7 +66,7 @@ class TestCreateShare(TestCase):
         register_and_login(self.client, 'admin')
         response = create_share_with_image(
             self.client, 999, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
         self.assertFalse(find_bucket('test-space-id-999'))
 

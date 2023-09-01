@@ -68,13 +68,13 @@ class TestDeleteMember(TestCase):
         register(self.client, 'member')
         register_and_login(self.client, 'admin')
         response = self.client.delete('/spaces/999/members/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_member_not_exist(self):
         create_space_as_admin(self.client, 'space-1')
         response = self.client.delete('/spaces/1/members/999')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"User with ID '999' doesn't exist")
 
     def test_delete_member_from_other_space(self):

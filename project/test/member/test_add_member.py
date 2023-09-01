@@ -34,14 +34,14 @@ class TestAddMember(TestCase):
         register_and_login(self.client, 'admin')
         response = add_member(self.client, 999, 1)
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_member_not_exist(self):
         create_space_as_admin(self.client, 'space-1')
         response = add_member(self.client, 1, 999)
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"User with ID '999' doesn't exist")
 
     def test_not_admin(self):
@@ -67,7 +67,7 @@ class TestAddMember(TestCase):
             "user-id": "wrong"
         }
         response = self.client.post('/spaces/1/members', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"User with ID 'wrong' doesn't exist")
 
     def test_wrong_json_key(self):

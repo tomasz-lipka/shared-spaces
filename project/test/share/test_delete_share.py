@@ -30,7 +30,7 @@ class TestDeleteShare(TestCase):
         self.assertEqual(response.data, b"Share deleted")
 
         response = self.client.get('/shares/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned(self):
@@ -46,7 +46,7 @@ class TestDeleteShare(TestCase):
     def test_not_exist(self):
         register_and_login(self.client, 'usr')
         response = self.client.delete('/shares/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned_with_image(self):
