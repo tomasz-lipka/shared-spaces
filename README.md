@@ -25,7 +25,7 @@ From user perspective it's a social media app, but for a small group of people, 
 - SqlAlchemy - version 2.0.20
 - AWS
     - Lambda
-    - S3 Buckets
+    - S3 Bucket
     - SQS (Simple Queue Service)
 
 
