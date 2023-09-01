@@ -5,11 +5,11 @@ import bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 from injector import inject
 
-from ..exception.service_exception import ServiceException
-from ..repository.repository import Repository
-from ..service.validator_helper import ValidatorHelper
-from ..service.input_validator import validate_usr_input
-from ..model.user import User
+from ...exception.service_exception import ServiceException
+from ...repository.repository import Repository
+from ..validator_helper import ValidatorHelper
+from ..input_validator import validate_usr_input
+from ...model.user import User
 
 
 class UserService():

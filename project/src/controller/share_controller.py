@@ -8,7 +8,7 @@ from injector import inject
 
 from ..exception.service_exception import ServiceException
 from ..service.image.image_service import ImageService
-from ..service.share_service import ShareService
+from ..service.entity.share_service import ShareService
 
 share_controller = Blueprint('share_controller', __name__)
 

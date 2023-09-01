@@ -4,10 +4,10 @@ Module containing the AssignmentService class.
 from flask_login import current_user, login_required
 from injector import inject
 
-from ..repository.repository import Repository
-from ..model.assignment import Assignment
-from ..service.validator_helper import ValidatorHelper
-from ..exception.service_exception import ServiceException
+from ...repository.repository import Repository
+from ...model.assignment import Assignment
+from ..validator_helper import ValidatorHelper
+from ...exception.service_exception import ServiceException
 
 
 class AssignmentService():

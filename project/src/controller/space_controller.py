@@ -7,7 +7,7 @@ from flask import Blueprint, request, make_response
 from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..service.space_service import SpaceService
+from ..service.entity.space_service import SpaceService
 
 space_controller = Blueprint('space_controller', __name__)
 

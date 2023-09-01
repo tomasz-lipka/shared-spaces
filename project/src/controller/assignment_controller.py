@@ -7,7 +7,7 @@ from flask import Blueprint, request, make_response
 from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..service.assignment_service import AssignmentService
+from ..service.entity.assignment_service import AssignmentService
 
 
 assignment_controller = Blueprint('assignment_controller', __name__)

@@ -7,8 +7,8 @@ from src.repository.sql_alchemy_repository import Repository
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.service.image.image_service import ImageService
 from src.service.image.aws_image_service import AwsImageService
-from src.service.share_service import ShareService
-from src.service.assignment_service import AssignmentService
+from src.service.entity.share_service import ShareService
+from src.service.entity.assignment_service import AssignmentService
 from src.service.validator_helper import ValidatorHelper
 
 

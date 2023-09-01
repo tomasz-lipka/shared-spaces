@@ -5,12 +5,12 @@ Module containing the SpaceService class.
 from flask_login import current_user, login_required
 from injector import inject
 
-from ..repository.repository import Repository
-from ..service.image.image_service import ImageService
-from ..service.assignment_service import AssignmentService
-from ..model.space import Space
-from ..service.validator_helper import ValidatorHelper
-from ..service.input_validator import validate_usr_input
+from ...repository.repository import Repository
+from ..image.image_service import ImageService
+from .assignment_service import AssignmentService
+from ...model.space import Space
+from ..validator_helper import ValidatorHelper
+from ..input_validator import validate_usr_input
 
 
 class SpaceService():
