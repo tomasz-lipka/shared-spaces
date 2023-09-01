@@ -48,7 +48,7 @@ class TestEditShare(TestCase):
                 "login": "admin"
             },
             "text": "Edit lorem ipsum",
-            "media_url": None
+            "image_url": None
         }
         data = json.loads(response.data)
         data.pop("timestamp", None)
@@ -117,10 +117,10 @@ class TestEditShare(TestCase):
                 "login": "admin"
             },
             "text": "Edit lorem ipsum",
-            # "media_url":
+            # "image_url":
         }
         data.pop("timestamp", None)
-        data.pop("media_url", None)
+        data.pop("image_url", None)
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 

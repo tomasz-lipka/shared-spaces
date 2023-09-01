@@ -56,7 +56,7 @@ class ShareService():
         """
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(share, int(current_user.get_id()))
-        share.media_url = self.image_service.get_image(share)
+        share.image_url = self.image_service.get_image(share)
         return share
 
     @login_required
@@ -76,7 +76,7 @@ class ShareService():
         shares = self.repository.get_all_by_filter(
             Share, Share.space_id == space_id)
         for share in shares:
-            share.media_url = self.image_service.get_image(share)
+            share.image_url = self.image_service.get_image(share)
         return shares
 
     @login_required

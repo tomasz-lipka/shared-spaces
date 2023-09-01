@@ -18,7 +18,7 @@ class Share(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     text = Column(String, nullable=False)
     timestamp = Column(DateTime, default=func.now())
-    media_url = None
+    image_url = None
 
     user = relationship('User')
     space = relationship('Space')
@@ -40,7 +40,7 @@ class Share(Base):
             'user': self.user.to_dict(),
             'text': self.text,
             'timestamp': self.timestamp.isoformat(),
-            'media_url': self.media_url
+            'image_url': self.image_url
         }
 
     def shares_to_dict(self):
@@ -54,5 +54,5 @@ class Share(Base):
             'user': self.user.to_dict(),
             'text': self.text,
             'timestamp': self.timestamp.isoformat(),
-            'media_url': self.media_url
+            'image_url': self.image_url
         }

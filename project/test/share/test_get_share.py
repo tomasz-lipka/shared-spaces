@@ -38,7 +38,7 @@ class TestGetShare(TestCase):
             },
             "text": "Lorem ipsum",
             # "timestamp":
-            "media_url": None
+            "image_url": None
         }
         data = json.loads(response.data)
         data.pop("timestamp", None)
@@ -89,7 +89,7 @@ class TestGetShare(TestCase):
             },
             "text": "Lorem ipsum"
             # "timestamp":
-            # "media_url":
+            # "image_url":
         }
         data = json.loads(response.data)
 
@@ -97,7 +97,7 @@ class TestGetShare(TestCase):
             data, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg'))
 
         data.pop("timestamp", None)
-        data.pop("media_url", None)
+        data.pop("image_url", None)
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 

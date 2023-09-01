@@ -49,7 +49,7 @@ class TestGetShares(TestCase):
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
-                "media_url": None
+                "image_url": None
             },
             {
                 "id": 3,
@@ -59,7 +59,7 @@ class TestGetShares(TestCase):
                     "login": "member-1"
                 },
                 # "timestamp":
-                "media_url": None
+                "image_url": None
             }
         ]
         data = json.loads(response.data)
@@ -98,7 +98,7 @@ class TestGetShares(TestCase):
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
-                # "media_url":
+                # "image_url":
             },
             {
                 "id": 2,
@@ -108,7 +108,7 @@ class TestGetShares(TestCase):
                     "login": "admin"
                 },
                 # "timestamp":
-                # "media_url":
+                # "image_url":
             },
             {
                 "id": 3,
@@ -118,7 +118,7 @@ class TestGetShares(TestCase):
                     "login": "admin"
                 },
                 # "timestamp":
-                "media_url": None
+                "image_url": None
             }
         ]
         data = json.loads(response.data)
@@ -129,8 +129,8 @@ class TestGetShares(TestCase):
         self.assertTrue(are_images_same(
             data[1], '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg'))
 
-        data[0].pop("media_url", None)
-        data[1].pop("media_url", None)
+        data[0].pop("image_url", None)
+        data[1].pop("image_url", None)
         for item in data:
             item.pop("timestamp", None)
         self.assertEqual(data, expected_data)

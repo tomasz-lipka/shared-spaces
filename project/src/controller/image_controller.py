@@ -25,7 +25,7 @@ def get_images(space_id, image_service: ImageService):
     """
     try:
         images = image_service.get_all_images(space_id)
-        json_serializable_list = [{"media_url": image} for image in images]
+        json_serializable_list = [{"image_url": image} for image in images]
         return json.dumps(json_serializable_list)
     except ServiceException as exc:
         return make_response(str(exc), 400)

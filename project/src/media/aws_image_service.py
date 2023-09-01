@@ -83,12 +83,12 @@ class AwsImageService(ImageService):
         )
 
         bucket = self.__find_bucket(space.id)
-        media_urls = []
+        image_urls = []
         if bucket:
             for obj in self.__get_all_objects(bucket):
-                media_urls.append(
+                image_urls.append(
                     self.__generate_presigned_url(bucket, obj['Key']))
-        return media_urls
+        return image_urls
 
     def create_temp_directory(self):
         for bucket in self.s3_client.list_buckets()['Buckets']:

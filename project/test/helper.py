@@ -123,7 +123,7 @@ def find_bucket(bucket_name):
 
 
 def are_images_same(data, test_img):
-    response = requests.get(data["media_url"])
+    response = requests.get(data["image_url"])
     image_bytes = BytesIO(response.content)
 
     return not ImageChops.difference(Image.open(test_img), Image.open(image_bytes)).getbbox()
