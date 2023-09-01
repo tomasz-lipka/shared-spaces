@@ -57,7 +57,7 @@ class TestGetShare(TestCase):
         logout(self.client)
         register_and_login(self.client, 'usr')
         response = self.client.get('/shares/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
     def test_normal_run_with_image(self):
@@ -115,7 +115,7 @@ class TestGetShare(TestCase):
         register_and_login(self.client, 'usr')
         response = self.client.get('/shares/1')
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket('test-space-id-1'))
 

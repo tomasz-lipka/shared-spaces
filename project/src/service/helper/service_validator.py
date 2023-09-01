@@ -5,6 +5,7 @@ from injector import inject
 
 from ...exception.service.service_exception import ServiceException
 from ...exception.service.not_found_exception import NotFoundException
+from ...exception.service.forbidden_exception import ForbiddenException
 from ...repository.repository import Repository
 from ...model.user import User
 from ...model.space import Space
@@ -63,7 +64,7 @@ class ServiceValidator():
         assignment = self.repository.get_first_by_two_filters(
             Assignment, Assignment.user_id == user.id, Assignment.space_id == space.id)
         if not assignment:
-            raise ServiceException('User-space pair doesn\'t exist', 400)
+            raise ForbiddenException('User-space pair doesn\'t exist')
         return assignment
 
     def validate_no_assignment(self, space, user):
@@ -86,7 +87,7 @@ class ServiceValidator():
             assignment (Assignment): The assignment object for validation.
         """
         if not assignment.is_admin:
-            raise ServiceException('User not admin', 400)
+            raise ForbiddenException('User not admin')
 
     def contains_only_owner(self, space):
         """
@@ -123,7 +124,7 @@ class ServiceValidator():
             user_id (int): ID of the user to be validated as the owner.
         """
         if not share.user_id == user_id:
-            raise ServiceException('User doesn\'t own this share', 400)
+            raise ForbiddenException('User doesn\'t own this share')
 
     def validate_not_null(self, usr_input, input_name):
         """
