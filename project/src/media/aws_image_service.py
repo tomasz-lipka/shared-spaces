@@ -12,7 +12,7 @@ from ..media.image_service import ImageService
 from ..service.validator_helper import ValidatorHelper
 
 
-class AwsService(ImageService):
+class AwsImageService(ImageService):
     """
     Concrete implementation of the ImageService abstract class using an AWS client.
     This class provides methods for adding, deleting, and retrieving images 
