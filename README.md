@@ -1,41 +1,17 @@
-# shared-spaces
-Enhanced version of the application to share thoughts between family members and friends
-
-+-------------------------------------------------+
-USAGE:
-flask --app 'app:create_app("<your-file>.config")' run
-+-------------------------------------------------+
-ACTIVATING VIRTUAL ENV
-
-. .venv/bin/activate
-
-+-------------------------------------------------+
-
-TESTING
-
-execute from ../project
-
-all classes:
-
-python -m unittest
-
-single class
-
-python -m unittest test.test_assignment_controller
-
-+-------------------------------------------------+
-
-TEST WITH COVERAGE
-
-coverage run -m unittest
-
-coverage html
-
-+--------------------------------------------------+
-LYNTING
-pylint assignment_service.py
+# Shared Spaces
+Enhanced version of the application to share thoughts between family members and friends 
+<br/>
 
 
-## Test coverage at 99%
-Coverage report made of 144 tests
+## Table of Contents
+<!-- * [General Info](#general-information) -->
+<!-- * [Technologies Used](#technologies-used) -->
+* [Tests](#tests)
+<!-- * [Features](#features) -->
+<!-- * [Project Status](#project-status) -->
+
+
+## Tests
+Full test coverage achieved by over 140 integration tests
+<br/>
 ![coverage-report](./readme/images/coverage-report.jpg)
