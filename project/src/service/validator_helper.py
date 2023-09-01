@@ -1,9 +1,5 @@
 """
-Module containing helper functions for validating users, spaces, assignments, and shares.
-
-This module provides functions for validating user identities, space assignments, admin privileges,
-and ownership of shares. It interacts with the repository for database queries and raises
-ServiceException for various validation failures.
+Module containing the ValidatorHelper class.
 """
 from injector import inject
 
@@ -16,6 +12,11 @@ from ..model.share import Share
 
 
 class ValidatorHelper():
+    """
+    This class provides methods for validating user identities, space assignments, admin privileges,
+    and ownership of shares. It interacts with the repository for database queries and raises
+    ServiceException for various validation failures.
+    """
 
     @inject
     def __init__(self, repository: Repository):
@@ -122,5 +123,11 @@ class ValidatorHelper():
             raise ServiceException('User doesn\'t own this share')
 
     def validate_not_null(self, usr_input, input_name):
+        """
+        Validate that a user input is not `None`.
+        Args:
+            usr_input: The user input to be validated.
+            input_name (str): The name of the input parameter (for error messages).
+        """
         if usr_input is None:
             raise ServiceException(f"{input_name} must be provided")

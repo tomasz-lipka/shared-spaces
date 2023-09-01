@@ -1,9 +1,5 @@
 """
-Module containing functions for managing assignments and permissions of space-user pairs.
-
-This module includes functions for fetching, creating, modifying, and deleting user assignments
-and their associated permissions. The functions makes use of the Flask-Login
-extension for authentication and validation purposes.
+Module containing the AssignmentService class.
 """
 from flask_login import current_user, login_required
 from injector import inject
@@ -15,7 +11,11 @@ from ..exception.service_exception import ServiceException
 
 
 class AssignmentService():
-
+    """
+    This class provides methods for fetching, creating, modifying, and deleting user assignments
+    and their associated permissions. The methods make use of the Flask-Login
+    extension for authentication and utilizes validation methods.
+    """
     @inject
     def __init__(self, repository: Repository,  validator: ValidatorHelper):
         self.repository = repository

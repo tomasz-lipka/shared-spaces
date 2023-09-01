@@ -1,11 +1,7 @@
 """
-Module for managing spaces.
-
-This module provides functions for creating, retrieving, renaming, and deleting spaces.
-The functions are designed to work with Flask-Login for authentication and utilize validation 
-functions from the validator_helper module. 
-Additionally, the assignment_service module is used to perform assignment-related actions.
+Module containing the SpaceService class.
 """
+
 from flask_login import current_user, login_required
 from injector import inject
 
@@ -18,6 +14,12 @@ from ..service.input_validator import validate_usr_input
 
 
 class SpaceService():
+    """
+    This class provides methods for creating, retrieving, renaming, and deleting spaces.
+    The methods are designed to work with Flask-Login for authentication. It utilizes validation
+    methods and makes use of ImageService to work with images. 
+    Additionally, the AssignmentService class is used to perform assignment-related actions.
+    """
 
     MAX_NAME_LEN = 15
 

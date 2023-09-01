@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 class ImageService(ABC):
     """
     Abstract base class for managing image files associated with shares.
+    Template for specific image service implementations.
     """
 
     @abstractmethod

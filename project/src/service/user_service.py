@@ -1,10 +1,5 @@
 """
-Module for managing user authentication and related actions.
-
-This module provides functions for user authentication, user creation, password management, 
-and user retrieval. It handles login, logout, changing passwords, creating users, 
-verifying passwords, and retrieving user objects. The module works with Flask-Login 
-for authentication and uses bcrypt for password hashing.
+Module containing the UserService class.
 """
 import bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
@@ -18,6 +13,12 @@ from ..model.user import User
 
 
 class UserService():
+    """
+    This module provides methods for user authentication, user creation, password management, 
+    and user retrieval. It handles login, logout, changing passwords, creating users, 
+    verifying passwords, and retrieving user objects. The module works with Flask-Login 
+    for authentication, uses bcrypt for password hashing and utilizes validation methods.
+    """
 
     MAX_PASSWORD_LEN = 99999
 
@@ -91,12 +92,6 @@ class UserService():
         self.repository.add(session_user)
 
     def __get_verified_user(self, user_login, password):
-        """
-        Get a verified user based on provided login credentials.
-        Args:
-            user_login (str): User's login identifier.
-            password (str): User's password.
-        """
         user = self.repository.get_first_by_filter(
             User, User.login == user_login)
         if user and self.__verify_password(user, password):
@@ -104,23 +99,8 @@ class UserService():
         return None
 
     def __get_hashed(self, password):
-        """
-        Get the hashed version of a password using bcrypt.
-        Args:
-            password (str): The password to be hashed.
-        Returns:
-            bytes: The hashed password.
-        """
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode('utf-8'), salt)
 
     def __verify_password(self, user, password):
-        """
-        Verify if a provided password matches the hashed password of a user.
-        Args:
-            user (User): The user object containing the hashed password.
-            password (str): The password to be verified.
-        Returns:
-            bool: True if the password matches, False otherwise.
-        """
         return bcrypt.checkpw(password.encode('utf-8'), user.password)

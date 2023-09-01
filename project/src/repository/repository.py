@@ -14,11 +14,9 @@ class Repository(ABC):
     @abstractmethod
     def __init__(self, repository_url):
         """
-        # 
-        # 
-        TODO
-        # 
-        # 
+        Initialize a Repository instance.
+        Args:
+            repository_url (str): The URL to the repository.
         """
 
     @abstractmethod
@@ -85,4 +83,6 @@ class Repository(ABC):
     @abstractmethod
     def create_schema(self):
         """
+        Create a schema according to the model entities. 
+        Defines the data structure and relationships.
         """

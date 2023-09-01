@@ -1,3 +1,6 @@
+"""
+Module for Application dependency injection management.
+"""
 from injector import Module
 
 from src.repository.sql_alchemy_repository import Repository
@@ -10,6 +13,10 @@ from src.service.validator_helper import ValidatorHelper
 
 
 class AppModules(Module):
+    """
+    This class defines dependencies within the application. 
+    It sets up bindings for various services and repositories used throughout the application.
+    """
 
     def __init__(self, app):
         self.sql_alchemy_repository = SqlAlchemyRepository(
