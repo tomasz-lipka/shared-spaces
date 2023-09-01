@@ -36,7 +36,7 @@ class TestCreateShare(TestCase):
     def test_not_member(self):
         create_space_as_not_member(self.client)
         response = create_share(self.client, 1)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_wrong_json_key(self):
@@ -74,7 +74,7 @@ class TestCreateShare(TestCase):
         create_space_as_not_member(self.client)
         response = create_share_with_image(
             self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
         self.assertFalse(find_bucket('test-space-id-1'))
 

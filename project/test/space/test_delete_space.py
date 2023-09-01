@@ -40,7 +40,7 @@ class TestDeleteSpace(TestCase):
     def test_not_admin(self):
         create_space_as_member(self.client, 'space-1')
         response = self.client.delete('/spaces/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_not_empty(self):

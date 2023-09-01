@@ -42,5 +42,5 @@ class TestGetSpace(TestCase):
     def test_not_member(self):
         create_space_as_not_member(self.client)
         response = self.client.get('/spaces/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')

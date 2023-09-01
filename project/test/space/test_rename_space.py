@@ -57,7 +57,7 @@ class TestRenameSpace(TestCase):
             "new-name": "space_new_name"
         }
         response = self.client.put('/spaces/1', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_wrong_json_key(self):

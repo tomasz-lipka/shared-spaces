@@ -86,7 +86,7 @@ class TestChangeAdmin(TestCase):
             "is-admin": True
         }
         response = self.client.put('/spaces/2/members/1', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_not_admin(self):
@@ -95,7 +95,7 @@ class TestChangeAdmin(TestCase):
             "is-admin": False
         }
         response = self.client.put('/spaces/1/members/2', json=data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_payload_invalid_type(self):

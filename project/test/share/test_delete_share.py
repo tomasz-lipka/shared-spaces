@@ -40,7 +40,7 @@ class TestDeleteShare(TestCase):
         register_and_login(self.client, 'usr')
 
         response = self.client.delete('/shares/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
     def test_not_exist(self):
@@ -57,7 +57,7 @@ class TestDeleteShare(TestCase):
         register_and_login(self.client, 'usr')
 
         response = self.client.delete('/shares/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket('test-space-id-1'))
 

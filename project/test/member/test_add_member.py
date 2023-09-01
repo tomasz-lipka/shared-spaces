@@ -48,7 +48,7 @@ class TestAddMember(TestCase):
         create_space_as_member(self.client, 'space-1')
         response = add_member(self.client, 1, 1)
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_add_member_already_added(self):

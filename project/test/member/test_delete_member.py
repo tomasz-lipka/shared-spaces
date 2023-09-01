@@ -48,7 +48,7 @@ class TestDeleteMember(TestCase):
     def test_del_other_member_as_not_admin(self):
         create_space_as_member(self.client, 'space-1')
         response = self.client.delete('/spaces/1/members/2')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_del_myself_as_member(self):
@@ -84,5 +84,5 @@ class TestDeleteMember(TestCase):
         logout(self.client)
         create_space_as_admin(self.client, 'space-2')
         response = self.client.delete('/spaces/2/members/1')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
