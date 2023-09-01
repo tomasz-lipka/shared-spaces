@@ -5,7 +5,7 @@ Enhanced version of the application to share thoughts between family members and
 
 ## Table of Contents
 * [General Info](#general-information)
-<!-- * [Technologies Used](#technologies-used) -->
+* [Technologies Used](#technologies-used)
 * [AWS](#aws)
 * [Tests](#tests)
 <!-- * [Features](#features) -->
@@ -17,6 +17,16 @@ This project was developed to practice Python, Flask and AWS services. It is an 
 It utilizes the same idea to create a simple but fully functional solution of a REST application.
 <br />
 From user perspective it's a social media app, but for a small group of people, namely your family and friends. By definition, it provides an intimate space for your close ones to let them know that you throw a party or need help with your broken car.
+
+
+## Technologies Used
+- Python - version 3.10.8
+- Flask - version 2.3.3
+- SqlAlchemy - version 2.0.20
+- AWS
+    - Lambda
+    - S3 Buckets
+    - SQS (Simple Queue Service)
 
 
 ## AWS
