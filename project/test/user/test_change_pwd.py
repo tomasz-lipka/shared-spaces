@@ -19,7 +19,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
@@ -29,7 +29,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Password changed")
 
@@ -49,7 +49,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b"Wrong password")
 
@@ -60,7 +60,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "wrong_new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New passwords don\'t match")
 
@@ -71,7 +71,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'old-password'")
 
@@ -82,7 +82,7 @@ class TestChangePwd(TestCase):
             "wrong": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'new-password'")
 
@@ -93,7 +93,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "wrong": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")
 
@@ -104,7 +104,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Old password must be provided")
 
@@ -115,7 +115,7 @@ class TestChangePwd(TestCase):
             "new-password": None,
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New password must be provided")
 
@@ -126,7 +126,7 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": None
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Confirm password must be provided")
 
@@ -137,7 +137,7 @@ class TestChangePwd(TestCase):
             "new-password": "   ",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New password cannot be empty")
 
@@ -148,6 +148,6 @@ class TestChangePwd(TestCase):
             "new-password": "a",
             "confirm-password": "new_pwd"
         }
-        response = self.client.post('/change-password', json=data)
+        response = self.client.put('/change-password', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New password min 3 characters")

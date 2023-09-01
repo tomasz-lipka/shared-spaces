@@ -67,7 +67,7 @@ def logout(service: UserService):
 
 
 @inject
-@user_controller.route('/change-password', methods=["POST"])
+@user_controller.route('/change-password', methods=["PUT"])
 def change_password(service: UserService):
     """
     Change user password. Accepts a JSON payload with
