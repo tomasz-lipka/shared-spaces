@@ -5,8 +5,8 @@ from injector import Module
 
 from src.repository.sql_alchemy_repository import Repository
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
-from src.media.image_service import ImageService
-from src.media.aws_image_service import AwsImageService
+from src.image.image_service import ImageService
+from src.image.aws_image_service import AwsImageService
 from src.service.share_service import ShareService
 from src.service.assignment_service import AssignmentService
 from src.service.validator_helper import ValidatorHelper

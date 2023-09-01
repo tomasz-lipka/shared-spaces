@@ -27,7 +27,7 @@ from src.controller.assignment_controller import assignment_controller
 from src.controller.share_controller import share_controller
 from src.controller.image_controller import image_controller
 from src.repository.sql_alchemy_repository import Repository
-from src.media.image_service import ImageService
+from src.image.image_service import ImageService
 from src.model.user import User
 from appmodules import AppModules
 

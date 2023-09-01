@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from injector import inject
 
 from ..repository.repository import Repository
-from ..media.image_service import ImageService
+from ..image.image_service import ImageService
 from ..model.share import Share
 from ..service.validator_helper import ValidatorHelper
 from ..service.input_validator import validate_usr_input
@@ -63,11 +63,11 @@ class ShareService():
     def get_shares_by_space_id(self, space_id):
         """
         Retrieve shares associated with a specific space based on its ID, validate user access
-        and retrieve the media URL associated with each share.
+        and retrieve the image URL associated with each share.
         Args:
             space_id (int): The ID of the space for which shares should be retrieved.
         Returns:
-            list of Share: A list of Share objects representing the shares associated with the specified space, each with the media URL included.
+            list of Share: A list of Share objects representing the shares associated with the specified space, each with the image URL included.
         """
         self.validator.validate_assignment(
             self.validator.validate_space(space_id),

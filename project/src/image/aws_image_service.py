@@ -8,7 +8,7 @@ import boto3
 import botocore.exceptions
 
 
-from ..media.image_service import ImageService
+from ..image.image_service import ImageService
 from ..service.validator_helper import ValidatorHelper
 
 
