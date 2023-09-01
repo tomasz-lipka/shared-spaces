@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 from injector import inject
 
 from ..repository.repository import Repository
-from ..media.media_service import MediaService
+from ..media.image_service import ImageService
 from ..service.assignment_service import AssignmentService
 from ..model.space import Space
 from ..service.validator_helper import ValidatorHelper
@@ -23,10 +23,10 @@ class SpaceService():
 
     @inject
     def __init__(self,
-                 repository: Repository, media_service: MediaService,
+                 repository: Repository, image_service: ImageService,
                  assignment_service: AssignmentService, validator: ValidatorHelper):
         self.repository = repository
-        self.media_service = media_service
+        self.image_service = image_service
         self.assignment_service = assignment_service
         self.validator = validator
 
@@ -74,7 +74,7 @@ class SpaceService():
         if self.validator.contains_only_owner(space):
             self.assignment_service.delete_assignment(assignment)
             self.repository.delete_by_id(Space, space_id)
-            self.media_service.delete_space_directory(space)
+            self.image_service.delete_space_directory(space)
 
     @login_required
     def rename_space(self, space_id, new_name):

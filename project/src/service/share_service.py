@@ -9,7 +9,7 @@ from flask_login import current_user, login_required
 from injector import inject
 
 from ..repository.repository import Repository
-from ..media.media_service import MediaService
+from ..media.image_service import ImageService
 from ..model.share import Share
 from ..service.validator_helper import ValidatorHelper
 from ..service.input_validator import validate_usr_input
@@ -21,9 +21,9 @@ class ShareService():
 
     @inject
     def __init__(self, repository: Repository,
-                 media_service: MediaService,  validator: ValidatorHelper):
+                 image_service: ImageService,  validator: ValidatorHelper):
         self.repository = repository
-        self.media_service = media_service
+        self.image_service = image_service
         self.validator = validator
 
     @login_required
@@ -47,7 +47,7 @@ class ShareService():
     def get_share_by_share_id(self, share_id):
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(share, int(current_user.get_id()))
-        share.media_url = self.media_service.get_image(share)
+        share.media_url = self.image_service.get_image(share)
         return share
 
     @login_required
@@ -59,7 +59,7 @@ class ShareService():
         shares = self.repository.get_all_by_filter(
             Share, Share.space_id == space_id)
         for share in shares:
-            share.media_url = self.media_service.get_image(share)
+            share.media_url = self.image_service.get_image(share)
         return shares
 
     @login_required

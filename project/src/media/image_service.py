@@ -4,7 +4,7 @@ Module containing an ImageService ABC (Abstract Base Class).
 from abc import ABC, abstractmethod
 
 
-class MediaService(ABC):
+class ImageService(ABC):
     """
     Abstract base class for managing image files associated with shares.
     """

@@ -2,7 +2,7 @@ from injector import Module
 
 from src.repository.sql_alchemy_repository import Repository
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
-from src.media.aws_service import MediaService
+from src.media.aws_service import ImageService
 from src.media.aws_service import AwsService
 from src.service.share_service import ShareService
 from src.service.assignment_service import AssignmentService
@@ -28,7 +28,7 @@ class AppModules(Module):
             to=self.sql_alchemy_repository
         )
         binder.bind(
-            MediaService,
+            ImageService,
             to=self.aws_service
         )
         binder.bind(

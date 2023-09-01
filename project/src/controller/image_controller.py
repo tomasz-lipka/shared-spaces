@@ -7,24 +7,24 @@ from flask import Blueprint, make_response
 from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..media.aws_service import MediaService
+from ..media.aws_service import ImageService
 
 image_controller = Blueprint('image_controller', __name__)
 
 
 @inject
 @image_controller.route('/spaces/<int:space_id>/images')
-def get_images(space_id, media_service: MediaService):
+def get_images(space_id, image_service: ImageService):
     """
     Get all image URLs within a space.
     Args:
         space_id (int): ID of the target space.
-        media_service (MediaService): Instance of MediaService.
+        image_service (ImageService): Instance of ImageService.
     Returns:
         str: JSON-encoded list of image URLs.
     """
     try:
-        images = media_service.get_all_media_urls(space_id)
+        images = image_service.get_all_media_urls(space_id)
         json_serializable_list = [{"media_url": image} for image in images]
         return json.dumps(json_serializable_list)
     except ServiceException as exc:

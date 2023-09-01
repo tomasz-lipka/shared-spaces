@@ -7,7 +7,7 @@ from flask import Blueprint, request, make_response
 from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..media.aws_service import MediaService
+from ..media.aws_service import ImageService
 from ..service.share_service import ShareService
 
 share_controller = Blueprint('share_controller', __name__)
@@ -15,12 +15,12 @@ share_controller = Blueprint('share_controller', __name__)
 
 @inject
 @share_controller.route('/spaces/<int:space_id>/shares', methods=["POST"])
-def post_share(space_id, media_service: MediaService, service: ShareService):
+def post_share(space_id, image_service: ImageService, service: ShareService):
     """
     Create a new share in a space and optionally upload an image.
     Args:
         space_id (int): ID of the target space.
-        media_service (MediaService): Instance of MediaService.
+        image_service (ImageService): Instance of ImageService.
         service (ShareService): Instance of ShareService.
     Returns:
         str: Response message.
@@ -33,7 +33,7 @@ def post_share(space_id, media_service: MediaService, service: ShareService):
             request.form['text']
         )
         if 'file' in request.files:
-            media_service.upload_image(
+            image_service.upload_image(
                 request.files['file'],
                 share_id
             )
@@ -100,13 +100,13 @@ def delete_share(share_id, service: ShareService):
 
 @inject
 @share_controller.route('/shares/<int:share_id>', methods=["PUT"])
-def put_share(share_id, service: ShareService, media_service: MediaService):
+def put_share(share_id, service: ShareService, image_service: ImageService):
     """
     Update a share's text and optionally upload an new image.
     Args:
         share_id (int): ID of the target share.
         service (ShareService): Instance of ShareService.
-        media_service (MediaService): Instance of MediaService.
+        image_service (ImageService): Instance of ImageService.
     Returns:
         str: Response message.
     """
@@ -118,7 +118,7 @@ def put_share(share_id, service: ShareService, media_service: MediaService):
             request.form['text']
         )
         if 'file' in request.files:
-            media_service.upload_image(
+            image_service.upload_image(
                 request.files['file'],
                 share_id
             )

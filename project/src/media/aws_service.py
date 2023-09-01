@@ -8,11 +8,11 @@ import boto3
 import botocore.exceptions
 
 
-from ..media.media_service import MediaService
+from ..media.image_service import ImageService
 from ..service.validator_helper import ValidatorHelper
 
 
-class AwsService(MediaService):
+class AwsService(ImageService):
     """
     Concrete implementation of the ImageService abstract class using an AWS client.
     This class provides methods for adding, deleting, and retrieving images 
