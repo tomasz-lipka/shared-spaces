@@ -75,7 +75,7 @@ class AwsImageService(ImageService):
         self.s3_client.delete_bucket(Bucket=bucket)
 
     @login_required
-    def get_all_media_urls(self, space_id):
+    def get_all_images(self, space_id):
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(
             space,

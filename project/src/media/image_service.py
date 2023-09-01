@@ -38,7 +38,7 @@ class ImageService(ABC):
         """
 
     @abstractmethod
-    def get_all_media_urls(self, space_id):
+    def get_all_images(self, space_id):
         """
         Retrieve a list of all images associated with a specific space.
         Args:
