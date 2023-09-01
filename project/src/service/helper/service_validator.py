@@ -32,7 +32,7 @@ class ServiceValidator():
         """
         space = self.repository.get_by_id(Space, space_id)
         if not space:
-            raise ServiceException(f"Space with ID '{space_id}' doesn't exist")
+            raise ServiceException(f"Space with ID '{space_id}' doesn't exist", 400)
         return space
 
     def validate_user(self, user_id):
@@ -45,7 +45,7 @@ class ServiceValidator():
         """
         user = self.repository.get_by_id(User, user_id)
         if not user:
-            raise ServiceException(f"User with ID '{user_id}' doesn't exist")
+            raise ServiceException(f"User with ID '{user_id}' doesn't exist", 400)
         return user
 
     def validate_assignment(self, space, user):
@@ -60,7 +60,7 @@ class ServiceValidator():
         assignment = self.repository.get_first_by_two_filters(
             Assignment, Assignment.user_id == user.id, Assignment.space_id == space.id)
         if not assignment:
-            raise ServiceException('User-space pair doesn\'t exist')
+            raise ServiceException('User-space pair doesn\'t exist', 400)
         return assignment
 
     def validate_no_assignment(self, space, user):
@@ -74,7 +74,7 @@ class ServiceValidator():
                                                     Assignment.user_id == user.id,
                                                     Assignment.space_id == space.id
                                                     ):
-            raise ServiceException('User-space pair already exists')
+            raise ServiceException('User-space pair already exists', 400)
 
     def validate_admin(self, assignment):
         """
@@ -83,7 +83,7 @@ class ServiceValidator():
             assignment (Assignment): The assignment object for validation.
         """
         if not assignment.is_admin:
-            raise ServiceException('User not admin')
+            raise ServiceException('User not admin', 400)
 
     def contains_only_owner(self, space):
         """
@@ -96,7 +96,7 @@ class ServiceValidator():
         assignments = self.repository.get_all_by_filter(
             Assignment, Assignment.space_id == space.id)
         if len(assignments) != 1:
-            raise ServiceException('Space not empty')
+            raise ServiceException('Space not empty', 400)
         return True
 
     def validate_share(self, share_id):
@@ -109,7 +109,7 @@ class ServiceValidator():
         """
         share = self.repository.get_by_id(Share, share_id)
         if not share:
-            raise ServiceException('No such share')
+            raise ServiceException('No such share', 400)
         return share
 
     def validate_share_owner(self, share, user_id):
@@ -120,7 +120,7 @@ class ServiceValidator():
             user_id (int): ID of the user to be validated as the owner.
         """
         if not share.user_id == user_id:
-            raise ServiceException('User doesn\'t own this share')
+            raise ServiceException('User doesn\'t own this share', 400)
 
     def validate_not_null(self, usr_input, input_name):
         """
@@ -130,4 +130,4 @@ class ServiceValidator():
             input_name (str): The name of the input parameter (for error messages).
         """
         if usr_input is None:
-            raise ServiceException(f"{input_name} must be provided")
+            raise ServiceException(f"{input_name} must be provided", 400)

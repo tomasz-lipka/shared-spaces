@@ -11,8 +11,10 @@ class ServiceException(Exception):
 
     Args:
         message (str): The error message describing the reason for the exception.
+        error_code (int): An error code associated with the exception.
     """
 
-    def __init__(self, message):
+    def __init__(self, message, error_code):
         self.message = message
+        self.error_code = error_code
         super().__init__(message)

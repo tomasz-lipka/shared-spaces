@@ -46,7 +46,7 @@ def get_members(space_id, service: AssignmentService):
                                   for assignment in assignments]
         return json.dumps(json_serializable_list)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -64,7 +64,7 @@ def post_member(space_id, service: AssignmentService):
         service.create_assignment(space_id, request.json['user-id'])
         return make_response('Member added', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
 
@@ -85,7 +85,7 @@ def delete_member(space_id, user_id, service: AssignmentService):
         service.delete_assignment_by_space_id_user_id(space_id, user_id)
         return make_response('Member deleted', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -106,6 +106,6 @@ def put_admin(space_id, user_id, service: AssignmentService):
             space_id, user_id, request.json['is-admin'])
         return make_response('Admin permission changed', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)

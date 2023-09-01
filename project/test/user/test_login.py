@@ -20,7 +20,7 @@ class TestLogin(TestCase):
 
     def test_wrong_login(self):
         response = login(self.client, 'wrong_login')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Wrong login and/or password")
 
     def test_wrong_pwd(self):
@@ -30,7 +30,7 @@ class TestLogin(TestCase):
             "password": "wrong_pwd"
         }
         response = self.client.post('/login', json=data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Wrong login and/or password")
 
     def test_login_and_logout(self):
@@ -62,14 +62,14 @@ class TestLogin(TestCase):
     def test_when_already_logged_in(self):
         register_and_login(self.client, 'usr')
         response = login(self.client, 'usr')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'Already logged in')
 
     def test_when_already_logged_in_other_usr(self):
         register(self.client, 'other-usr')
         register_and_login(self.client, 'usr')
         response = login(self.client, 'other-usr')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'Already logged in')
 
     def test_null_json_value_login(self):
@@ -79,7 +79,7 @@ class TestLogin(TestCase):
             "password": 'pwd'
         }
         response = self.client.post('/login', json=data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Login must be provided")
 
     def test_null_json_value_pwd(self):
@@ -89,5 +89,5 @@ class TestLogin(TestCase):
             "password": None
         }
         response = self.client.post('/login', json=data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Password must be provided")

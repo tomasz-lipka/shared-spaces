@@ -26,7 +26,7 @@ def login(service: UserService):
         service.login(data['login'], data['password'])
         return make_response('Logged in', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 401)
+        return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
 
@@ -47,7 +47,7 @@ def register(service: UserService):
             data['login'], data['password'], data['confirm-password'])
         return make_response('User created', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
 
@@ -83,6 +83,6 @@ def change_password(service: UserService):
             data['old-password'], data['new-password'], data['confirm-password'])
         return make_response('Password changed', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)

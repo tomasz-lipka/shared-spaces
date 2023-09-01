@@ -40,7 +40,7 @@ def post_share(space_id, image_service: ImageService, service: ShareService):
             return make_response('Share with image created', 200)
         return make_response('Share created', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -58,7 +58,7 @@ def get_share(share_id, service: ShareService):
         share = service.get_share_by_share_id(share_id)
         return json.dumps(share.to_dict())
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -77,7 +77,7 @@ def get_shares(space_id, service: ShareService):
         json_serializable_list = [share.shares_to_dict() for share in shares]
         return json.dumps(json_serializable_list)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -95,7 +95,7 @@ def delete_share(share_id, service: ShareService):
         service.delete_share_by_share_id(share_id)
         return make_response('Share deleted', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -124,4 +124,4 @@ def put_share(share_id, service: ShareService, image_service: ImageService):
             )
         return make_response('Share edited', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)

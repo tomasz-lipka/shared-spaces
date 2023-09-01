@@ -37,10 +37,10 @@ class UserService():
         self.validator.validate_not_null(user_login, 'Login')
         self.validator.validate_not_null(password, 'Password')
         if current_user.is_authenticated:
-            raise ServiceException('Already logged in')
+            raise ServiceException('Already logged in', 400)
         user = self.__get_verified_user(user_login, password)
         if not user:
-            raise ServiceException('Wrong login and/or password')
+            raise ServiceException('Wrong login and/or password', 400)
         login_user(user)
 
     def create_user(self, user_login, password, confirm_password):
@@ -57,11 +57,11 @@ class UserService():
         validate_usr_input(user_login, 'Login', 15)
         validate_usr_input(password, 'Password', self.MAX_PASSWORD_LEN)
         if current_user.is_authenticated:
-            raise ServiceException('Already logged in')
+            raise ServiceException('Already logged in', 400)
         if password != confirm_password:
-            raise ServiceException('Passwords don\'t match')
+            raise ServiceException('Passwords don\'t match', 400)
         if self.repository.get_first_by_filter(User, User.login == user_login):
-            raise ServiceException('User already exists')
+            raise ServiceException('User already exists', 400)
         self.repository.add(User(user_login, self.__get_hashed(password)))
 
     def logout(self):
@@ -85,9 +85,9 @@ class UserService():
         validate_usr_input(new_password, 'New password', self.MAX_PASSWORD_LEN)
         session_user = self.repository.get_by_id(User, current_user.get_id())
         if not self.__verify_password(session_user, old_password):
-            raise ServiceException('Wrong password')
+            raise ServiceException('Wrong password', 400)
         if new_password != confirm_password:
-            raise ServiceException('New passwords don\'t match')
+            raise ServiceException('New passwords don\'t match', 400)
         session_user.password = self.__get_hashed(new_password)
         self.repository.add(session_user)
 

@@ -88,7 +88,7 @@ class AssignmentService():
         if to_be_deleted_assignment == caller_assignment:
             if caller_assignment.is_admin:
                 raise ServiceException(
-                    'Can\'t leave space when you\'re an admin')
+                    'Can\'t leave space when you\'re an admin', 400)
         else:
             self.validator.validate_admin(caller_assignment)
         self.repository.delete_by_id(Assignment, to_be_deleted_assignment.id)
@@ -114,7 +114,7 @@ class AssignmentService():
             self.validator.validate_user(user_id)
         )
         if not isinstance(is_admin, bool):
-            raise ServiceException('"is admin" must be type boolean')
+            raise ServiceException('"is admin" must be type boolean', 400)
 
         assignment.is_admin = is_admin
         self.repository.add(assignment)

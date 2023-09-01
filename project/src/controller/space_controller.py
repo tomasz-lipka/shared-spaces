@@ -28,7 +28,7 @@ def post_space(service: SpaceService):
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -46,7 +46,7 @@ def get_space(space_id, service: SpaceService):
         space = service.get_space_by_space_id(space_id)
         return json.dumps(space.to_dict())
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -64,7 +64,7 @@ def delete_space(space_id, service: SpaceService):
         service.delete_space_by_space_id(space_id)
         return make_response('Space deleted', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
 
 
 @inject
@@ -82,6 +82,6 @@ def rename(space_id, service: SpaceService):
         service.rename_space(space_id, request.json['new-name'])
         return make_response('Space renamed', 200)
     except ServiceException as exc:
-        return make_response(str(exc), 400)
+        return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
