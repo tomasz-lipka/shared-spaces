@@ -48,7 +48,7 @@ class TestGetShare(TestCase):
     def test_not_exist(self):
         register_and_login(self.client, 'usr')
         response = self.client.get('/shares/999')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned(self):

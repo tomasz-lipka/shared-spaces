@@ -4,6 +4,7 @@ Module containing the ServiceValidator class.
 from injector import inject
 
 from ...exception.service.service_exception import ServiceException
+from ...exception.service.not_found_exception import NotFoundException
 from ...repository.repository import Repository
 from ...model.user import User
 from ...model.space import Space
@@ -32,7 +33,8 @@ class ServiceValidator():
         """
         space = self.repository.get_by_id(Space, space_id)
         if not space:
-            raise ServiceException(f"Space with ID '{space_id}' doesn't exist", 400)
+            raise NotFoundException(
+                f"Space with ID '{space_id}' doesn't exist")
         return space
 
     def validate_user(self, user_id):
@@ -45,7 +47,8 @@ class ServiceValidator():
         """
         user = self.repository.get_by_id(User, user_id)
         if not user:
-            raise ServiceException(f"User with ID '{user_id}' doesn't exist", 400)
+            raise NotFoundException(
+                f"User with ID '{user_id}' doesn't exist")
         return user
 
     def validate_assignment(self, space, user):
@@ -109,7 +112,7 @@ class ServiceValidator():
         """
         share = self.repository.get_by_id(Share, share_id)
         if not share:
-            raise ServiceException('No such share', 400)
+            raise NotFoundException('No such share')
         return share
 
     def validate_share_owner(self, share, user_id):
