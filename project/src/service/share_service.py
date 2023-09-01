@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from injector import inject
 
 from ..repository.repository import Repository
-from ..image.image_service import ImageService
+from ..service.image.image_service import ImageService
 from ..model.share import Share
 from ..service.validator_helper import ValidatorHelper
 from ..service.input_validator import validate_usr_input

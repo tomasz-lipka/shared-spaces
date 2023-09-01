@@ -7,7 +7,7 @@ from flask import Blueprint, request, make_response
 from injector import inject
 
 from ..exception.service_exception import ServiceException
-from ..image.image_service import ImageService
+from ..service.image.image_service import ImageService
 from ..service.share_service import ShareService
 
 share_controller = Blueprint('share_controller', __name__)

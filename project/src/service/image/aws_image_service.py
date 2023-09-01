@@ -9,8 +9,7 @@ import botocore.exceptions
 
 
 from ..image.image_service import ImageService
-from ..service.validator_helper import ValidatorHelper
-
+from ..validator_helper import ValidatorHelper
 
 class AwsImageService(ImageService):
     """
