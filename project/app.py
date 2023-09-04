@@ -9,6 +9,8 @@ The application uses SQLAlchemy for database operations.
 And Amazon Web Services: SQS, Lambda and S3 Buckets to maintain images.
 
 Usage:
+    export AWS_ACCESS_KEY_ID=<access key>
+    export AWS_SECRET_ACCESS_KEY=<secret key>
     flask --app 'app:create_app("<your-file>.config")' run
 
 Author:
