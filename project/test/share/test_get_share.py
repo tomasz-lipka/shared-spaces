@@ -19,13 +19,18 @@ class TestGetShare(TestCase):
         purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = self.client.get('/shares/1')
-        self.assertEqual(response.status_code, 401)
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
+        response = self.client.get(
+            '/shares/1', headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(
+            response.data, b'{"msg":"Signature verification failed"}\n')
+        self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
-        create_space_as_admin(self.client, 'space-1')
-        create_share(self.client, 1)
-        response = self.client.get('/shares/1')
+        token = create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1, token)
+        response = self.client.get(
+            '/shares/1', headers={"Authorization": f"Bearer {token}"})
         expected_data = {
             "id": 1,
             "space": {
@@ -46,37 +51,40 @@ class TestGetShare(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_exist(self):
-        register_and_login(self.client, 'usr')
-        response = self.client.get('/shares/999')
+        token = register_and_login(self.client, 'usr')
+        response = self.client.get(
+            '/shares/999', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned(self):
-        create_space_as_admin(self.client, 'space-1')
-        create_share(self.client, 1)
+        token = create_space_as_admin(self.client, 'space-1')
+        create_share(self.client, 1, token)
         logout(self.client)
-        register_and_login(self.client, 'usr')
-        response = self.client.get('/shares/1')
+        token = register_and_login(self.client, 'usr')
+        response = self.client.get(
+            '/shares/1', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
     def test_normal_run_with_image(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
-        create_space(self.client, 'space-2')
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+        create_space(self.client, 'space-2', token)
         logout(self.client)
         register(self.client, 'usr')
-        login(self.client, 'admin')
-        add_member(self.client, 2, 2)
+        token = login(self.client, 'admin')
+        add_member(self.client, 2, 2, token)
         logout(self.client)
-        login(self.client, 'usr')
+        token = login(self.client, 'usr')
         create_share_with_image(
-            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
+            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
         create_share_with_image(
-            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg')
+            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg', token)
 
-        response = self.client.get('/shares/3')
+        response = self.client.get(
+            '/shares/3', headers={"Authorization": f"Bearer {token}"})
         expected_data = {
             "id": 3,
             "space": {
@@ -102,23 +110,28 @@ class TestGetShare(TestCase):
         self.assertEqual(response.status_code, 200)
 
         logout(self.client)
-        login(self.client, 'admin')
-        self.client.delete('/spaces/2/members/2')
-        self.client.delete('/spaces/1')
-        self.client.delete('/spaces/2')
+        token = login(self.client, 'admin')
+        self.client.delete('/spaces/2/members/2',
+                           headers={"Authorization": f"Bearer {token}"})
+        self.client.delete(
+            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+        self.client.delete(
+            '/spaces/2', headers={"Authorization": f"Bearer {token}"})
 
     def test_not_owned_with_image(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
         logout(self.client)
-        register_and_login(self.client, 'usr')
-        response = self.client.get('/shares/1')
+        token = register_and_login(self.client, 'usr')
+        response = self.client.get(
+            '/shares/1', headers={"Authorization": f"Bearer {token}"})
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket('test-space-id-1'))
 
         logout(self.client)
-        login(self.client, 'admin')
-        self.client.delete('/spaces/1')
+        token = login(self.client, 'admin')
+        self.client.delete(
+            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
