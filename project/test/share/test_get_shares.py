@@ -23,23 +23,24 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        register_and_login(self.client, 'admin-1')
-        create_space(self.client, 'space-1')
-        create_share(self.client, 1)
+        token = register_and_login(self.client, 'admin-1')
+        create_space(self.client, 'space-1', token)
+        create_share(self.client, 1, token)
         logout(self.client)
 
         register(self.client, 'member-1')
 
-        register_and_login(self.client, 'admin-2')
-        create_space(self.client, 'space-2')
-        create_share(self.client, 2)
-        add_member(self.client, 2, 2)
+        token = register_and_login(self.client, 'admin-2')
+        create_space(self.client, 'space-2', token)
+        create_share(self.client, 2, token)
+        add_member(self.client, 2, 2, token)
         logout(self.client)
 
-        login(self.client, 'member-1')
-        create_share(self.client, 2)
+        token = login(self.client, 'member-1')
+        create_share(self.client, 2, token)
 
-        response = self.client.get('/spaces/2/shares')
+        response = self.client.get(
+            '/spaces/2/shares', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "id": 2,
@@ -69,26 +70,29 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        register_and_login(self.client, 'usr')
-        response = self.client.get('/spaces/999/shares')
+        token = register_and_login(self.client, 'usr')
+        response = self.client.get(
+            '/spaces/999/shares', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_member(self):
-        create_space_as_not_member(self.client)
-        response = self.client.get('/spaces/1/shares')
+        token = create_space_as_not_member(self.client)
+        response = self.client.get(
+            '/spaces/1/shares', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_normal_run_with_image(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg')
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg')
-        create_share(self.client, 1)
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
+        create_share(self.client, 1, token)
 
-        response = self.client.get('/spaces/1/shares')
+        response = self.client.get(
+            '/spaces/1/shares', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "id": 1,
@@ -136,4 +140,5 @@ class TestGetShares(TestCase):
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 
-        self.client.delete('/spaces/1')
+        self.client.delete(
+            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
