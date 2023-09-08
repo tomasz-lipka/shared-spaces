@@ -1,5 +1,6 @@
 from unittest import TestCase
 from test.helper import get_app, logout, purge_db, login, register, register_and_login
+import json
 
 
 class TestLogin(TestCase):
@@ -14,12 +15,21 @@ class TestLogin(TestCase):
         purge_db(self.app)
 
     def test_normal_run(self):
-        response = register_and_login(self.client, "usr")
+        register(self.client, "usr")
+        data = {
+            "login":  "usr",
+            "password": "pwd"
+        }
+        response = self.client.post('/login', json=data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"Logged in")
 
     def test_wrong_login(self):
-        response = login(self.client, 'wrong_login')
+        register(self.client, "usr")
+        data = {
+            "login":  "wrong_login",
+            "password": "pwd"
+        }
+        response = self.client.post('/login', json=data)
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b"Wrong login and/or password")
 
@@ -34,8 +44,9 @@ class TestLogin(TestCase):
         self.assertEqual(response.data, b"Wrong login and/or password")
 
     def test_login_and_logout(self):
-        register_and_login(self.client, "usr")
-        response = self.client.get('/logout')
+        token = register_and_login(self.client, "usr")
+        response = self.client.delete(
+            '/logout', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Logged out")
 
@@ -58,19 +69,6 @@ class TestLogin(TestCase):
         response = self.client.post('/login', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'password'")
-
-    def test_when_already_logged_in(self):
-        register_and_login(self.client, 'usr')
-        response = login(self.client, 'usr')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b'Already logged in')
-
-    def test_when_already_logged_in_other_usr(self):
-        register(self.client, 'other-usr')
-        register_and_login(self.client, 'usr')
-        response = login(self.client, 'other-usr')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b'Already logged in')
 
     def test_null_json_value_login(self):
         register(self.client, 'usr')

@@ -19,17 +19,22 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
-        self.assertEqual(response.status_code, 401)
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(
+            response.data, b'{"msg":"Signature verification failed"}\n')
+        self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Password changed")
 
@@ -38,116 +43,126 @@ class TestChangePwd(TestCase):
             "login": 'usr',
             "password": "new_pwd"
         }
-        response = self.client.post('/login', json=data)
+        response = self.client.post(
+            '/login', json=data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"Logged in")
 
     def test_wrong_old_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "wrong",
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data, b"Wrong password")
 
     def test_wrong_confirmation(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
             "confirm-password": "wrong_new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New passwords don\'t match")
 
     def test_wrong_json_key_old_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "wrong": "pwd",
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'old-password'")
 
     def test_wrong_json_key_new_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "wrong": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'new-password'")
 
     def test_wrong_json_key_confirm_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
             "wrong": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")
 
     def test_null_json_value_old_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": None,
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Old password must be provided")
 
     def test_null_json_value_new_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": None,
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New password must be provided")
 
     def test_null_json_value_confirm_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
             "confirm-password": None
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Confirm password must be provided")
 
     def test_empty_new_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "   ",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New password cannot be empty")
 
     def test_min_char_new_pwd(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "a",
             "confirm-password": "new_pwd"
         }
-        response = self.client.put('/change-password', json=data)
+        response = self.client.put(
+            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New password min 3 characters")
