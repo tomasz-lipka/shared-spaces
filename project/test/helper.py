@@ -122,7 +122,6 @@ def create_share_with_image(client, space_id, img_url, token):
 
 
 def find_bucket(bucket_name):
-    time.sleep(1)
     for bucket in s3_client.list_buckets()['Buckets']:
         if bucket["Name"].startswith(bucket_name):
             return True
