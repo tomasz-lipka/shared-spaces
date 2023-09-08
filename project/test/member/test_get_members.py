@@ -25,12 +25,13 @@ class TestGetMembers(TestCase):
     def test_normal_run(self):
         register(self.client, 'member-1')
         register(self.client, 'member-2')
-        create_space_as_admin(self.client, 'space-1')
-        create_space(self.client, 'space-2')
-        add_member(self.client, 1, 1)
-        add_member(self.client, 2, 2)
+        token = create_space_as_admin(self.client, 'space-1')
+        create_space(self.client, 'space-2', token)
+        add_member(self.client, 1, 1, token)
+        add_member(self.client, 2, 2, token)
 
-        response = self.client.get('/spaces/1/members')
+        response = self.client.get(
+            '/spaces/1/members', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,
@@ -52,13 +53,15 @@ class TestGetMembers(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        register_and_login(self.client, 'admin')
-        response = self.client.get('/spaces/999/members')
+        token = register_and_login(self.client, 'admin')
+        response = self.client.get(
+            '/spaces/999/members', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_member(self):
-        create_space_as_not_member(self.client)
-        response = self.client.get('/spaces/1/members')
+        token = create_space_as_not_member(self.client)
+        response = self.client.get(
+            '/spaces/1/members', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
