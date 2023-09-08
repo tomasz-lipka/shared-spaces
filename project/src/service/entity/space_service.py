@@ -2,7 +2,7 @@
 Module containing the SpaceService class.
 """
 
-from flask_login import current_user, login_required
+from flask_jwt_extended import jwt_required
 from injector import inject
 
 from ...repository.repository import Repository
@@ -16,7 +16,7 @@ from ..helper.input_validator import validate_usr_input
 class SpaceService():
     """
     This class provides methods for creating, retrieving, renaming, and deleting spaces.
-    The methods are designed to work with Flask-Login for authentication. It utilizes validation
+    The methods are designed to work with Flask-JWT-Extended for authentication. It utilizes validation
     methods and makes use of ImageService to work with images. 
     Additionally, the AssignmentService class is used to perform assignment-related actions.
     """
@@ -32,7 +32,7 @@ class SpaceService():
         self.assignment_service = assignment_service
         self.validator = validator
 
-    @login_required
+    @jwt_required()
     def create_space(self, name):
         """
         Create a new space and assign the current user as the admin.
@@ -44,7 +44,7 @@ class SpaceService():
         space_id = self.repository.add(Space(name))
         self.assignment_service.create_assignment_with_admin(space_id)
 
-    @login_required
+    @jwt_required()
     def get_space_by_space_id(self, space_id):
         """
         Retrieve a space by its ID after validations.
@@ -56,11 +56,12 @@ class SpaceService():
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         return space
 
-    @login_required
+    @jwt_required()
     def delete_space_by_space_id(self, space_id):
         """
         Delete a space by its ID after validations and admin check.
@@ -70,7 +71,8 @@ class SpaceService():
         space = self.validator.validate_space(space_id)
         assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(assignment)
         if self.validator.contains_only_owner(space):
@@ -78,7 +80,7 @@ class SpaceService():
             self.repository.delete_by_id(Space, space_id)
             self.image_service.delete_space_directory(space)
 
-    @login_required
+    @jwt_required()
     def rename_space(self, space_id, new_name):
         """
         Rename a space by its ID after validations and admin check.
@@ -91,7 +93,8 @@ class SpaceService():
         space = self.validator.validate_space(space_id)
         assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(assignment)
 

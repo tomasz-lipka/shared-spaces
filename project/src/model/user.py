@@ -1,15 +1,13 @@
 """
 Module containing the User model class.
 """
-from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String
 from ..model.base import Base
 
 
-class User(Base, UserMixin):
+class User(Base):
     """
     Model class representing individual users.
-    It inherits from Flask-Login's UserMixin to provide user authentication functionality.
     """
 
     __tablename__ = 'users'

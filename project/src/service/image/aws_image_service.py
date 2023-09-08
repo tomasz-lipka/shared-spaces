@@ -3,7 +3,7 @@ Module containing the AWSImageService class.
 """
 import os
 import datetime
-from flask_login import current_user, login_required
+from flask_jwt_extended import jwt_required
 import boto3
 import botocore.exceptions
 
@@ -33,12 +33,12 @@ class AwsImageService(ImageService):
         )
         self.validator = validator
 
-    @login_required
+    @jwt_required()
     def upload_image(self, file, share_id):
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(
             share,
-            int(current_user.get_id())
+            int(self.validator.get_logged_in_user_id())
         )
 
         object_key = str(share.space.id) + '-' + \
@@ -50,7 +50,7 @@ class AwsImageService(ImageService):
         )
         self.__send_file_name_to_sqs(object_key)
 
-    @login_required
+    @jwt_required()
     def get_image(self, share):
         bucket = self.__find_bucket(share.space_id)
         if not bucket:
@@ -65,7 +65,7 @@ class AwsImageService(ImageService):
 
         return self.__generate_presigned_url(bucket, key)
 
-    @login_required
+    @jwt_required()
     def delete_space_directory(self, space):
         bucket = self.__find_bucket(space.id)
         if not bucket:
@@ -74,12 +74,12 @@ class AwsImageService(ImageService):
             self.s3_client.delete_object(Bucket=bucket, Key=obj['Key'])
         self.s3_client.delete_bucket(Bucket=bucket)
 
-    @login_required
+    @jwt_required()
     def get_all_images(self, space_id):
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(self.validator.get_logged_in_user_id())
         )
 
         bucket = self.__find_bucket(space.id)

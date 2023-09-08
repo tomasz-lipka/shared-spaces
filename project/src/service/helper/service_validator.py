@@ -2,6 +2,7 @@
 Module containing the ServiceValidator class.
 """
 from injector import inject
+from flask_jwt_extended import get_jwt_identity
 
 from ...exception.service.service_exception import ServiceException
 from ...exception.service.not_found_exception import NotFoundException
@@ -51,6 +52,11 @@ class ServiceValidator():
             raise NotFoundException(
                 f"User with ID '{user_id}' doesn't exist")
         return user
+
+    def get_logged_in_user_id(self):
+        user = self.repository.get_first_by_filter(
+            User, User.login == get_jwt_identity())
+        return user.id
 
     def validate_assignment(self, space, user):
         """

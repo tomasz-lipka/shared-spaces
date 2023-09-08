@@ -2,6 +2,7 @@
 Module containing the user controller blueprint with REST endpoints 
 for managing user related operations.
 """
+import json
 from flask import Blueprint, request, make_response
 from injector import inject
 
@@ -19,12 +20,12 @@ def login(service: UserService):
     Args:
         service (UserService): Instance of UserService.
     Returns:
-        str: Response message.
+        str: JSON with jwt token.
     """
     try:
         data = request.json
-        service.login(data['login'], data['password'])
-        return make_response('Logged in', 200)
+        token = service.login(data['login'], data['password'])
+        return json.dumps({'access_token': token})
     except ServiceException as exc:
         return make_response(str(exc), exc.error_code)
     except KeyError as key_err:
@@ -53,7 +54,7 @@ def register(service: UserService):
 
 
 @inject
-@user_controller.route('/logout')
+@user_controller.route('/logout', methods=["DELETE"])
 def logout(service: UserService):
     """
     Log the user out.

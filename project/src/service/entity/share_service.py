@@ -2,7 +2,7 @@
 Module containing the ShareService class.
 """
 
-from flask_login import current_user, login_required
+from flask_jwt_extended import jwt_required
 from injector import inject
 
 from ...repository.repository import Repository
@@ -15,7 +15,7 @@ from ..helper.input_validator import validate_usr_input
 class ShareService():
     """
     This class provides methods for creating, retrieving, editing, and deleting shares 
-    within spaces. The methods are designed to work with Flask-Login for authentication. 
+    within spaces. The methods are designed to work with Flask-JWT-Extended for authentication. 
     It utilizes validation methods and makes use of ImageService to work with images.
     """
 
@@ -28,7 +28,7 @@ class ShareService():
         self.image_service = image_service
         self.validator = validator
 
-    @login_required
+    @jwt_required()
     def create_share(self, space_id, text):
         """
         Create a new share within a space after validations.
@@ -41,11 +41,12 @@ class ShareService():
         validate_usr_input(text, 'Text', self.MAX_TEXT_LEN)
         self.validator.validate_assignment(
             self.validator.validate_space(space_id),
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
-        return self.repository.add(Share(space_id, current_user.get_id(), text))
+        return self.repository.add(Share(space_id, self.validator.get_logged_in_user_id(), text))
 
-    @login_required
+    @jwt_required()
     def get_share_by_share_id(self, share_id):
         """
         Retrieve a share by its share ID, validate ownership, and get the associated image URL.
@@ -55,11 +56,12 @@ class ShareService():
             Share: A Share object representing the retrieved share with the image URL included.
         """
         share = self.validator.validate_share(share_id)
-        self.validator.validate_share_owner(share, int(current_user.get_id()))
+        self.validator.validate_share_owner(
+            share, int(self.validator.get_logged_in_user_id()))
         share.image_url = self.image_service.get_image(share)
         return share
 
-    @login_required
+    @jwt_required()
     def get_shares_by_space_id(self, space_id):
         """
         Retrieve shares associated with a specific space based on its ID, validate user access
@@ -72,7 +74,8 @@ class ShareService():
         """
         self.validator.validate_assignment(
             self.validator.validate_space(space_id),
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         shares = self.repository.get_all_by_filter(
             Share, Share.space_id == space_id)
@@ -80,7 +83,7 @@ class ShareService():
             share.image_url = self.image_service.get_image(share)
         return shares
 
-    @login_required
+    @jwt_required()
     def delete_share_by_share_id(self, share_id):
         """
         Delete a share by its ID after owner validation.
@@ -90,11 +93,11 @@ class ShareService():
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(
             share,
-            int(current_user.get_id())
+            int(self.validator.get_logged_in_user_id())
         )
         self.repository.delete_by_id(Share, share.id)
 
-    @login_required
+    @jwt_required()
     def edit_share(self, share_id, text):
         """
         Edit the text of a share by its ID after owner validation.
@@ -106,7 +109,7 @@ class ShareService():
         share = self.validator.validate_share(share_id)
         self.validator.validate_share_owner(
             share,
-            int(current_user.get_id())
+            int(self.validator.get_logged_in_user_id())
         )
         share.text = text
         return self.repository.add(share)

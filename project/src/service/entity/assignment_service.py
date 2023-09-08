@@ -1,7 +1,7 @@
 """
 Module containing the AssignmentService class.
 """
-from flask_login import current_user, login_required
+from flask_jwt_extended import jwt_required
 from injector import inject
 
 from ...repository.repository import Repository
@@ -13,7 +13,7 @@ from ...exception.service.service_exception import ServiceException
 class AssignmentService():
     """
     This class provides methods for fetching, creating, modifying, and deleting user assignments
-    and their associated permissions. The methods make use of the Flask-Login
+    and their associated permissions. The methods make use of the Flask-JWT-Extended
     extension for authentication and utilizes validation methods.
     """
     @inject
@@ -21,7 +21,7 @@ class AssignmentService():
         self.repository = repository
         self.validator = validator
 
-    @login_required
+    @jwt_required()
     def get_users_assignments(self):
         """
         Fetch assignments belonging to the current user.
@@ -30,10 +30,10 @@ class AssignmentService():
         """
         return self.repository.get_all_by_filter(
             Assignment,
-            Assignment.user_id == current_user.get_id()
+            Assignment.user_id == self.validator.get_logged_in_user_id()
         )
 
-    @login_required
+    @jwt_required()
     def get_assignments_by_space_id(self, space_id):
         """
         Retrieve assignments for a specific space, after user and space validation.
@@ -42,7 +42,7 @@ class AssignmentService():
         Returns:
             List[Assignment]: Assignments within the specified space.
         """
-        user = self.validator.validate_user(current_user.get_id())
+        user = self.validator.validate_user(self.validator.get_logged_in_user_id())
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(space, user)
         return self.repository.get_all_by_filter(
@@ -50,7 +50,7 @@ class AssignmentService():
             Assignment.space_id == space.id
         )
 
-    @login_required
+    @jwt_required()
     def create_assignment(self, space_id, user_id):
         """
         Create a new assignment of a space-user pair after validations.
@@ -62,7 +62,7 @@ class AssignmentService():
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(caller_assignment)
         self.validator.validate_no_assignment(
@@ -71,7 +71,7 @@ class AssignmentService():
         )
         self.repository.add(Assignment(space_id, user_id))
 
-    @login_required
+    @jwt_required()
     def delete_assignment_by_space_id_user_id(self, space_id, user_id):
         """
         Delete a space-user pair assignment after validations.
@@ -86,7 +86,7 @@ class AssignmentService():
         )
         caller_assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(self.validator.get_logged_in_user_id())
         )
         if to_be_deleted_assignment == caller_assignment:
             if caller_assignment.is_admin:
@@ -96,7 +96,7 @@ class AssignmentService():
             self.validator.validate_admin(caller_assignment)
         self.repository.delete_by_id(Assignment, to_be_deleted_assignment.id)
 
-    @login_required
+    @jwt_required()
     def change_admin_permission(self, space_id, user_id, is_admin):
         """
         Modify admin permission for a user within a space after validations.
@@ -109,7 +109,7 @@ class AssignmentService():
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(current_user.get_id())
+            self.validator.validate_user(self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(caller_assignment)
         assignment = self.validator.validate_assignment(
@@ -128,7 +128,7 @@ class AssignmentService():
         Args:
             space_id (int): ID of the target space.
         """
-        assignment = Assignment(space_id, current_user.get_id())
+        assignment = Assignment(space_id, self.validator.get_logged_in_user_id())
         assignment.is_admin = True
         self.repository.add(assignment)
 
