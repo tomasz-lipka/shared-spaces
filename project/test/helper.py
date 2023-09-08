@@ -96,11 +96,11 @@ def create_space_as_member(client, space_name):
     return login(client, 'member')
 
 
-def create_share(client, space_id):
+def create_share(client, space_id, token):
     data = {
         "text": "Lorem ipsum"
     }
-    return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data')
+    return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data', headers={"Authorization": f"Bearer {token}"})
 
 
 def create_share_with_image(client, space_id, img_url, token):
