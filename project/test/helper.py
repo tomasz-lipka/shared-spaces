@@ -59,7 +59,7 @@ def register_and_login(client, usr_login):
 
 
 def logout(client):
-    client.get('/logout')
+    client.delete('/logout')
 
 
 def create_space(client, space_name, token):
