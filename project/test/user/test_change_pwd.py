@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, register_and_login
+from test.helper import get_app, logout, purge_db, register_and_login, WRONG_TOKEN
 
 
 class TestChangePwd(TestCase):
@@ -19,9 +19,8 @@ class TestChangePwd(TestCase):
             "new-password": "new_pwd",
             "confirm-password": "new_pwd"
         }
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
         response = self.client.put(
-            '/change-password', json=data, headers={"Authorization": f"Bearer {token}"})
+            '/change-password', json=data, headers={"Authorization": f"Bearer {WRONG_TOKEN}"})
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)

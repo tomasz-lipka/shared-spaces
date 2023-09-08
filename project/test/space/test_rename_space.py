@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     register_and_login, get_app,
     logout, purge_db, create_space_as_admin,
-    create_space_as_member
+    create_space_as_member, WRONG_TOKEN
 )
 
 
@@ -22,9 +22,8 @@ class TestRenameSpace(TestCase):
         data = {
             "new-name": "space_new_name"
         }
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
         response = self.client.put(
-            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {WRONG_TOKEN}"})
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)

@@ -16,6 +16,8 @@ s3_client = boto3.client(
     aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
 )
 
+WRONG_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
+
 
 def get_app():
     app = create_app('test-app.config')
@@ -120,6 +122,7 @@ def create_share_with_image(client, space_id, img_url, token):
 
 
 def find_bucket(bucket_name):
+    time.sleep(1)
     for bucket in s3_client.list_buckets()['Buckets']:
         if bucket["Name"].startswith(bucket_name):
             return True

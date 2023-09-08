@@ -1,7 +1,7 @@
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space,
-    create_space_as_admin, register_and_login
+    register_and_login, WRONG_TOKEN
 )
 
 
@@ -17,8 +17,7 @@ class TestCreateSpace(TestCase):
         purge_db(self.app)
 
     def test_not_logged_in(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
-        response = create_space(self.client, "space-1", token)
+        response = create_space(self.client, "space-1", WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)

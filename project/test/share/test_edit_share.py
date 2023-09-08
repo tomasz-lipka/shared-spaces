@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin,
     edit_share_with_image, create_share, register_and_login,
-    create_share_with_image, are_images_same, login
+    create_share_with_image, are_images_same, login, WRONG_TOKEN
 )
 
 
@@ -93,9 +93,8 @@ class TestEditShare(TestCase):
         self.assertEqual(response.data, b"Text must be provided")
 
     def test_not_logged_in_with_image(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
         response = edit_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
