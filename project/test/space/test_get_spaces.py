@@ -19,10 +19,11 @@ class TestGetSpaces(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        register_and_login(self.client, 'usr')
-        create_space(self.client, "space-1")
-        create_space(self.client, "space-2")
-        response = self.client.get('/spaces')
+        token = register_and_login(self.client, 'usr')
+        create_space(self.client, "space-1", token)
+        create_space(self.client, "space-2", token)
+        response = self.client.get(
+            '/spaces', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,
@@ -44,9 +45,10 @@ class TestGetSpaces(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_member(self):
-        create_space_as_not_member(self.client)
-        create_space(self.client, 'space-2')
-        response = self.client.get('/spaces')
+        token = create_space_as_not_member(self.client)
+        create_space(self.client, 'space-2', token)
+        response = self.client.get(
+            '/spaces', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,

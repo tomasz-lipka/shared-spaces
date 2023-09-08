@@ -22,19 +22,25 @@ class TestRenameSpace(TestCase):
         data = {
             "new-name": "space_new_name"
         }
-        response = self.client.put('/spaces/1', json=data)
-        self.assertEqual(response.status_code, 401)
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(
+            response.data, b'{"msg":"Signature verification failed"}\n')
+        self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         data = {
             "new-name": "space_new_name"
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Space renamed")
 
-        response = self.client.get('/spaces/1')
+        response = self.client.get(
+            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
         expected_data = {
             "id": 1,
             "name": "space_new_name"
@@ -43,64 +49,71 @@ class TestRenameSpace(TestCase):
         self.assertEqual(data, expected_data)
 
     def test_not_exist(self):
-        register_and_login(self.client, 'usr')
+        token = register_and_login(self.client, 'usr')
         data = {
             "new-name": "space_new_name"
         }
-        response = self.client.put('/spaces/999', json=data)
+        response = self.client.put(
+            '/spaces/999', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_not_admin(self):
-        create_space_as_member(self.client, 'space-1')
+        token = create_space_as_member(self.client, 'space-1')
         data = {
             "new-name": "space_new_name"
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_wrong_json_key(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         data = {
             "wrong": "space_new_name"
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'new-name'")
 
     def test_null_json_value(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         data = {
             "new-name": None
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"New name must be provided")
 
     def test_empty_name(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         data = {
             "new-name": "   "
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Name cannot be empty")
 
     def test_min_char_name(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         data = {
             "new-name": "a"
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Name min 3 characters")
 
     def test_max_char_name(self):
-        create_space_as_admin(self.client, 'space-1')
+        token = create_space_as_admin(self.client, 'space-1')
         data = {
             "new-name": "name name name name name"
         }
-        response = self.client.put('/spaces/1', json=data)
+        response = self.client.put(
+            '/spaces/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Name max 15 characters")
