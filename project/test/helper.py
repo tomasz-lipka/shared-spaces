@@ -1,6 +1,7 @@
 from io import BytesIO
 import os
 import time
+import json
 import boto3
 from sqlalchemy import MetaData, Table
 from PIL import Image, ImageChops
@@ -48,7 +49,8 @@ def login(client, usr_login):
         "login": usr_login,
         "password": "pwd"
     }
-    return client.post('/login', json=data)
+    response = client.post('/login', json=data)
+    return json.loads(response.data.decode('utf-8')).get('access_token')
 
 
 def register_and_login(client, usr_login):
@@ -60,22 +62,23 @@ def logout(client):
     client.get('/logout')
 
 
-def create_space(client, space_name):
+def create_space(client, space_name, token):
     data = {
         "name": space_name
     }
-    return client.post('/spaces', json=data)
+    return client.post('/spaces', headers={"Authorization": f"Bearer {token}"}, json=data)
 
 
 def create_space_as_admin(client, space_name):
-    register_and_login(client, 'admin')
-    return create_space(client, space_name)
+    token = register_and_login(client, 'admin')
+    create_space(client, space_name, token)
+    return token
 
 
 def create_space_as_not_member(client):
     create_space_as_admin(client, 'space-1')
     logout(client)
-    register_and_login(client, 'not-member')
+    return register_and_login(client, 'not-member')
 
 
 def add_member(client, space_id, user_id):
@@ -100,7 +103,7 @@ def create_share(client, space_id):
     return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data')
 
 
-def create_share_with_image(client, space_id, img_url):
+def create_share_with_image(client, space_id, img_url, token):
     with open(img_url, 'rb') as image_file:
         data = {
             'text': "Lorem ipsum",
@@ -108,6 +111,7 @@ def create_share_with_image(client, space_id, img_url):
         }
         response = client.post(
             f'/spaces/{space_id}/shares',
+            headers={"Authorization": f"Bearer {token}"},
             data=data,
             content_type='multipart/form-data'
         )
