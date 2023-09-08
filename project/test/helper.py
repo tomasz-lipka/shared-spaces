@@ -81,19 +81,19 @@ def create_space_as_not_member(client):
     return register_and_login(client, 'not-member')
 
 
-def add_member(client, space_id, user_id):
+def add_member(client, space_id, user_id, token):
     data = {
         "user-id": user_id
     }
-    return client.post(f'/spaces/{space_id}/members', json=data)
+    return client.post(f'/spaces/{space_id}/members', json=data, headers={"Authorization": f"Bearer {token}"})
 
 
 def create_space_as_member(client, space_name):
     register(client, 'member')
-    create_space_as_admin(client, space_name)
-    add_member(client, 1, 1)
+    token = create_space_as_admin(client, space_name)
+    add_member(client, 1, 1, token)
     logout(client)
-    login(client, 'member')
+    return login(client, 'member')
 
 
 def create_share(client, space_id):
