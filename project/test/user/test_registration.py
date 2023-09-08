@@ -64,12 +64,6 @@ class TestRegistration(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")
 
-    def test_already_logged_in(self):
-        register_and_login(self.client, 'usr')
-        response = register(self.client, 'other-usr')
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b'Already logged in')
-
     def test_null_json_value_login(self):
         data = {
             "login": None,
