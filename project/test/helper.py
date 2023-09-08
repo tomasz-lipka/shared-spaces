@@ -133,7 +133,7 @@ def are_images_same(data, test_img):
     return not ImageChops.difference(Image.open(test_img), Image.open(image_bytes)).getbbox()
 
 
-def edit_share_with_image(client, share_id, new_img_url):
+def edit_share_with_image(client, share_id, new_img_url, token):
     with open(new_img_url, 'rb') as image_file:
         data = {
             'text': "Edit lorem ipsum",
@@ -142,7 +142,8 @@ def edit_share_with_image(client, share_id, new_img_url):
         response = client.put(
             f'/shares/{share_id}',
             data=data,
-            content_type='multipart/form-data'
+            content_type='multipart/form-data',
+            headers={"Authorization": f"Bearer {token}"}
         )
         time.sleep(1)
         return response
