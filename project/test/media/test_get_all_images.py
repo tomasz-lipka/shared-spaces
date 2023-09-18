@@ -24,17 +24,17 @@ class TestGetAllImages(TestCase):
     def test_normal_run(self):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
+            self.client, 1, 'test-image-2.jpg', token)
         response = self.client.get(
             '/spaces/1/images', headers={"Authorization": f"Bearer {token}"})
         data = json.loads(response.data)
 
         self.assertTrue(are_images_same(
-            data[0], '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg'))
+            data[0], 'test-image-1.jpg'))
         self.assertTrue(are_images_same(
-            data[1], '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg'))
+            data[1], 'test-image-2.jpg'))
 
         self.client.delete(
             '/spaces/1', headers={"Authorization": f"Bearer {token}"})

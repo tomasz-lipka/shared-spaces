@@ -54,14 +54,14 @@ class TestCreateShare(TestCase):
     def test_normal_run_with_image(self):
         token = create_space_as_admin(self.client, 'space-1')
         response = create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share with image created")
         self.client.delete('/spaces/1')
 
     def test_not_logged_in_with_image(self):
         response = create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', WRONG_TOKEN)
+            self.client, 1, 'test-image-1.jpg', WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
@@ -70,7 +70,7 @@ class TestCreateShare(TestCase):
     def test_space_not_exist_with_image(self):
         token = register_and_login(self.client, 'admin')
         response = create_share_with_image(
-            self.client, 999, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 999, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
         self.assertFalse(find_bucket('test-space-id-999'))
@@ -78,7 +78,7 @@ class TestCreateShare(TestCase):
     def test_not_member_with_image(self):
         token = create_space_as_not_member(self.client)
         response = create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
         self.assertFalse(find_bucket('test-space-id-1'))

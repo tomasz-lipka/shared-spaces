@@ -17,6 +17,7 @@ s3_client = boto3.client(
 )
 
 WRONG_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
+RESOURCES = '/test/resources/'
 
 
 def get_app():
@@ -105,8 +106,9 @@ def create_share(client, space_id, token):
     return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data', headers={"Authorization": f"Bearer {token}"})
 
 
-def create_share_with_image(client, space_id, img_url, token):
-    with open(img_url, 'rb') as image_file:
+def create_share_with_image(client, space_id, img_name, token):
+    image_url = os.getcwd() + RESOURCES + img_name
+    with open(image_url, 'rb') as image_file:
         data = {
             'text': "Lorem ipsum",
             'file': (image_file, 'img')
@@ -128,15 +130,17 @@ def find_bucket(bucket_name):
     return False
 
 
-def are_images_same(data, test_img):
+def are_images_same(data, test_img_name):
     response = requests.get(data["image_url"])
     image_bytes = BytesIO(response.content)
+    image_url = os.getcwd() + RESOURCES + test_img_name
 
-    return not ImageChops.difference(Image.open(test_img), Image.open(image_bytes)).getbbox()
+    return not ImageChops.difference(Image.open(image_url), Image.open(image_bytes)).getbbox()
 
 
-def edit_share_with_image(client, share_id, new_img_url, token):
-    with open(new_img_url, 'rb') as image_file:
+def edit_share_with_image(client, share_id, new_img_name, token):
+    image_url = os.getcwd() + RESOURCES + new_img_name
+    with open(image_url, 'rb') as image_file:
         data = {
             'text': "Edit lorem ipsum",
             'file': (image_file, 'img')

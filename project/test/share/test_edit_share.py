@@ -94,7 +94,7 @@ class TestEditShare(TestCase):
 
     def test_not_logged_in_with_image(self):
         response = edit_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', WRONG_TOKEN)
+            self.client, 1, 'test-image-1.jpg', WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
@@ -102,9 +102,9 @@ class TestEditShare(TestCase):
     def test_normal_run_with_image(self):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         response = edit_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
+            self.client, 1, 'test-image-2.jpg', token)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share edited")
 
@@ -112,7 +112,7 @@ class TestEditShare(TestCase):
             '/shares/1', headers={"Authorization": f"Bearer {token}"})
         data = json.loads(response.data)
         self.assertTrue(are_images_same(
-            data, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg'))
+            data, 'test-image-2.jpg'))
         expected_data = {
             "id": 1,
             "space": {
@@ -138,12 +138,12 @@ class TestEditShare(TestCase):
     def test_not_owned_with_image(self):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         logout(self.client)
         token = register_and_login(self.client, 'usr')
 
         response = edit_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
+            self.client, 1, 'test-image-2.jpg', token)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
@@ -155,7 +155,7 @@ class TestEditShare(TestCase):
     def test_not_exist_with_image(self):
         token = register_and_login(self.client, 'usr')
         response = edit_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
+            self.client, 1, 'test-image-2.jpg', token)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b'No such share')
 

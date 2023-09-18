@@ -59,7 +59,7 @@ class TestDeleteSpace(TestCase):
     def test_delete_s3_bucket(self):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         self.client.delete(
             '/spaces/1', headers={"Authorization": f"Bearer {token}"})
 

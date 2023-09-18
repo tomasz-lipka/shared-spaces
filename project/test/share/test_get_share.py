@@ -70,7 +70,7 @@ class TestGetShare(TestCase):
     def test_normal_run_with_image(self):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         create_space(self.client, 'space-2', token)
         logout(self.client)
         register(self.client, 'usr')
@@ -79,9 +79,9 @@ class TestGetShare(TestCase):
         logout(self.client)
         token = login(self.client, 'usr')
         create_share_with_image(
-            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-2.jpg', token)
+            self.client, 2, 'test-image-2.jpg', token)
         create_share_with_image(
-            self.client, 2, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg', token)
+            self.client, 2, 'test-image-3.jpg', token)
 
         response = self.client.get(
             '/shares/3', headers={"Authorization": f"Bearer {token}"})
@@ -102,7 +102,7 @@ class TestGetShare(TestCase):
         data = json.loads(response.data)
 
         self.assertTrue(are_images_same(
-            data, '/workspaces/shared-spaces/project/test/resources/test-image-3.jpg'))
+            data, 'test-image-3.jpg'))
 
         data.pop("timestamp", None)
         data.pop("image_url", None)
@@ -121,7 +121,7 @@ class TestGetShare(TestCase):
     def test_not_owned_with_image(self):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, '/workspaces/shared-spaces/project/test/resources/test-image-1.jpg', token)
+            self.client, 1, 'test-image-1.jpg', token)
         logout(self.client)
         token = register_and_login(self.client, 'usr')
         response = self.client.get(
