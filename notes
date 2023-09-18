@@ -1,22 +1,26 @@
 EXECUTE EVERYTHING FROM
-	/project
+/project
 +--------------------------------------------------------------------+
+
 ACTIVATE VIRTUAL ENVIRONMENT
-	. .venv/bin/activate
+. .venv/bin/activate
 +--------------------------------------------------------------------+
+
 TEST
-	ALL MODULES
-		python -m unittest
-	SINGLE MODULE
-		python -m unittest test.<module-name>
+- ALL MODULES
+python -m unittest
+- SINGLE MODULE
+python -m unittest test.<module-name>
 +--------------------------------------------------------------------+
+
 TEST WITH COVERAGE
-	coverage run -m unittest
-	coverage html
+coverage run -m unittest
+coverage html
 +--------------------------------------------------------------------+
+
 LYNTING
-	ALL MODULES
+- ALL MODULES
 		pylint ./src
-	SINGLE MODULE
+- SINGLE MODULE
 		pylint <module-name>.py
 +--------------------------------------------------------------------+
