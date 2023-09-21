@@ -24,3 +24,5 @@ LYNTING
 - SINGLE MODULE
 		pylint <module-name>.py
 +--------------------------------------------------------------------+
+RUN WSGI SERVER
+gunicorn -w 4 -b 0.0.0.0 'app:create_app("<your-file>.config")'

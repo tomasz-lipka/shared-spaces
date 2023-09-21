@@ -17,6 +17,7 @@ Author:
     Tomasz Lipka
 """
 import secrets
+from datetime import timedelta
 from flask import Flask
 from flask_cors import CORS
 from flask_injector import FlaskInjector
@@ -36,11 +37,15 @@ from appmodules import AppModules
 
 
 def create_app(config_filename):
+    print('start')
+    
     app = Flask(__name__)
     CORS(app)
+
     app.config.from_pyfile(config_filename)
     app.config["SECRET_KEY"] = secrets.token_hex(32)
     app.config["JWT_SECRET_KEY"] = secrets.token_hex(32)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=999)
 
     app.register_blueprint(user_controller)
     app.register_blueprint(space_controller)
