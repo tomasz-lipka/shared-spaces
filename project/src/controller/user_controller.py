@@ -22,8 +22,6 @@ def login(service: UserService):
     Returns:
         str: JSON with jwt token.
     """
-    print('login')
-
     try:
         data = request.json
         token = service.login(data['login'], data['password'])

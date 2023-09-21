@@ -37,8 +37,6 @@ from appmodules import AppModules
 
 
 def create_app(config_filename):
-    print('start')
-    
     app = Flask(__name__)
     CORS(app)
 
