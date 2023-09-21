@@ -9,14 +9,16 @@ The application uses SQLAlchemy for database operations.
 And Amazon Web Services: SQS, Lambda and S3 Buckets to maintain images.
 
 Usage:
-    export AWS_ACCESS_KEY_ID=<access key>
-    export AWS_SECRET_ACCESS_KEY=<secret key>
+    export AWS_ACCESS_KEY_ID=<value>
+    export AWS_SECRET_ACCESS_KEY=<value>
+    export SECRET_KEY=<value>
+    export JWT_SECRET_KEY=<value>
     flask --app 'app:create_app("<your-file>.config")' run
 
 Author:
     Tomasz Lipka
 """
-import secrets
+import os
 from datetime import timedelta
 from flask import Flask
 from flask_cors import CORS
@@ -41,8 +43,8 @@ def create_app(config_filename):
     CORS(app)
 
     app.config.from_pyfile(config_filename)
-    app.config["SECRET_KEY"] = secrets.token_hex(32)
-    app.config["JWT_SECRET_KEY"] = secrets.token_hex(32)
+    app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY')
+    app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=999)
 
     app.register_blueprint(user_controller)
