@@ -81,6 +81,18 @@ class Repository(ABC):
         """
 
     @abstractmethod
+    def get_all_by_two_filters(self, model, query_filter1, query_filter2):
+        """
+        Abstract method to retrieve all objects from the database based on two filters.
+        Args:
+            model: The model class representing the type of object to be retrieved.
+            query_filter1: The first filter condition for the query.
+            query_filter2: The second filter condition for the query.
+        Returns:
+            list: A list of retrieved objects.
+        """
+
+    @abstractmethod
     def create_schema(self):
         """
         Create a schema according to the model entities. 

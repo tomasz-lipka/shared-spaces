@@ -59,6 +59,14 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 
+        data = {
+            "is-admin": False
+        }
+        response = self.client.put(
+            '/spaces/1/members/1', json=data, headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Admin permission changed")
+
     def test_space_not_exist(self):
         token = register_and_login(self.client, 'admin')
         data = {
@@ -139,3 +147,13 @@ class TestChangeAdmin(TestCase):
             '/spaces/1/members/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Is admin must be provided")
+
+    def test_last_admin(self):
+        token = create_space_as_admin(self.client, 'space-1')
+        data = {
+            "is-admin": False
+        }
+        response = self.client.put(
+            '/spaces/1/members/1', json=data, headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Space must have at least one admin")

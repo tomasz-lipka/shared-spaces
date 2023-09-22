@@ -42,7 +42,8 @@ class AssignmentService():
         Returns:
             List[Assignment]: Assignments within the specified space.
         """
-        user = self.validator.validate_user(self.validator.get_logged_in_user_id())
+        user = self.validator.validate_user(
+            self.validator.get_logged_in_user_id())
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(space, user)
         return self.repository.get_all_by_filter(
@@ -62,7 +63,8 @@ class AssignmentService():
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(self.validator.get_logged_in_user_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(caller_assignment)
         self.validator.validate_no_assignment(
@@ -86,7 +88,8 @@ class AssignmentService():
         )
         caller_assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(self.validator.get_logged_in_user_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         if to_be_deleted_assignment == caller_assignment:
             if caller_assignment.is_admin:
@@ -109,7 +112,8 @@ class AssignmentService():
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,
-            self.validator.validate_user(self.validator.get_logged_in_user_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(caller_assignment)
         assignment = self.validator.validate_assignment(
@@ -118,7 +122,7 @@ class AssignmentService():
         )
         if not isinstance(is_admin, bool):
             raise ServiceException('"is admin" must be type boolean', 400)
-
+        self.validator.validate_last_admin(assignment, is_admin)
         assignment.is_admin = is_admin
         self.repository.add(assignment)
 
@@ -128,7 +132,8 @@ class AssignmentService():
         Args:
             space_id (int): ID of the target space.
         """
-        assignment = Assignment(space_id, self.validator.get_logged_in_user_id())
+        assignment = Assignment(
+            space_id, self.validator.get_logged_in_user_id())
         assignment.is_admin = True
         self.repository.add(assignment)
 

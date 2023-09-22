@@ -48,5 +48,8 @@ class SqlAlchemyRepository(Repository):
     def get_all_by_filter(self, model, query_filter):
         return self.session.query(model).filter(query_filter).all()
 
+    def get_all_by_two_filters(self, model, query_filter1, query_filter2):
+        return self.session.query(model).filter(query_filter1).filter(query_filter2).all()
+
     def create_schema(self):
         Base.metadata.create_all(self.engine)

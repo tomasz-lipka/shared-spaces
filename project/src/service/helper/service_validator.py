@@ -54,6 +54,11 @@ class ServiceValidator():
         return user
 
     def get_logged_in_user_id(self):
+        """
+        Retrieves user_id of the logged-in user based on the JWT identity.
+        Returns:
+            int: The user id.
+        """
         user = self.repository.get_first_by_filter(
             User, User.login == get_jwt_identity())
         return user.id
@@ -141,3 +146,17 @@ class ServiceValidator():
         """
         if usr_input is None:
             raise ServiceException(f"{input_name} must be provided", 400)
+
+    def validate_last_admin(self, assignment, is_admin):
+        """
+        Validate if space has at least one admin before changing admin permissions.
+        Args:
+            assignment (Assignment): The assignment object for validation.
+            is_admin: admin state.
+        """
+        if not is_admin:
+            assignments = self.repository.get_all_by_two_filters(
+                Assignment, bool(Assignment.is_admin), Assignment.space_id == assignment.space_id)
+            if len(assignments) == 1:
+                raise ServiceException(
+                    'Space must have at least one admin', 400)
