@@ -156,7 +156,7 @@ class ServiceValidator():
         """
         if not is_admin:
             assignments = self.repository.get_all_by_two_filters(
-                Assignment, bool(Assignment.is_admin), Assignment.space_id == assignment.space_id)
+                Assignment, Assignment.is_admin == True, Assignment.space_id == assignment.space_id)
             if len(assignments) == 1:
                 raise ServiceException(
                     'Space must have at least one admin', 400)

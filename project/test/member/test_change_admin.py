@@ -157,3 +157,15 @@ class TestChangeAdmin(TestCase):
             '/spaces/1/members/1', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Space must have at least one admin")
+
+    def test_only_admin(self):
+        register(self.client, 'member')
+        token = create_space_as_admin(self.client, 'space-1')
+        data = {
+            "is-admin": False
+        }
+        add_member(self.client, 1, 1, token)
+        response = self.client.put(
+            '/spaces/1/members/2', json=data, headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Space must have at least one admin")
