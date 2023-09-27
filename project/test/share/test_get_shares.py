@@ -1,4 +1,5 @@
 import json
+import time
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_share, register_and_login, create_space,
@@ -33,15 +34,27 @@ class TestGetShares(TestCase):
         token = register_and_login(self.client, 'admin-2')
         create_space(self.client, 'space-2', token)
         create_share(self.client, 2, token)
+        time.sleep(0.5)
         add_member(self.client, 2, 2, token)
         logout(self.client)
 
         token = login(self.client, 'member-1')
         create_share(self.client, 2, token)
+        time.sleep(0.5)
 
         response = self.client.get(
             '/spaces/2/shares', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
+            {
+                "id": 3,
+                "user": {
+                    "id": 2,
+                    "login": "member-1"
+                },
+                "text": "Lorem ipsum",
+                # "timestamp":
+                "image_url": None
+            },
             {
                 "id": 2,
                 "user": {
@@ -49,16 +62,6 @@ class TestGetShares(TestCase):
                     "login": "admin-2"
                 },
                 "text": "Lorem ipsum",
-                # "timestamp":
-                "image_url": None
-            },
-            {
-                "id": 3,
-                "text": "Lorem ipsum",
-                "user": {
-                    "id": 2,
-                    "login": "member-1"
-                },
                 # "timestamp":
                 "image_url": None
             }
@@ -87,13 +90,36 @@ class TestGetShares(TestCase):
         token = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
             self.client, 1, 'test-image-1.jpg', token)
+        time.sleep(0.5)
         create_share_with_image(
             self.client, 1, 'test-image-2.jpg', token)
+        time.sleep(0.5)
         create_share(self.client, 1, token)
+        time.sleep(0.5)
 
         response = self.client.get(
             '/spaces/1/shares', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
+            {
+                "id": 3,
+                "user": {
+                    "id": 1,
+                    "login": "admin"
+                },
+                "text": "Lorem ipsum",
+                # "timestamp":
+                "image_url": None
+            },
+            {
+                "id": 2,
+                "user": {
+                    "id": 1,
+                    "login": "admin"
+                },
+                "text": "Lorem ipsum",
+                # "timestamp":
+                # "image_url":
+            },
             {
                 "id": 1,
                 "user": {
@@ -103,38 +129,18 @@ class TestGetShares(TestCase):
                 "text": "Lorem ipsum",
                 # "timestamp":
                 # "image_url":
-            },
-            {
-                "id": 2,
-                "text": "Lorem ipsum",
-                "user": {
-                    "id": 1,
-                    "login": "admin"
-                },
-                # "timestamp":
-                # "image_url":
-            },
-            {
-                "id": 3,
-                "text": "Lorem ipsum",
-                "user": {
-                    "id": 1,
-                    "login": "admin"
-                },
-                # "timestamp":
-                "image_url": None
             }
         ]
         data = json.loads(response.data)
 
         self.assertTrue(are_images_same(
-            data[0], 'test-image-1.jpg'))
+            data[2], 'test-image-1.jpg'))
 
         self.assertTrue(are_images_same(
             data[1], 'test-image-2.jpg'))
 
-        data[0].pop("image_url", None)
         data[1].pop("image_url", None)
+        data[2].pop("image_url", None)
         for item in data:
             item.pop("timestamp", None)
         self.assertEqual(data, expected_data)

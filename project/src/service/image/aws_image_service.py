@@ -20,7 +20,7 @@ class AwsImageService(ImageService):
     """
 
     FILE_FORMAT = '.jpg'
-    MEDIA_URL_EXPIRES_IN = 3
+    MEDIA_URL_EXPIRES_IN = 10
 
     def __init__(self, queue_url, s3_temp_bucket, mode, validator: ServiceValidator, ):
         self.queue_url = queue_url

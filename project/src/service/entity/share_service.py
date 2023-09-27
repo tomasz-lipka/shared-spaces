@@ -65,7 +65,7 @@ class ShareService():
     def get_shares_by_space_id(self, space_id):
         """
         Retrieve shares associated with a specific space based on its ID, validate user access
-        and retrieve the image URL associated with each share.
+        and retrieve the image URL associated with each share. Sort the shares desc by timestamp.
         Args:
             space_id (int): The ID of the space for which shares should be retrieved.
         Returns:
@@ -79,6 +79,7 @@ class ShareService():
         )
         shares = self.repository.get_all_by_filter(
             Share, Share.space_id == space_id)
+        shares = sorted(shares, key=lambda share: share.timestamp, reverse=True)
         for share in shares:
             share.image_url = self.image_service.get_image(share)
         return shares
