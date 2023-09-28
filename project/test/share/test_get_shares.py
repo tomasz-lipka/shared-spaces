@@ -40,7 +40,6 @@ class TestGetShares(TestCase):
 
         token = login(self.client, 'member-1')
         create_share(self.client, 2, token)
-        time.sleep(0.5)
 
         response = self.client.get(
             '/spaces/2/shares', headers={"Authorization": f"Bearer {token}"})

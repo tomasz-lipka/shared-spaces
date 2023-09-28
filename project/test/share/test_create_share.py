@@ -57,7 +57,8 @@ class TestCreateShare(TestCase):
             self.client, 1, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Share with image created")
-        self.client.delete('/spaces/1')
+        self.client.delete(
+            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
 
     def test_not_logged_in_with_image(self):
         response = create_share_with_image(
