@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space,
@@ -25,8 +26,13 @@ class TestCreateSpace(TestCase):
     def test_normal_run(self):
         token = register_and_login(self.client, 'admin')
         response = create_space(self.client, 'space-1', token)
+        expected_data = {
+            "id": 1,
+            "name": "space-1"
+        }
+        data = json.loads(response.data)
+        self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"Space created")
 
     def test_wrong_json_key(self):
         token = register_and_login(self.client, 'usr')

@@ -20,11 +20,11 @@ def post_space(service: SpaceService):
     Args:
         service (SpaceService): Instance of SpaceService.
     Returns:
-        str: Response message.
+        str: JSON representation of the created space.
     """
     try:
-        service.create_space(request.json['name'])
-        return make_response('Space created', 200)
+        space = service.create_space(request.json['name'])
+        return json.dumps(space.to_dict())
     except KeyError as key_err:
         return make_response('Invalid payload: ' + str(key_err), 400)
     except ServiceException as exc:

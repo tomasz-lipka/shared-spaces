@@ -43,6 +43,7 @@ class SpaceService():
         validate_usr_input(name, 'Name', self.MAX_NAME_LEN)
         space_id = self.repository.add(Space(name))
         self.assignment_service.create_assignment_with_admin(space_id)
+        return self.get_space_by_space_id(space_id)
 
     @jwt_required()
     def get_space_by_space_id(self, space_id):
