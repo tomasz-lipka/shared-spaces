@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, create_space_as_admin, register_and_login,
@@ -26,8 +27,25 @@ class TestCreateShare(TestCase):
     def test_normal_run(self):
         token = create_space_as_admin(self.client, 'space-1')
         response = create_share(self.client, 1, token)
+        expected_data = {
+            "id": 1,
+            "space": {
+                "id": 1,
+                "name": "space-1"
+            },
+            "user": {
+                "id": 1,
+                "login": "admin"
+            },
+            "text": "Lorem ipsum"
+            # "timestamp":
+            # "image_url":
+        }
+        data = json.loads(response.data)
+        data.pop("timestamp", None)
+        data.pop("image_url", None)
+        self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"Share created")
 
     def test_space_not_exist(self):
         token = register_and_login(self.client, 'admin')
@@ -56,7 +74,6 @@ class TestCreateShare(TestCase):
         response = create_share_with_image(
             self.client, 1, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"Share with image created")
         self.client.delete(
             '/spaces/1', headers={"Authorization": f"Bearer {token}"})
 

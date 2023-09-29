@@ -37,8 +37,8 @@ def post_share(space_id, image_service: ImageService, service: ShareService):
                 request.files['file'],
                 share_id
             )
-            return make_response('Share with image created', 200)
-        return make_response('Share created', 200)
+        share = service.get_share_by_share_id(share_id)
+        return json.dumps(share.to_dict())
     except ServiceException as exc:
         return make_response(str(exc), exc.error_code)
 
