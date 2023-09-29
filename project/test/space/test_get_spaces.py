@@ -20,22 +20,22 @@ class TestGetSpaces(TestCase):
 
     def test_normal_run(self):
         token = register_and_login(self.client, 'usr')
-        create_space(self.client, "space-1", token)
-        create_space(self.client, "space-2", token)
+        response, space_id_1 = create_space(self.client, "space-1", token)
+        response, space_id_2 = create_space(self.client, "space-2", token)
         response = self.client.get(
             '/spaces', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,
                 "space": {
-                    "id": 1,
+                    "id": space_id_1,
                     "name": "space-1"
                 }
             },
             {
                 "is_admin": True,
                 "space": {
-                    "id": 2,
+                    "id": space_id_2,
                     "name": "space-2"
                 }
             }
@@ -45,15 +45,15 @@ class TestGetSpaces(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_member(self):
-        token = create_space_as_not_member(self.client)
-        create_space(self.client, 'space-2', token)
+        token, space_id_1 = create_space_as_not_member(self.client)
+        response, space_id_2 = create_space(self.client, 'space-2', token)
         response = self.client.get(
             '/spaces', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,
                 "space": {
-                    "id": 2,
+                    "id": space_id_2,
                     "name": "space-2"
                 }
             }

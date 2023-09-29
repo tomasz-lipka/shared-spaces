@@ -22,45 +22,45 @@ class TestDeleteSpace(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token = create_space_as_admin(self.client, 'space-1')
+        token, space_id = create_space_as_admin(self.client, 'space-1')
         response = self.client.delete(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Space deleted")
 
         response = self.client.get(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"Space with ID '1' doesn't exist")
+        self.assertEqual(
+            response.data, f"Space with ID '{space_id}' doesn't exist".encode())
 
     def test_not_exist(self):
         token = register_and_login(self.client, 'usr')
         response = self.client.delete(
-            '/spaces/999', headers={"Authorization": f"Bearer {token}"})
+            '/spaces/999999999', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
+        self.assertEqual(response.data, b"Space with ID '999999999' doesn't exist")
 
     def test_not_admin(self):
-        token = create_space_as_member(self.client, 'space-1')
+        token, space_id = create_space_as_member(self.client, 'space-1')
         response = self.client.delete(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_not_empty(self):
         register(self.client, 'member')
-        token = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, 1, 'member', token)
+        token, space_id = create_space_as_admin(self.client, 'space-1')
+        add_member(self.client, space_id, 'member', token)
         response = self.client.delete(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b'Space not empty')
 
     def test_delete_s3_bucket(self):
-        token = create_space_as_admin(self.client, 'space-1')
+        token, space_id = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, 'test-image-1.jpg', token)
+            self.client, space_id, 'test-image-1.jpg', token)
         self.client.delete(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
-
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertFalse(find_bucket('test-space-id-1'))

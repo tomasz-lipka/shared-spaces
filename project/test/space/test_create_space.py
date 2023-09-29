@@ -18,20 +18,18 @@ class TestCreateSpace(TestCase):
         purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = create_space(self.client, "space-1", WRONG_TOKEN)
+        response, space_id = create_space(self.client, "space-1", WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
         token = register_and_login(self.client, 'admin')
-        response = create_space(self.client, 'space-1', token)
-        expected_data = {
-            "id": 1,
-            "name": "space-1"
-        }
+        response, space_id = create_space(self.client, 'space-1', token)
         data = json.loads(response.data)
-        self.assertEqual(data, expected_data)
+        self.assertTrue("id" in data)
+        self.assertTrue(isinstance(data["id"], int) and data["id"] > 0)
+        self.assertEqual(data["name"], "space-1")
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_json_key(self):
