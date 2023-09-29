@@ -44,9 +44,9 @@ def register(service: UserService):
     """
     try:
         data = request.json
-        service.create_user(
+        user = service.create_user(
             data['login'], data['password'], data['confirm-password'])
-        return make_response('User created', 200)
+        return json.dumps(user.to_dict())
     except ServiceException as exc:
         return make_response(str(exc), exc.error_code)
     except KeyError as key_err:

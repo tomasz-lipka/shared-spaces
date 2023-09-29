@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 from test.helper import get_app, logout, purge_db, register, register_and_login
 
@@ -14,9 +15,11 @@ class TestRegistration(TestCase):
         purge_db(self.app)
 
     def test_normal_run(self):
-        response = register(self.client, "usr")
+        response, user = register(self.client, "usr")
+        self.assertTrue("id" in user)
+        self.assertTrue(isinstance(user["id"], int) and user["id"] > 0)
+        self.assertEqual(user["login"], "usr")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"User created")
 
     def test_registration_pwd_not_same(self):
         data = {
@@ -30,7 +33,7 @@ class TestRegistration(TestCase):
 
     def test_user_already_exists(self):
         register(self.client, "usr")
-        response = register(self.client, "usr")
+        response, user = register(self.client, "usr")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"User already exists")
 

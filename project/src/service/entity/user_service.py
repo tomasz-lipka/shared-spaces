@@ -63,6 +63,7 @@ class UserService():
         if self.repository.get_first_by_filter(User, User.login == user_login):
             raise ServiceException('User already exists', 400)
         self.repository.add(User(user_login, self.__get_hashed(password)))
+        return self.validator.validate_user_by_login(user_login)
 
     @jwt_required()
     def logout(self):
