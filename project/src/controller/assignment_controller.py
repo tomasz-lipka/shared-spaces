@@ -53,7 +53,7 @@ def get_members(space_id, service: AssignmentService):
 @assignment_controller.route('/spaces/<int:space_id>/members', methods=["POST"])
 def post_member(space_id, service: AssignmentService):
     """
-    Add a member to a space. Accept JSON payload with 'user-id'.
+    Add a member to a space. Accept JSON payload with 'login' of the new member.
     Args:
         space_id (int): ID of the target space.
         service (AssignmentService): Instance of AssignmentService.
@@ -61,7 +61,7 @@ def post_member(space_id, service: AssignmentService):
         str: Response message.
     """
     try:
-        service.create_assignment(space_id, request.json['user-id'])
+        service.create_assignment(space_id, request.json['login'])
         return make_response('Member added', 200)
     except ServiceException as exc:
         return make_response(str(exc), exc.error_code)

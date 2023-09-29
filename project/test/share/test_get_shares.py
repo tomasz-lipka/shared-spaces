@@ -35,7 +35,7 @@ class TestGetShares(TestCase):
         create_space(self.client, 'space-2', token)
         create_share(self.client, 2, token)
         time.sleep(0.5)
-        add_member(self.client, 2, 2, token)
+        add_member(self.client, 2, 'member-1', token)
         logout(self.client)
 
         token = login(self.client, 'member-1')

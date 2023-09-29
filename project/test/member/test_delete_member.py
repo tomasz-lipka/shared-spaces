@@ -25,7 +25,7 @@ class TestDeleteMember(TestCase):
     def test_del_other_member_as_admin(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
 
         response = self.client.delete(
             '/spaces/1/members/1', headers={"Authorization": f"Bearer {token}"})
@@ -87,7 +87,7 @@ class TestDeleteMember(TestCase):
     def test_delete_member_from_other_space(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, 1, 1, token)
+        add_member(self.client, 1, 'member', token)
         logout(self.client)
         token = create_space_as_admin(self.client, 'space-2')
         response = self.client.delete(

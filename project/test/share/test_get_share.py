@@ -75,7 +75,7 @@ class TestGetShare(TestCase):
         logout(self.client)
         register(self.client, 'usr')
         token = login(self.client, 'admin')
-        add_member(self.client, 2, 2, token)
+        add_member(self.client, 2, 'usr', token)
         logout(self.client)
         token = login(self.client, 'usr')
         create_share_with_image(

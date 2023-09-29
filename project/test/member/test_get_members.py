@@ -27,8 +27,8 @@ class TestGetMembers(TestCase):
         register(self.client, 'member-2')
         token = create_space_as_admin(self.client, 'space-1')
         create_space(self.client, 'space-2', token)
-        add_member(self.client, 1, 1, token)
-        add_member(self.client, 2, 2, token)
+        add_member(self.client, 1, 'member-1', token)
+        add_member(self.client, 2, 'member-2', token)
 
         response = self.client.get(
             '/spaces/1/members', headers={"Authorization": f"Bearer {token}"})

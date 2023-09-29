@@ -19,7 +19,7 @@ class TestAddMember(TestCase):
         purge_db(self.app)
 
     def test_not_logged_in(self):
-        response = add_member(self.client, 1, 1, WRONG_TOKEN)
+        response = add_member(self.client, 1, 'member', WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
@@ -27,7 +27,7 @@ class TestAddMember(TestCase):
     def test_normal_run(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Member added")
@@ -35,21 +35,21 @@ class TestAddMember(TestCase):
     def test_space_not_exist(self):
         register(self.client, 'member')
         token = register_and_login(self.client, 'admin')
-        response = add_member(self.client, 999, 1, token)
+        response = add_member(self.client, 999, 'member', token)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
 
     def test_member_not_exist(self):
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 999, token)
+        response = add_member(self.client, 1, 'member', token)
 
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"User with ID '999' doesn't exist")
+        self.assertEqual(response.data, b"User with login 'member' doesn't exist")
 
     def test_not_admin(self):
         token = create_space_as_member(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
@@ -57,8 +57,8 @@ class TestAddMember(TestCase):
     def test_add_member_already_added(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
+        response = add_member(self.client, 1, 'member', token)
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"User-space pair already exists")
@@ -67,12 +67,12 @@ class TestAddMember(TestCase):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, "space-1")
         data = {
-            "user-id": "wrong"
+            "login": "wrong"
         }
         response = self.client.post(
             '/spaces/1/members', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"User with ID 'wrong' doesn't exist")
+        self.assertEqual(response.data, b"User with login 'wrong' doesn't exist")
 
     def test_wrong_json_key(self):
         register(self.client, 'member')
@@ -84,16 +84,16 @@ class TestAddMember(TestCase):
             '/spaces/1/members', json=data, headers={"Authorization": f"Bearer {token}"})
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"Invalid payload: 'user-id'")
+        self.assertEqual(response.data, b"Invalid payload: 'login'")
 
     def test_null_json_value(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, "space-1")
         data = {
-            "user-id": None
+            "login": None
         }
         response = self.client.post(
             '/spaces/1/members', json=data, headers={"Authorization": f"Bearer {token}"})
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"User id must be provided")
+        self.assertEqual(response.data, b"Login must be provided")

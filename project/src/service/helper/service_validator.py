@@ -53,6 +53,21 @@ class ServiceValidator():
                 f"User with ID '{user_id}' doesn't exist")
         return user
 
+    def validate_user_by_login(self, user_login):
+        """
+        Validate if user exists and retrieve a user by their login.
+        Args:
+            member_login (str): Login of the target user.
+        Returns:
+            User: The validated user object.
+        """
+        user = self.repository.get_first_by_filter(
+            User, User.login == user_login)
+        if not user:
+            raise NotFoundException(
+                f"User with login '{user_login}' doesn't exist")
+        return user
+
     def get_logged_in_user_id(self):
         """
         Retrieves user_id of the logged-in user based on the JWT identity.

@@ -50,7 +50,7 @@ class TestDeleteSpace(TestCase):
     def test_not_empty(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, 1, 1, token)
+        add_member(self.client, 1, 'member', token)
         response = self.client.delete(
             '/spaces/1', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)

@@ -28,7 +28,7 @@ class TestChangeAdmin(TestCase):
     def test_normal_run(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
         data = {
             "is-admin": True
         }
@@ -90,7 +90,7 @@ class TestChangeAdmin(TestCase):
     def test_member_from_other_space(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, 1, 1, token)
+        add_member(self.client, 1, 'member', token)
         logout(self.client)
         token = create_space_as_admin(self.client, 'space-2')
 
@@ -115,7 +115,7 @@ class TestChangeAdmin(TestCase):
     def test_payload_invalid_type(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
         data = {
             "is-admin": 123
         }
@@ -127,7 +127,7 @@ class TestChangeAdmin(TestCase):
     def test_wrong_json_key(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
         data = {
             "wrong": True
         }
@@ -139,7 +139,7 @@ class TestChangeAdmin(TestCase):
     def test_null_json_value(self):
         register(self.client, 'member')
         token = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, 1, 1, token)
+        response = add_member(self.client, 1, 'member', token)
         data = {
             "is-admin": None
         }
@@ -164,7 +164,7 @@ class TestChangeAdmin(TestCase):
         data = {
             "is-admin": False
         }
-        add_member(self.client, 1, 1, token)
+        add_member(self.client, 1, 'member', token)
         response = self.client.put(
             '/spaces/1/members/2', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)

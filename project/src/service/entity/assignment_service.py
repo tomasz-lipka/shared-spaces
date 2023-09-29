@@ -52,14 +52,14 @@ class AssignmentService():
         )
 
     @jwt_required()
-    def create_assignment(self, space_id, user_id):
+    def create_assignment(self, space_id, member_login):
         """
         Create a new assignment of a space-user pair after validations.
         Args:
             space_id (int): ID of the target space.
-            user_id (int): ID of the user to be assigned.
+            member_login (str): Login of the user to be assigned.
         """
-        self.validator.validate_not_null(user_id, 'User id')
+        self.validator.validate_not_null(member_login, 'Login')
         space = self.validator.validate_space(space_id)
         caller_assignment = self.validator.validate_assignment(
             space,
@@ -67,11 +67,12 @@ class AssignmentService():
                 self.validator.get_logged_in_user_id())
         )
         self.validator.validate_admin(caller_assignment)
+        user = self.validator.validate_user_by_login(member_login)
         self.validator.validate_no_assignment(
             space,
-            self.validator.validate_user(user_id)
+            user
         )
-        self.repository.add(Assignment(space_id, user_id))
+        self.repository.add(Assignment(space_id, user.id))
 
     @jwt_required()
     def delete_assignment_by_space_id_user_id(self, space_id, user_id):
