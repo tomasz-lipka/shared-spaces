@@ -1,6 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, register, register_and_login
+from test.helper import get_app, logout, purge_db, register
 
 
 class TestRegistration(TestCase):

@@ -26,7 +26,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
@@ -47,7 +47,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_old_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "wrong",
             "new-password": "new_pwd",
@@ -59,7 +59,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"Wrong password")
 
     def test_wrong_confirmation(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
@@ -71,7 +71,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"New passwords don\'t match")
 
     def test_wrong_json_key_old_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "wrong": "pwd",
             "new-password": "new_pwd",
@@ -83,7 +83,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"Invalid payload: 'old-password'")
 
     def test_wrong_json_key_new_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "wrong": "new_pwd",
@@ -107,7 +107,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"Invalid payload: 'confirm-password'")
 
     def test_null_json_value_old_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": None,
             "new-password": "new_pwd",
@@ -119,7 +119,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"Old password must be provided")
 
     def test_null_json_value_new_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": None,
@@ -131,7 +131,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"New password must be provided")
 
     def test_null_json_value_confirm_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "new_pwd",
@@ -143,7 +143,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"Confirm password must be provided")
 
     def test_empty_new_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "   ",
@@ -155,7 +155,7 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.data, b"New password cannot be empty")
 
     def test_min_char_new_pwd(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         data = {
             "old-password": "pwd",
             "new-password": "a",

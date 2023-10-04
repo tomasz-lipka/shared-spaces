@@ -1,6 +1,5 @@
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, login, register, register_and_login
-import json
+from test.helper import get_app, logout, purge_db, register, register_and_login
 
 
 class TestLogin(TestCase):
@@ -44,7 +43,7 @@ class TestLogin(TestCase):
         self.assertEqual(response.data, b"Wrong login and/or password")
 
     def test_login_and_logout(self):
-        token = register_and_login(self.client, "usr")
+        token, _ = register_and_login(self.client, "usr")
         response = self.client.delete(
             '/logout', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
