@@ -15,7 +15,13 @@ class TestRegistration(TestCase):
         purge_db(self.app)
 
     def test_normal_run(self):
-        response, user = register(self.client, "usr")
+        data = {
+            "login": "usr",
+            "password": "pwd",
+            "confirm-password": "pwd"
+        }
+        response = self.client.post('/register', json=data)
+        user = json.loads(response.data.decode('utf-8'))
         self.assertTrue("id" in user)
         self.assertTrue(isinstance(user["id"], int) and user["id"] > 0)
         self.assertEqual(user["login"], "usr")
@@ -33,7 +39,12 @@ class TestRegistration(TestCase):
 
     def test_user_already_exists(self):
         register(self.client, "usr")
-        response, user = register(self.client, "usr")
+        data = {
+            "login": "usr",
+            "password": "pwd",
+            "confirm-password": "pwd"
+        }
+        response = self.client.post('/register', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"User already exists")
 

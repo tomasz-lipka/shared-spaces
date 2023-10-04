@@ -44,7 +44,11 @@ def register(client, usr_login):
         "password": "pwd",
         "confirm-password": "pwd"
     }
-    return client.post('/register', json=data)
+    response = client.post('/register', json=data)
+    user = None
+    if response.status_code == 200:
+        user = json.loads(response.data.decode('utf-8'))
+    return user
 
 
 def login(client, usr_login):
