@@ -1,6 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, register
+from test.helper import get_app, logout, purge_db, register, generate_login_from_timestamp
 
 
 class TestRegistration(TestCase):
@@ -15,8 +15,9 @@ class TestRegistration(TestCase):
         purge_db(self.app)
 
     def test_normal_run(self):
+        login = generate_login_from_timestamp()
         data = {
-            "login": "usr",
+            "login": login,
             "password": "pwd",
             "confirm-password": "pwd"
         }
@@ -24,12 +25,12 @@ class TestRegistration(TestCase):
         user = json.loads(response.data.decode('utf-8'))
         self.assertTrue("id" in user)
         self.assertTrue(isinstance(user["id"], int) and user["id"] > 0)
-        self.assertEqual(user["login"], "usr")
+        self.assertEqual(user["login"], login)
         self.assertEqual(response.status_code, 200)
 
     def test_registration_pwd_not_same(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "password": "pwd",
             "confirm-password": "other_pwd"
         }
@@ -38,9 +39,15 @@ class TestRegistration(TestCase):
         self.assertEqual(response.data, b"Passwords don\'t match")
 
     def test_user_already_exists(self):
-        register(self.client, "usr")
+        login = generate_login_from_timestamp()
         data = {
-            "login": "usr",
+            "login": login,
+            "password": "pwd",
+            "confirm-password": "pwd"
+        }
+        self.client.post('/register', json=data)
+        data = {
+            "login": login,
             "password": "pwd",
             "confirm-password": "pwd"
         }
@@ -50,7 +57,7 @@ class TestRegistration(TestCase):
 
     def test_wrong_json_key_login(self):
         data = {
-            "wrong": "usr",
+            "wrong": generate_login_from_timestamp(),
             "password": "pwd",
             "confirm-password": "other_pwd"
         }
@@ -60,7 +67,7 @@ class TestRegistration(TestCase):
 
     def test_wrong_json_key_pwd(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "wrong": "pwd",
             "confirm-password": "other_pwd"
         }
@@ -70,7 +77,7 @@ class TestRegistration(TestCase):
 
     def test_wrong_json_key_confirm_pwd(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "password": "pwd",
             "wrong": "other_pwd"
         }
@@ -90,7 +97,7 @@ class TestRegistration(TestCase):
 
     def test_null_json_value_pwd(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "password": None,
             "confirm-password": "other_pwd"
         }
@@ -100,7 +107,7 @@ class TestRegistration(TestCase):
 
     def test_null_json_value_confirm_pwd(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "password": "pwd",
             "confirm-password": None
         }
@@ -140,7 +147,7 @@ class TestRegistration(TestCase):
 
     def test_empty_pwd(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "password": "   ",
             "confirm-password": "pwd"
         }
@@ -150,7 +157,7 @@ class TestRegistration(TestCase):
 
     def test_min_char_pwd(self):
         data = {
-            "login": "usr",
+            "login": generate_login_from_timestamp(),
             "password": "p",
             "confirm-password": "pwd"
         }
