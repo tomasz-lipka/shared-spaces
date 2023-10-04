@@ -2,8 +2,7 @@ import json
 from unittest import TestCase
 from test.helper import (
     get_app, logout, purge_db, register, create_space_as_admin,
-    add_member, register_and_login,
-    create_space_as_not_member, create_space
+    add_member, register_and_login, create_space
 )
 
 
@@ -23,27 +22,28 @@ class TestGetMembers(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        register(self.client, 'member-1')
+        member_1 = register(self.client, 'member-1')
         register(self.client, 'member-2')
-        token = create_space_as_admin(self.client, 'space-1')
-        create_space(self.client, 'space-2', token)
-        add_member(self.client, 1, 'member-1', token)
-        add_member(self.client, 2, 'member-2', token)
+        token, space_id_1, admin = create_space_as_admin(
+            self.client, 'space-1')
+        response, space_id_2 = create_space(self.client, 'space-2', token)
+        add_member(self.client, space_id_1, 'member-1', token)
+        add_member(self.client, space_id_2, 'member-2', token)
 
         response = self.client.get(
-            '/spaces/1/members', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id_1}/members', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,
                 "user": {
-                    "id": 3,
+                    "id": admin.get('id'),
                     "login": "admin"
                 }
             },
             {
                 "is_admin": False,
                 "user": {
-                    "id": 1,
+                    "id": member_1.get('id'),
                     "login": "member-1"
                 }
             }
@@ -53,15 +53,18 @@ class TestGetMembers(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        token = register_and_login(self.client, 'admin')
+        token, _ = register_and_login(self.client, 'admin')
         response = self.client.get(
-            '/spaces/999/members', headers={"Authorization": f"Bearer {token}"})
+            '/spaces/999999999/members', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
+        self.assertEqual(
+            response.data, b"Space with ID '999999999' doesn't exist")
 
     def test_not_member(self):
-        token = create_space_as_not_member(self.client)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        logout(self.client)
+        token, _ = register_and_login(self.client, 'member')
         response = self.client.get(
-            '/spaces/1/members', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/members', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')

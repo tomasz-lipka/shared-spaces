@@ -63,4 +63,4 @@ class TestDeleteSpace(TestCase):
             self.client, space_id, 'test-image-1.jpg', token)
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
-        self.assertFalse(find_bucket('test-space-id-1'))
+        self.assertFalse(find_bucket(f'test-space-id-{space_id}'))
