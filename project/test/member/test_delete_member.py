@@ -23,9 +23,10 @@ class TestDeleteMember(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_del_other_member_as_admin(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
 
         response = self.client.delete(
             f"/spaces/{space_id}/members/{member.get('id')}", headers={"Authorization": f"Bearer {token}"})
@@ -39,7 +40,7 @@ class TestDeleteMember(TestCase):
                 "is_admin": True,
                 "user": {
                     "id": admin.get('id'),
-                    "login": "admin"
+                    "login": admin.get('login')
                 }
             }
         ]
@@ -48,22 +49,22 @@ class TestDeleteMember(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_del_other_member_as_not_admin(self):
-        register(self.client, 'member')
+        member = register(self.client)
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, space_id, 'member', token)
+        add_member(self.client, space_id, member.get('login'), token)
         logout(self.client)
-        token = login(self.client, 'member')
+        token = login(self.client, member.get('login'))
         response = self.client.delete(
             f"/spaces/{space_id}/members/{admin.get('id')}", headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_del_myself_as_member(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, space_id, 'member', token)
+        add_member(self.client, space_id, member.get('login'), token)
         logout(self.client)
-        token = login(self.client, 'member')
+        token = login(self.client, member.get('login'))
         response = self.client.delete(
             f'/spaces/{space_id}/members/{member.get("id")}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
@@ -78,8 +79,8 @@ class TestDeleteMember(TestCase):
             response.data, b"Can\'t leave space when you\'re an admin")
 
     def test_space_not_exist(self):
-        member = register(self.client, 'member')
-        token, _ = register_and_login(self.client, 'admin')
+        member = register(self.client)
+        token, _ = register_and_login(self.client)
         response = self.client.delete(
             f'/spaces/999999999/members/{member.get("id")}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
@@ -95,10 +96,10 @@ class TestDeleteMember(TestCase):
             response.data, b"User with ID '999999999' doesn't exist")
 
     def test_delete_member_from_other_space(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id_1, _ = create_space_as_admin(
             self.client, 'space-1')
-        add_member(self.client, space_id_1, 'member', token)
+        add_member(self.client, space_id_1, member.get('login'), token)
         logout(self.client)
         token, space_id_2, _ = create_space_as_admin(
             self.client, 'space-2')

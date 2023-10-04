@@ -37,9 +37,12 @@ def purge_db(app):
             table = Table(table_name, metadata, autoload=True)
             connection.execute(table.delete())
 
+
 def generate_login_from_timestamp():
     timestamp = str(time.time())
-    return timestamp[:15]
+    timestamp_without_decimal = timestamp.replace(".", "")
+    return timestamp_without_decimal[-15:]
+
 
 def register(client):
     data = {
@@ -84,15 +87,15 @@ def create_space(client, space_name, token):
 
 
 def create_space_as_admin(client, space_name):
-    token, user = register_and_login(client, 'admin')
+    token, admin = register_and_login(client)
     _, space_id = create_space(client, space_name, token)
-    return token, space_id, user
+    return token, space_id, admin
 
 
 def create_space_as_not_member(client):
     _, space_id, _ = create_space_as_admin(client, 'space-1')
     logout(client)
-    token, _ = register_and_login(client, 'not-member')
+    token, _ = register_and_login(client)
     return token, space_id
 
 
@@ -105,11 +108,11 @@ def add_member(client, space_id, member_login, token):
 
 
 def create_space_as_member(client, space_name):
-    register(client, 'member')
+    member_login = register(client).get('login')
     token, space_id, _ = create_space_as_admin(client, space_name)
-    add_member(client, 1, 'member', token)
+    add_member(client, 1, member_login, token)
     logout(client)
-    token = login(client, 'member')
+    token = login(client, member_login)
     return token, space_id
 
 

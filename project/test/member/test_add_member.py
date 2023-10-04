@@ -1,9 +1,7 @@
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, purge_db, add_member,
-    register, register_and_login,
-    create_space_as_member, create_space_as_admin,
-    WRONG_TOKEN
+    get_app, logout, purge_db, add_member, WRONG_TOKEN,
+    register, register_and_login, login, create_space_as_admin
 )
 
 
@@ -25,16 +23,18 @@ class TestAddMember(TestCase):
         self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
-        register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Member added")
 
     def test_space_not_exist(self):
-        register(self.client, 'member')
-        token, _ = register_and_login(self.client, 'admin')
-        response = add_member(self.client, 999999999, 'member', token)
+        member = register(self.client)
+        token, _ = register_and_login(self.client)
+        response = add_member(self.client, 999999999,
+                              member.get('login'), token)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(
             response.data, b"Space with ID '999999999' doesn't exist")
@@ -47,22 +47,28 @@ class TestAddMember(TestCase):
             response.data, b"User with login 'member' doesn't exist")
 
     def test_not_admin(self):
-        token, space_id = create_space_as_member(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        member = register(self.client)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        add_member(self.client, space_id, member.get('login'), token)
+        logout(self.client)
+        token = login(self.client,  member.get('login'))
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 
     def test_add_member_already_added(self):
-        register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
-        response = add_member(self.client, space_id, 'member', token)
-
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"User-space pair already exists")
 
     def test_payload_invalid_type(self):
-        register(self.client, 'member')
+        register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, "space-1")
         data = {
             "login": "wrong"
@@ -74,7 +80,7 @@ class TestAddMember(TestCase):
             response.data, b"User with login 'wrong' doesn't exist")
 
     def test_wrong_json_key(self):
-        register(self.client, 'member')
+        register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, "space-1")
         data = {
             "wrong": 1
@@ -85,7 +91,7 @@ class TestAddMember(TestCase):
         self.assertEqual(response.data, b"Invalid payload: 'login'")
 
     def test_null_json_value(self):
-        register(self.client, 'member')
+        register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, "space-1")
         data = {
             "login": None

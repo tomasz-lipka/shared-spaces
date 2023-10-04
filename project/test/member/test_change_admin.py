@@ -26,14 +26,15 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        member_id = register(self.client, 'member').get('id')
+        member = register(self.client)
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         data = {
             "is-admin": True
         }
         response = self.client.put(
-            f'/spaces/{space_id}/members/{member_id}', json=data, headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/members/{member.get("id")}', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Admin permission changed")
 
@@ -44,14 +45,14 @@ class TestChangeAdmin(TestCase):
                 "is_admin": True,
                 "user": {
                     "id": admin.get('id'),
-                    "login": "admin"
+                    "login": admin.get('login')
                 }
             },
             {
                 "is_admin": True,
                 "user": {
-                    "id": member_id,
-                    "login": "member"
+                    "id": member.get('id'),
+                    "login": member.get('login')
                 }
             }
         ]
@@ -63,12 +64,12 @@ class TestChangeAdmin(TestCase):
             "is-admin": False
         }
         response = self.client.put(
-            f'/spaces/{space_id}/members/{member_id}', json=data, headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/members/{member.get("id")}', json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Admin permission changed")
 
     def test_space_not_exist(self):
-        token, user = register_and_login(self.client, 'admin')
+        token, user = register_and_login(self.client)
         data = {
             "is-admin": True
         }
@@ -90,9 +91,9 @@ class TestChangeAdmin(TestCase):
             response.data, b"User with ID '999999999' doesn't exist")
 
     def test_member_from_other_space(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id_1, _ = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, space_id_1, 'member', token)
+        add_member(self.client, space_id_1, member.get('login'), token)
         logout(self.client)
         token, space_id_2, _ = create_space_as_admin(self.client, 'space-2')
         data = {
@@ -104,11 +105,11 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_not_admin(self):
-        register(self.client, "member")
+        member = register(self.client)
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, space_id, "member", token)
+        add_member(self.client, space_id, member.get('login'), token)
         logout(self.client)
-        token = login(self.client, "member")
+        token = login(self.client, member.get('login'))
         data = {
             "is-admin": False
         }
@@ -118,9 +119,10 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(response.data, b'User not admin')
 
     def test_payload_invalid_type(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         data = {
             "is-admin": 123
         }
@@ -130,9 +132,10 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(response.data, b'"is admin" must be type boolean')
 
     def test_wrong_json_key(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         data = {
             "wrong": True
         }
@@ -142,9 +145,10 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(response.data, b"Invalid payload: 'is-admin'")
 
     def test_null_json_value(self):
-        member = register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        response = add_member(self.client, space_id, 'member', token)
+        response = add_member(self.client, space_id,
+                              member.get('login'), token)
         data = {
             "is-admin": None
         }
@@ -164,12 +168,12 @@ class TestChangeAdmin(TestCase):
         self.assertEqual(response.data, b"Space must have at least one admin")
 
     def test_only_admin(self):
-        register(self.client, 'member')
+        member = register(self.client)
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
         data = {
             "is-admin": False
         }
-        add_member(self.client, space_id, 'member', token)
+        add_member(self.client, space_id, member.get('login'), token)
         response = self.client.put(
             f"/spaces/{space_id}/members/{admin.get('id')}", json=data, headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)

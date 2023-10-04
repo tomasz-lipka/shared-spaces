@@ -22,13 +22,13 @@ class TestGetMembers(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        member_1 = register(self.client, 'member-1')
-        register(self.client, 'member-2')
+        member_1 = register(self.client)
+        member_2 = register(self.client)
         token, space_id_1, admin = create_space_as_admin(
             self.client, 'space-1')
         response, space_id_2 = create_space(self.client, 'space-2', token)
-        add_member(self.client, space_id_1, 'member-1', token)
-        add_member(self.client, space_id_2, 'member-2', token)
+        add_member(self.client, space_id_1, member_1.get('login'), token)
+        add_member(self.client, space_id_2,  member_2.get('login'), token)
 
         response = self.client.get(
             f'/spaces/{space_id_1}/members', headers={"Authorization": f"Bearer {token}"})
@@ -37,14 +37,14 @@ class TestGetMembers(TestCase):
                 "is_admin": True,
                 "user": {
                     "id": admin.get('id'),
-                    "login": "admin"
+                    "login": admin.get('login')
                 }
             },
             {
                 "is_admin": False,
                 "user": {
                     "id": member_1.get('id'),
-                    "login": "member-1"
+                    "login": member_1.get('login')
                 }
             }
         ]
@@ -53,7 +53,7 @@ class TestGetMembers(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        token, _ = register_and_login(self.client, 'admin')
+        token, _ = register_and_login(self.client)
         response = self.client.get(
             '/spaces/999999999/members', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
@@ -63,7 +63,7 @@ class TestGetMembers(TestCase):
     def test_not_member(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         logout(self.client)
-        token, _ = register_and_login(self.client, 'member')
+        token, _ = register_and_login(self.client)
         response = self.client.get(
             f'/spaces/{space_id}/members', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)

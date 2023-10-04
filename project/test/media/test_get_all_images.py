@@ -40,7 +40,7 @@ class TestGetAllImages(TestCase):
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
 
     def test_space_not_exist(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         response = self.client.get(
             '/spaces/999999999/images', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
