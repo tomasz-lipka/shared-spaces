@@ -15,14 +15,14 @@ class TestCreateShare(TestCase):
         cls.client = cls.app.test_client()
 
     def test_not_logged_in(self):
-        response, _ = create_share(self.client, 1, WRONG_TOKEN)
+        response, _ = create_share(self.client, 999999999, WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
-        response, share_id = create_share(self.client, 1, token)
+        response, share_id = create_share(self.client, space_id, token)
         expected_data = {
             "id": share_id,
             "space": {

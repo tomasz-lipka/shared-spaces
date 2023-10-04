@@ -56,7 +56,6 @@ class TestEditShare(TestCase):
     def test_not_owned(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share(self.client, space_id, token)
-        self.client)
         token, _ = register_and_login(self.client)
 
         data = {
@@ -90,7 +89,7 @@ class TestEditShare(TestCase):
 
     def test_not_logged_in_with_image(self):
         response = edit_share_with_image(
-            self.client, 1, 'test-image-1.jpg', WRONG_TOKEN)
+            self.client, 999999999, 'test-image-1.jpg', WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
@@ -165,8 +164,8 @@ class TestEditShare(TestCase):
         self.assertEqual(response.data, b"Text must be provided")
 
     def test_empty_text(self):
-        token, _, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
         data = {
             "text": "   "
         }
@@ -176,8 +175,8 @@ class TestEditShare(TestCase):
         self.assertEqual(response.data, b"Text cannot be empty")
 
     def test_min_char_text(self):
-        token, _, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
         data = {
             "text": "a"
         }
@@ -187,8 +186,8 @@ class TestEditShare(TestCase):
         self.assertEqual(response.data, b"Text min 3 characters")
 
     def test_max_char_text(self):
-        token, _, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
         data = {
             "text": "text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text "
         }

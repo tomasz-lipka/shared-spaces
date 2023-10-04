@@ -18,8 +18,8 @@ class TestDeleteShare(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token, _, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
         response = self.client.delete(
             f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})
 
@@ -32,8 +32,8 @@ class TestDeleteShare(TestCase):
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned(self):
-        token, _, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
         token, _ = register_and_login(self.client)
 
         response = self.client.delete(

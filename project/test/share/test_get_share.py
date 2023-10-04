@@ -24,7 +24,7 @@ class TestGetShare(TestCase):
 
     def test_normal_run(self):
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        _, share_id = create_share(self.client, space_id, token)
         response = self.client.get(
             f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})
         expected_data = {
@@ -54,8 +54,8 @@ class TestGetShare(TestCase):
         self.assertEqual(response.data, b'No such share')
 
     def test_not_owned(self):
-        token, _, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, 1, token)
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
         token, _ = register_and_login(self.client)
         response = self.client.get(
             f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})
@@ -66,7 +66,7 @@ class TestGetShare(TestCase):
         token, space_id_1, admin = create_space_as_admin(
             self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, 'test-image-1.jpg', token)
+            self.client, space_id_1, 'test-image-1.jpg', token)
         _, space_id_2 = create_space(self.client, 'space-2', token)
         user = register(self.client)
         token = login(self.client, admin.get('login'))
@@ -114,7 +114,7 @@ class TestGetShare(TestCase):
     def test_not_owned_with_image(self):
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share_with_image(
-            self.client, 1, 'test-image-1.jpg', token)
+            self.client, space_id, 'test-image-1.jpg', token)
         token, _ = register_and_login(self.client)
         response = self.client.get(
             f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})

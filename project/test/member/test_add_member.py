@@ -10,7 +10,7 @@ class TestAddMember(TestCase):
         cls.client = cls.app.test_client()
 
     def test_not_logged_in(self):
-        response = add_member(self.client, 1, 'member', WRONG_TOKEN)
+        response = add_member(self.client, 999999999, 'member', WRONG_TOKEN)
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)

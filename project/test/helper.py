@@ -3,19 +3,15 @@ import os
 import time
 import json
 import boto3
-from sqlalchemy import MetaData, Table
 from PIL import Image, ImageChops
 import requests
-
 from app import create_app
-
 
 s3_client = boto3.client(
     's3',
     aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
     aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
 )
-
 WRONG_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
 RESOURCES = '/test/resources/'
 
@@ -91,10 +87,10 @@ def add_member(client, space_id, member_login, token):
 
 
 def create_space_as_member(client, space_name):
-    member_login = register(client).get('login')
+    member = register(client)
     token, space_id, _ = create_space_as_admin(client, space_name)
-    add_member(client, 1, member_login, token)
-    token = login(client, member_login)
+    add_member(client, space_id, member.get('login'), token)
+    token = login(client, member.get('login'))
     return token, space_id
 
 
