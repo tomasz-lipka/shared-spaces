@@ -22,13 +22,13 @@ class TestGetAllImages(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token = create_space_as_admin(self.client, 'space-1')
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         create_share_with_image(
-            self.client, 1, 'test-image-1.jpg', token)
+            self.client, space_id, 'test-image-1.jpg', token)
         create_share_with_image(
-            self.client, 1, 'test-image-2.jpg', token)
+            self.client, space_id, 'test-image-2.jpg', token)
         response = self.client.get(
-            '/spaces/1/images', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/images', headers={"Authorization": f"Bearer {token}"})
         data = json.loads(response.data)
 
         self.assertTrue(are_images_same(
@@ -37,26 +37,27 @@ class TestGetAllImages(TestCase):
             data[1], 'test-image-2.jpg'))
 
         self.client.delete(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
 
     def test_space_not_exist(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         response = self.client.get(
-            '/spaces/999/images', headers={"Authorization": f"Bearer {token}"})
+            '/spaces/999999999/images', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
+        self.assertEqual(
+            response.data, b"Space with ID '999999999' doesn't exist")
 
     def test_not_member(self):
-        token = create_space_as_not_member(self.client)
+        token, space_id = create_space_as_not_member(self.client)
         response = self.client.get(
-            '/spaces/1/images', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/images', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_no_images(self):
-        token = create_space_as_admin(self.client, 'space-1')
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         response = self.client.get(
-            '/spaces/1/images', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/images', headers={"Authorization": f"Bearer {token}"})
         expected_data = []
         data = json.loads(response.data)
         self.assertEqual(data, expected_data)
