@@ -37,10 +37,13 @@ def purge_db(app):
             table = Table(table_name, metadata, autoload=True)
             connection.execute(table.delete())
 
+def generate_login_from_timestamp():
+    timestamp = str(time.time())
+    return timestamp[:15]
 
-def register(client, usr_login):
+def register(client):
     data = {
-        "login": usr_login,
+        "login": generate_login_from_timestamp(),
         "password": "pwd",
         "confirm-password": "pwd"
     }
@@ -60,9 +63,9 @@ def login(client, usr_login):
     return json.loads(response.data.decode('utf-8')).get('access_token')
 
 
-def register_and_login(client, usr_login):
-    user = register(client, usr_login)
-    token = login(client, usr_login)
+def register_and_login(client):
+    user = register(client)
+    token = login(client, user.get('login'))
     return token, user
 
 

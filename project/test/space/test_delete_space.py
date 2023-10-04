@@ -1,4 +1,3 @@
-import time
 from unittest import TestCase
 from test.helper import (
     register_and_login, get_app, logout, purge_db, create_space_as_admin,
@@ -36,7 +35,7 @@ class TestDeleteSpace(TestCase):
             response.data, f"Space with ID '{space_id}' doesn't exist".encode())
 
     def test_not_exist(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         response = self.client.delete(
             '/spaces/999999999', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
@@ -51,9 +50,9 @@ class TestDeleteSpace(TestCase):
         self.assertEqual(response.data, b'User not admin')
 
     def test_not_empty(self):
-        register(self.client, 'member')
+        member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, space_id, 'member', token)
+        add_member(self.client, space_id, member.get('login'), token)
         response = self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
@@ -65,8 +64,4 @@ class TestDeleteSpace(TestCase):
             self.client, space_id, 'test-image-1.jpg', token)
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
-        count = 0
-        while find_bucket(f'test-space-id-{space_id}') and count < 3:
-            time.sleep(1)
-            count = +1
         self.assertFalse(find_bucket(f'test-space-id-{space_id}'))

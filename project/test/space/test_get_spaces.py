@@ -19,7 +19,7 @@ class TestGetSpaces(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         response, space_id_1 = create_space(self.client, "space-1", token)
         response, space_id_2 = create_space(self.client, "space-2", token)
         response = self.client.get(

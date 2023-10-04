@@ -24,7 +24,7 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.status_code, 422)
 
     def test_normal_run(self):
-        token, _ = register_and_login(self.client, 'admin')
+        token, _ = register_and_login(self.client)
         response, _ = create_space(self.client, 'space-1', token)
         data = json.loads(response.data)
         self.assertTrue("id" in data)
@@ -33,7 +33,7 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_json_key(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         data = {
             "wrong": "space"
         }
@@ -43,7 +43,7 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.data, b"Invalid payload: 'name'")
 
     def test_null_json_value(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         data = {
             "name": None
         }
@@ -53,7 +53,7 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.data, b"Name must be provided")
 
     def test_empty_name(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         data = {
             "name": "   "
         }
@@ -63,7 +63,7 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.data, b"Name cannot be empty")
 
     def test_min_char_name(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         data = {
             "name": "a"
         }
@@ -73,7 +73,7 @@ class TestCreateSpace(TestCase):
         self.assertEqual(response.data, b"Name min 3 characters")
 
     def test_max_char_name(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         data = {
             "name": "name name name name name"
         }

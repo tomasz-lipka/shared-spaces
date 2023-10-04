@@ -33,7 +33,7 @@ class TestGetSpace(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_exist(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         response = self.client.get(
             '/spaces/999999999', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)

@@ -48,7 +48,7 @@ class TestRenameSpace(TestCase):
         self.assertEqual(data, expected_data)
 
     def test_not_exist(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         data = {
             "new-name": "space_new_name"
         }
