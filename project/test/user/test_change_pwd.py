@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, register_and_login, WRONG_TOKEN
+from test.helper import get_app, logout, register_and_login, WRONG_TOKEN
 
 
 class TestChangePwd(TestCase):
@@ -8,10 +8,6 @@ class TestChangePwd(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_not_logged_in(self):
         data = {

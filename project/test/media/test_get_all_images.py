@@ -1,7 +1,7 @@
 from unittest import TestCase
 import json
 from test.helper import (
-    get_app, logout, purge_db, create_share_with_image, register_and_login,
+    get_app, create_share_with_image, register_and_login,
     create_space_as_admin, are_images_same, create_space_as_not_member, find_bucket
 )
 
@@ -12,10 +12,6 @@ class TestGetAllImages(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_not_logged_in(self):
         response = self.client.get('/spaces/1/images')

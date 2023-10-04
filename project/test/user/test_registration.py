@@ -1,6 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, register, generate_login_from_timestamp
+from test.helper import get_app, generate_login_from_timestamp
 
 
 class TestRegistration(TestCase):
@@ -9,10 +9,6 @@ class TestRegistration(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_normal_run(self):
         login = generate_login_from_timestamp()

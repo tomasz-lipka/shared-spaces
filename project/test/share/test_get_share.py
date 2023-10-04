@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, purge_db, create_space_as_admin,
+    get_app, logout, create_space_as_admin,
     create_share, register_and_login, create_share_with_image,
     create_space, register, login, add_member, find_bucket, are_images_same,
     WRONG_TOKEN
@@ -14,10 +14,6 @@ class TestGetShare(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_not_logged_in(self):
         response = self.client.get(

@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, purge_db, add_member, WRONG_TOKEN,
+    get_app, logout, add_member, WRONG_TOKEN,
     register, register_and_login, login, create_space_as_admin
 )
 
@@ -11,10 +11,6 @@ class TestAddMember(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_not_logged_in(self):
         response = add_member(self.client, 1, 'member', WRONG_TOKEN)

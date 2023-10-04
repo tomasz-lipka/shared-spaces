@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test.helper import (
-    register_and_login, get_app, logout, purge_db, create_space_as_admin,
+    register_and_login, get_app, create_space_as_admin,
     create_space_as_member, add_member,
     register, create_share_with_image, find_bucket
 )
@@ -12,10 +12,6 @@ class TestDeleteSpace(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_not_logged_in(self):
         response = self.client.delete('/spaces/1')

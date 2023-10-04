@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test.helper import get_app, logout, purge_db, register, register_and_login
+from test.helper import get_app, register, register_and_login
 
 
 class TestLogin(TestCase):
@@ -8,10 +8,6 @@ class TestLogin(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_normal_run(self):
         user = register(self.client)

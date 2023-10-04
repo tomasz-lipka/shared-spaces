@@ -1,9 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import (
-    get_app, logout, purge_db, create_space,
-    register_and_login, WRONG_TOKEN
-)
+from test.helper import get_app, create_space, register_and_login, WRONG_TOKEN
 
 
 class TestCreateSpace(TestCase):
@@ -12,10 +9,6 @@ class TestCreateSpace(TestCase):
     def setUpClass(cls):
         cls.app = get_app()
         cls.client = cls.app.test_client()
-
-    def setUp(self):
-        logout(self.client)
-        purge_db(self.app)
 
     def test_not_logged_in(self):
         response, _ = create_space(self.client, "space-1", WRONG_TOKEN)

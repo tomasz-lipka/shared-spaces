@@ -26,18 +26,6 @@ def get_app():
     return app
 
 
-def purge_db(app):
-    metadata = MetaData()
-    metadata.reflect(bind=app.engine)
-
-    table_names = metadata.tables.keys()
-
-    with app.engine.begin() as connection:
-        for table_name in table_names:
-            table = Table(table_name, metadata, autoload=True)
-            connection.execute(table.delete())
-
-
 def generate_login_from_timestamp():
     timestamp = str(time.time())
     timestamp_without_decimal = timestamp.replace(".", "")
