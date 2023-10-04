@@ -23,7 +23,7 @@ class TestGetSpace(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token, space_id = create_space_as_admin(self.client, 'space-1')
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         response = self.client.get(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         data = json.loads(response.data)
@@ -33,7 +33,7 @@ class TestGetSpace(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_exist(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         response = self.client.get(
             '/spaces/999999999', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
