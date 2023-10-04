@@ -24,30 +24,30 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token = register_and_login(self.client, 'admin-1')
-        create_space(self.client, 'space-1', token)
-        create_share(self.client, 1, token)
+        token, _ = register_and_login(self.client, 'admin-1')
+        _, space_id_1 = create_space(self.client, 'space-1', token)
+        create_share(self.client, space_id_1, token)
         logout(self.client)
 
-        register(self.client, 'member-1')
+        member_1 = register(self.client, 'member-1')
 
-        token = register_and_login(self.client, 'admin-2')
-        create_space(self.client, 'space-2', token)
-        create_share(self.client, 2, token)
+        token, admin_2 = register_and_login(self.client, 'admin-2')
+        _, space_id_2 = create_space(self.client, 'space-2', token)
+        _, share_id_2 = create_share(self.client, space_id_2, token)
         time.sleep(0.5)
-        add_member(self.client, 2, 'member-1', token)
+        add_member(self.client, space_id_2, 'member-1', token)
         logout(self.client)
 
         token = login(self.client, 'member-1')
-        create_share(self.client, 2, token)
+        _, share_id_3 = create_share(self.client, space_id_2, token)
 
         response = self.client.get(
-            '/spaces/2/shares', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id_2}/shares', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
-                "id": 3,
+                "id": share_id_3,
                 "user": {
-                    "id": 2,
+                    "id": member_1.get('id'),
                     "login": "member-1"
                 },
                 "text": "Lorem ipsum",
@@ -55,9 +55,9 @@ class TestGetShares(TestCase):
                 "image_url": None
             },
             {
-                "id": 2,
+                "id": share_id_2,
                 "user": {
-                    "id": 3,
+                    "id": admin_2.get('id'),
                     "login": "admin-2"
                 },
                 "text": "Lorem ipsum",
@@ -72,37 +72,38 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        token = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client, 'usr')
         response = self.client.get(
-            '/spaces/999/shares', headers={"Authorization": f"Bearer {token}"})
+            '/spaces/999999999/shares', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.data, b"Space with ID '999' doesn't exist")
+        self.assertEqual(
+            response.data, b"Space with ID '999999999' doesn't exist")
 
     def test_not_member(self):
-        token = create_space_as_not_member(self.client)
+        token, space_id = create_space_as_not_member(self.client)
         response = self.client.get(
-            '/spaces/1/shares', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/shares', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')
 
     def test_normal_run_with_image(self):
-        token = create_space_as_admin(self.client, 'space-1')
-        create_share_with_image(
-            self.client, 1, 'test-image-1.jpg', token)
+        token, space_id, admin = create_space_as_admin(self.client, 'space-1')
+        _, share_id_1 = create_share_with_image(
+            self.client, space_id, 'test-image-1.jpg', token)
         time.sleep(0.5)
-        create_share_with_image(
-            self.client, 1, 'test-image-2.jpg', token)
+        _, share_id_2 = create_share_with_image(
+            self.client, space_id, 'test-image-2.jpg', token)
         time.sleep(0.5)
-        create_share(self.client, 1, token)
+        _, share_id_3 = create_share(self.client, space_id, token)
         time.sleep(0.5)
 
         response = self.client.get(
-            '/spaces/1/shares', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/shares', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
-                "id": 3,
+                "id": share_id_3,
                 "user": {
-                    "id": 1,
+                    "id": admin.get('id'),
                     "login": "admin"
                 },
                 "text": "Lorem ipsum",
@@ -110,9 +111,9 @@ class TestGetShares(TestCase):
                 "image_url": None
             },
             {
-                "id": 2,
+                "id": share_id_2,
                 "user": {
-                    "id": 1,
+                    "id": admin.get('id'),
                     "login": "admin"
                 },
                 "text": "Lorem ipsum",
@@ -120,9 +121,9 @@ class TestGetShares(TestCase):
                 # "image_url":
             },
             {
-                "id": 1,
+                "id": share_id_1,
                 "user": {
-                    "id": 1,
+                    "id": admin.get('id'),
                     "login": "admin"
                 },
                 "text": "Lorem ipsum",
@@ -146,4 +147,4 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.client.delete(
-            '/spaces/1', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})

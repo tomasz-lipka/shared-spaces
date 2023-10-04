@@ -114,9 +114,14 @@ def create_share(client, space_id, token):
     data = {
         "text": "Lorem ipsum"
     }
-    return client.post(f'/spaces/{space_id}/shares',
-                       data=data, content_type='multipart/form-data',
-                       headers={"Authorization": f"Bearer {token}"})
+    response = client.post(f'/spaces/{space_id}/shares',
+                           data=data,
+                           content_type='multipart/form-data',
+                           headers={"Authorization": f"Bearer {token}"})
+    share_id = None
+    if response.status_code == 200:
+        share_id = json.loads(response.data).get('id')
+    return response, share_id
 
 
 def create_share_with_image(client, space_id, img_name, token):
@@ -133,7 +138,10 @@ def create_share_with_image(client, space_id, img_name, token):
             content_type='multipart/form-data'
         )
         time.sleep(1)
-        return response
+        share_id = None
+        if response.status_code == 200:
+            share_id = json.loads(response.data).get('id')
+        return response, share_id
 
 
 def find_bucket(bucket_name):
