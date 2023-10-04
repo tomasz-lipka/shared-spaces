@@ -61,8 +61,9 @@ def login(client, usr_login):
 
 
 def register_and_login(client, usr_login):
-    register(client, usr_login)
-    return login(client, usr_login)
+    user = register(client, usr_login)
+    token = login(client, usr_login)
+    return token, user
 
 
 def logout(client):
@@ -80,15 +81,15 @@ def create_space(client, space_name, token):
 
 
 def create_space_as_admin(client, space_name):
-    token = register_and_login(client, 'admin')
-    response, space_id = create_space(client, space_name, token)
-    return token, space_id
+    token, user = register_and_login(client, 'admin')
+    _, space_id = create_space(client, space_name, token)
+    return token, space_id, user
 
 
 def create_space_as_not_member(client):
-    token, space_id = create_space_as_admin(client, 'space-1')
+    _, space_id, _ = create_space_as_admin(client, 'space-1')
     logout(client)
-    token = register_and_login(client, 'not-member')
+    token, _ = register_and_login(client, 'not-member')
     return token, space_id
 
 
@@ -96,12 +97,13 @@ def add_member(client, space_id, member_login, token):
     data = {
         "login": member_login
     }
-    return client.post(f'/spaces/{space_id}/members', json=data, headers={"Authorization": f"Bearer {token}"})
+    return client.post(f'/spaces/{space_id}/members',
+                       json=data, headers={"Authorization": f"Bearer {token}"})
 
 
 def create_space_as_member(client, space_name):
     register(client, 'member')
-    token, space_id = create_space_as_admin(client, space_name)
+    token, space_id, _ = create_space_as_admin(client, space_name)
     add_member(client, 1, 'member', token)
     logout(client)
     token = login(client, 'member')
@@ -112,7 +114,9 @@ def create_share(client, space_id, token):
     data = {
         "text": "Lorem ipsum"
     }
-    return client.post(f'/spaces/{space_id}/shares', data=data, content_type='multipart/form-data', headers={"Authorization": f"Bearer {token}"})
+    return client.post(f'/spaces/{space_id}/shares',
+                       data=data, content_type='multipart/form-data',
+                       headers={"Authorization": f"Bearer {token}"})
 
 
 def create_share_with_image(client, space_id, img_name, token):
@@ -143,7 +147,6 @@ def are_images_same(data, test_img_name):
     response = requests.get(data["image_url"])
     image_bytes = BytesIO(response.content)
     image_url = os.getcwd() + RESOURCES + test_img_name
-
     return not ImageChops.difference(Image.open(image_url), Image.open(image_bytes)).getbbox()
 
 
