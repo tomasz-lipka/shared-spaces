@@ -35,7 +35,7 @@ class TestCreateShare(TestCase):
             },
             "user": {
                 "id": admin.get('id'),
-                "login": "admin"
+                "login": admin.get('login')
             },
             "text": "Lorem ipsum"
             # "timestamp":
@@ -48,7 +48,7 @@ class TestCreateShare(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        token, _ = register_and_login(self.client, 'admin')
+        token, _ = register_and_login(self.client)
         response, _ = create_share(self.client, 999999999, token)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(
@@ -87,7 +87,7 @@ class TestCreateShare(TestCase):
         self.assertFalse(find_bucket('test-space-id-999999999'))
 
     def test_space_not_exist_with_image(self):
-        token, _ = register_and_login(self.client, 'admin')
+        token, _ = register_and_login(self.client)
         response, _ = create_share_with_image(
             self.client, 999999999, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 404)

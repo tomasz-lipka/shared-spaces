@@ -24,21 +24,21 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token, _ = register_and_login(self.client, 'admin-1')
+        token, _ = register_and_login(self.client)
         _, space_id_1 = create_space(self.client, 'space-1', token)
         create_share(self.client, space_id_1, token)
         logout(self.client)
 
-        member_1 = register(self.client, 'member-1')
+        member_1 = register(self.client)
 
-        token, admin_2 = register_and_login(self.client, 'admin-2')
+        token, admin_2 = register_and_login(self.client)
         _, space_id_2 = create_space(self.client, 'space-2', token)
         _, share_id_2 = create_share(self.client, space_id_2, token)
         time.sleep(0.5)
-        add_member(self.client, space_id_2, 'member-1', token)
+        add_member(self.client, space_id_2, member_1.get('login'), token)
         logout(self.client)
 
-        token = login(self.client, 'member-1')
+        token = login(self.client, member_1.get('login'))
         _, share_id_3 = create_share(self.client, space_id_2, token)
 
         response = self.client.get(
@@ -48,7 +48,7 @@ class TestGetShares(TestCase):
                 "id": share_id_3,
                 "user": {
                     "id": member_1.get('id'),
-                    "login": "member-1"
+                    "login": member_1.get('login')
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
@@ -58,7 +58,7 @@ class TestGetShares(TestCase):
                 "id": share_id_2,
                 "user": {
                     "id": admin_2.get('id'),
-                    "login": "admin-2"
+                    "login": admin_2.get('login')
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
@@ -72,7 +72,7 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_space_not_exist(self):
-        token, _ = register_and_login(self.client, 'usr')
+        token, _ = register_and_login(self.client)
         response = self.client.get(
             '/spaces/999999999/shares', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 404)
@@ -104,7 +104,7 @@ class TestGetShares(TestCase):
                 "id": share_id_3,
                 "user": {
                     "id": admin.get('id'),
-                    "login": "admin"
+                    "login": admin.get('login')
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
@@ -114,7 +114,7 @@ class TestGetShares(TestCase):
                 "id": share_id_2,
                 "user": {
                     "id": admin.get('id'),
-                    "login": "admin"
+                    "login": admin.get('login')
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
@@ -124,7 +124,7 @@ class TestGetShares(TestCase):
                 "id": share_id_1,
                 "user": {
                     "id": admin.get('id'),
-                    "login": "admin"
+                    "login": admin.get('login')
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":
