@@ -48,3 +48,5 @@ class Assignment(Base):
             'user': self.user.to_dict(),
             'is_admin': self.is_admin
         }
+
+    __table_args__ = {"sqlite_autoincrement": True}

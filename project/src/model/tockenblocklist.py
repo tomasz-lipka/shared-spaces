@@ -19,3 +19,5 @@ class TokenBlocklist(Base):
 
     def __init__(self, jti):
         self.jti = jti
+
+    __table_args__ = {"sqlite_autoincrement": True}

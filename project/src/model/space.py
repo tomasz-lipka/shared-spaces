@@ -28,3 +28,5 @@ class Space(Base):
             'id': self.id,
             'name': self.name
         }
+
+    __table_args__ = {"sqlite_autoincrement": True}

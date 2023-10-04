@@ -30,3 +30,5 @@ class User(Base):
             'id': self.id,
             'login': self.login
         }
+
+    __table_args__ = {"sqlite_autoincrement": True}

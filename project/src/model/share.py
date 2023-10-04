@@ -56,3 +56,5 @@ class Share(Base):
             'timestamp': self.timestamp.isoformat(),
             'image_url': self.image_url
         }
+
+    __table_args__ = {"sqlite_autoincrement": True}
