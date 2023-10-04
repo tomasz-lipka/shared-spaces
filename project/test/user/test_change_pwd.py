@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test.helper import get_app, logout, register_and_login, WRONG_TOKEN
+from test.helper import get_app, register_and_login, WRONG_TOKEN
 
 
 class TestChangePwd(TestCase):
@@ -33,7 +33,6 @@ class TestChangePwd(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, b"Password changed")
 
-        logout(self.client)
         data = {
             "login": user.get('login'),
             "password": "new_pwd"

@@ -1,10 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import (
-    get_app, logout, register,
-    create_space_as_admin, add_member, login,
-    register_and_login
-)
+from test.helper import get_app,  register, create_space_as_admin, add_member, login, register_and_login
 
 
 class TestDeleteMember(TestCase):
@@ -48,7 +44,6 @@ class TestDeleteMember(TestCase):
         member = register(self.client)
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
         add_member(self.client, space_id, member.get('login'), token)
-        logout(self.client)
         token = login(self.client, member.get('login'))
         response = self.client.delete(
             f"/spaces/{space_id}/members/{admin.get('id')}", headers={"Authorization": f"Bearer {token}"})
@@ -59,7 +54,6 @@ class TestDeleteMember(TestCase):
         member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         add_member(self.client, space_id, member.get('login'), token)
-        logout(self.client)
         token = login(self.client, member.get('login'))
         response = self.client.delete(
             f'/spaces/{space_id}/members/{member.get("id")}', headers={"Authorization": f"Bearer {token}"})
@@ -96,7 +90,6 @@ class TestDeleteMember(TestCase):
         token, space_id_1, _ = create_space_as_admin(
             self.client, 'space-1')
         add_member(self.client, space_id_1, member.get('login'), token)
-        logout(self.client)
         token, space_id_2, _ = create_space_as_admin(
             self.client, 'space-2')
         response = self.client.delete(

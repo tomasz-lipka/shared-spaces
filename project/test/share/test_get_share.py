@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, create_space_as_admin,
+    get_app, create_space_as_admin,
     create_share, register_and_login, create_share_with_image,
     create_space, register, login, add_member, find_bucket, are_images_same,
     WRONG_TOKEN
@@ -56,7 +56,6 @@ class TestGetShare(TestCase):
     def test_not_owned(self):
         token, _, _ = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share(self.client, 1, token)
-        logout(self.client)
         token, _ = register_and_login(self.client)
         response = self.client.get(
             f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})
@@ -69,11 +68,9 @@ class TestGetShare(TestCase):
         create_share_with_image(
             self.client, 1, 'test-image-1.jpg', token)
         _, space_id_2 = create_space(self.client, 'space-2', token)
-        logout(self.client)
         user = register(self.client)
         token = login(self.client, admin.get('login'))
         add_member(self.client, space_id_2, user.get('login'), token)
-        logout(self.client)
         token = login(self.client, user.get('login'))
         create_share_with_image(
             self.client, space_id_2, 'test-image-2.jpg', token)
@@ -106,7 +103,6 @@ class TestGetShare(TestCase):
         self.assertEqual(data, expected_data)
         self.assertEqual(response.status_code, 200)
 
-        logout(self.client)
         token = login(self.client, admin.get('login'))
         self.client.delete(f'/spaces/{space_id_2}/members/{user.get("id")}',
                            headers={"Authorization": f"Bearer {token}"})
@@ -119,7 +115,6 @@ class TestGetShare(TestCase):
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share_with_image(
             self.client, 1, 'test-image-1.jpg', token)
-        logout(self.client)
         token, _ = register_and_login(self.client)
         response = self.client.get(
             f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})
@@ -128,7 +123,6 @@ class TestGetShare(TestCase):
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket(f'test-space-id-{space_id}'))
 
-        logout(self.client)
         token = login(self.client, admin.get('login'))
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})

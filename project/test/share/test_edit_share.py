@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, create_space_as_admin,
+    get_app, create_space_as_admin,
     edit_share_with_image, create_share, register_and_login,
     create_share_with_image, are_images_same, login, WRONG_TOKEN
 )
@@ -56,7 +56,7 @@ class TestEditShare(TestCase):
     def test_not_owned(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share(self.client, space_id, token)
-        logout(self.client)
+        self.client)
         token, _ = register_and_login(self.client)
 
         data = {
@@ -135,7 +135,6 @@ class TestEditShare(TestCase):
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share_with_image(
             self.client, space_id, 'test-image-1.jpg', token)
-        logout(self.client)
         token, _ = register_and_login(self.client)
 
         response = edit_share_with_image(
@@ -143,7 +142,6 @@ class TestEditShare(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
-        logout(self.client)
         token = login(self.client, admin.get('login'))
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})

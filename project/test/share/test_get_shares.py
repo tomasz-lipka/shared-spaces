@@ -2,7 +2,7 @@ import json
 import time
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, create_share, register_and_login, create_space,
+    get_app, create_share, register_and_login, create_space,
     register, add_member, login, create_space_as_not_member,
     create_space_as_admin, create_share_with_image, are_images_same
 )
@@ -23,7 +23,6 @@ class TestGetShares(TestCase):
         token, _ = register_and_login(self.client)
         _, space_id_1 = create_space(self.client, 'space-1', token)
         create_share(self.client, space_id_1, token)
-        logout(self.client)
 
         member_1 = register(self.client)
 
@@ -32,7 +31,6 @@ class TestGetShares(TestCase):
         _, share_id_2 = create_share(self.client, space_id_2, token)
         time.sleep(0.5)
         add_member(self.client, space_id_2, member_1.get('login'), token)
-        logout(self.client)
 
         token = login(self.client, member_1.get('login'))
         _, share_id_3 = create_share(self.client, space_id_2, token)

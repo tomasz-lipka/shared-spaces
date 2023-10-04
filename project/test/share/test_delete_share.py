@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test.helper import (
-    get_app, logout, create_space_as_admin,
+    get_app, create_space_as_admin,
     create_share, register_and_login,
     create_share_with_image, find_bucket, login
 )
@@ -34,7 +34,6 @@ class TestDeleteShare(TestCase):
     def test_not_owned(self):
         token, _, _ = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share(self.client, 1, token)
-        logout(self.client)
         token, _ = register_and_login(self.client)
 
         response = self.client.delete(
@@ -53,7 +52,6 @@ class TestDeleteShare(TestCase):
         token, space_id, admin = create_space_as_admin(self.client, 'space-1')
         _, share_id = create_share_with_image(
             self.client, space_id, 'test-image-1.jpg', token)
-        logout(self.client)
         token, _ = register_and_login(self.client)
 
         response = self.client.delete(
@@ -62,7 +60,6 @@ class TestDeleteShare(TestCase):
         self.assertEqual(response.data, b'User doesn\'t own this share')
         self.assertTrue(find_bucket(f'test-space-id-{space_id}'))
 
-        logout(self.client)
         token = login(self.client, admin.get('login'))
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})

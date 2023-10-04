@@ -60,10 +60,6 @@ def register_and_login(client):
     return token, user
 
 
-def logout(client):
-    client.delete('/logout')
-
-
 def create_space(client, space_name, token):
     data = {
         "name": space_name
@@ -82,7 +78,6 @@ def create_space_as_admin(client, space_name):
 
 def create_space_as_not_member(client):
     _, space_id, _ = create_space_as_admin(client, 'space-1')
-    logout(client)
     token, _ = register_and_login(client)
     return token, space_id
 
@@ -99,7 +94,6 @@ def create_space_as_member(client, space_name):
     member_login = register(client).get('login')
     token, space_id, _ = create_space_as_admin(client, space_name)
     add_member(client, 1, member_login, token)
-    logout(client)
     token = login(client, member_login)
     return token, space_id
 

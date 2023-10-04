@@ -1,8 +1,5 @@
 from unittest import TestCase
-from test.helper import (
-    get_app, logout, add_member, WRONG_TOKEN,
-    register, register_and_login, login, create_space_as_admin
-)
+from test.helper import get_app, add_member, WRONG_TOKEN, register, register_and_login, login, create_space_as_admin
 
 
 class TestAddMember(TestCase):
@@ -46,7 +43,6 @@ class TestAddMember(TestCase):
         member = register(self.client)
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
         add_member(self.client, space_id, member.get('login'), token)
-        logout(self.client)
         token = login(self.client,  member.get('login'))
         response = add_member(self.client, space_id,
                               member.get('login'), token)

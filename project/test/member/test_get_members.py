@@ -1,9 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import (
-    get_app, logout, register, create_space_as_admin,
-    add_member, register_and_login, create_space
-)
+from test.helper import get_app,  register, create_space_as_admin, add_member, register_and_login, create_space
 
 
 class TestGetMembers(TestCase):
@@ -58,7 +55,6 @@ class TestGetMembers(TestCase):
 
     def test_not_member(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        logout(self.client)
         token, _ = register_and_login(self.client)
         response = self.client.get(
             f'/spaces/{space_id}/members', headers={"Authorization": f"Bearer {token}"})
