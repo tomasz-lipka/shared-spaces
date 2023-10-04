@@ -24,14 +24,18 @@ class AssignmentService():
     @jwt_required()
     def get_users_assignments(self):
         """
-        Fetch assignments belonging to the current user.
+        Fetch assignments belonging to the current user. 
+        Sort them in alphabetical order by space name.
         Returns:
             List[Assignment]: User's assignment objects.
         """
-        return self.repository.get_all_by_filter(
+        assignments = self.repository.get_all_by_filter(
             Assignment,
             Assignment.user_id == self.validator.get_logged_in_user_id()
         )
+        assignments = sorted(
+            assignments, key=lambda assignment: assignment.space.name)
+        return assignments
 
     @jwt_required()
     def get_assignments_by_space_id(self, space_id):

@@ -16,23 +16,23 @@ class TestGetSpaces(TestCase):
 
     def test_normal_run(self):
         token, _ = register_and_login(self.client)
-        response, space_id_1 = create_space(self.client, "space-1", token)
-        response, space_id_2 = create_space(self.client, "space-2", token)
+        response, space_id_1 = create_space(self.client, "b-space", token)
+        response, space_id_2 = create_space(self.client, "a-space", token)
         response = self.client.get(
             '/spaces', headers={"Authorization": f"Bearer {token}"})
         expected_data = [
             {
                 "is_admin": True,
                 "space": {
-                    "id": space_id_1,
-                    "name": "space-1"
+                    "id": space_id_2,
+                    "name": "a-space"
                 }
             },
             {
                 "is_admin": True,
                 "space": {
-                    "id": space_id_2,
-                    "name": "space-2"
+                    "id": space_id_1,
+                    "name": "b-space"
                 }
             }
         ]
