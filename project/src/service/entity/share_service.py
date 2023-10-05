@@ -14,8 +14,8 @@ from ..helper.input_validator import validate_usr_input
 
 class ShareService():
     """
-    This class provides methods for creating, retrieving, editing, and deleting shares 
-    within spaces. The methods are designed to work with Flask-JWT-Extended for authentication. 
+    This class provides methods for creating, retrieving, editing, and deleting shares
+    within spaces. The methods are designed to work with Flask-JWT-Extended for authentication.
     It utilizes validation methods and makes use of ImageService to work with images.
     """
 
@@ -79,7 +79,8 @@ class ShareService():
         )
         shares = self.repository.get_all_by_filter(
             Share, Share.space_id == space_id)
-        shares = sorted(shares, key=lambda share: share.timestamp, reverse=True)
+        shares = sorted(
+            shares, key=lambda share: share.timestamp, reverse=True)
         for share in shares:
             share.image_url = self.image_service.get_image(share)
         return shares
@@ -114,3 +115,14 @@ class ShareService():
         )
         share.text = text
         return self.repository.add(share)
+
+    @jwt_required()
+    def delete_shares_by_space_id(self, space_id):
+        """
+        Delete all shares associated with a specific space by its ID.
+        Args:
+            space_id (int): ID of the target space.
+        """
+        shares = self.get_shares_by_space_id(space_id)
+        for share in shares:
+            self.delete_share_by_share_id(share.id)

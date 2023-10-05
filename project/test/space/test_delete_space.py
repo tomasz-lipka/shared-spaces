@@ -1,7 +1,7 @@
 from unittest import TestCase
 from test.helper import (
     register_and_login, get_app, create_space_as_admin,
-    create_space_as_member, add_member,
+    create_space_as_member, add_member, create_share,
     register, create_share_with_image, find_bucket
 )
 
@@ -61,3 +61,13 @@ class TestDeleteSpace(TestCase):
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertFalse(find_bucket(f'test-space-id-{space_id}'))
+
+    def test_delete_share_with_space(self):
+        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, token)
+        self.client.delete(
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
+        response = self.client.get(
+            f'/shares/{share_id}', headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data, b'No such share')

@@ -8,6 +8,7 @@ from injector import inject
 from ...repository.repository import Repository
 from ..image.image_service import ImageService
 from .assignment_service import AssignmentService
+from .share_service import ShareService
 from ...model.space import Space
 from ..helper.service_validator import ServiceValidator
 from ..helper.input_validator import validate_usr_input
@@ -25,11 +26,15 @@ class SpaceService():
 
     @inject
     def __init__(self,
-                 repository: Repository, image_service: ImageService,
-                 assignment_service: AssignmentService, validator: ServiceValidator):
+                 repository: Repository,
+                 image_service: ImageService,
+                 assignment_service: AssignmentService,
+                 share_service: ShareService,
+                 validator: ServiceValidator):
         self.repository = repository
         self.image_service = image_service
         self.assignment_service = assignment_service
+        self.share_service = share_service
         self.validator = validator
 
     @jwt_required()
@@ -77,6 +82,7 @@ class SpaceService():
         )
         self.validator.validate_admin(assignment)
         if self.validator.contains_only_owner(space):
+            self.share_service.delete_shares_by_space_id(space_id)
             self.assignment_service.delete_assignment(assignment)
             self.repository.delete_by_id(Space, space_id)
             self.image_service.delete_space_directory(space)
