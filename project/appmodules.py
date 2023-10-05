@@ -7,8 +7,6 @@ from src.repository.sql_alchemy_repository import Repository
 from src.repository.sql_alchemy_repository import SqlAlchemyRepository
 from src.service.image.image_service import ImageService
 from src.service.image.aws_image_service import AwsImageService
-from src.service.entity.share_service import ShareService
-from src.service.entity.assignment_service import AssignmentService
 from src.service.helper.service_validator import ServiceValidator
 
 
@@ -37,21 +35,4 @@ class AppModules(Module):
         binder.bind(
             ImageService,
             to=self.aws_image_service
-        )
-        binder.bind(
-            ShareService,
-            to=ShareService(self.sql_alchemy_repository,
-                            self.aws_image_service,
-                            self.validator
-                            )
-        )
-        binder.bind(
-            AssignmentService,
-            to=AssignmentService(self.sql_alchemy_repository,
-                                 self.validator
-                                 )
-        )
-        binder.bind(
-            ServiceValidator,
-            to=self.validator
         )
