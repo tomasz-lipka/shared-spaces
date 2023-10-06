@@ -74,8 +74,8 @@ def create_space_as_admin(client, space_name):
 
 def create_space_as_not_member(client):
     _, space_id, _ = create_space_as_admin(client, 'space-1')
-    token, _ = register_and_login(client)
-    return token, space_id
+    not_member_token, _ = register_and_login(client)
+    return not_member_token, space_id
 
 
 def add_member(client, space_id, member_login, token):
@@ -87,11 +87,10 @@ def add_member(client, space_id, member_login, token):
 
 
 def create_space_as_member(client, space_name):
-    member = register(client)
-    token, space_id, _ = create_space_as_admin(client, space_name)
-    add_member(client, space_id, member.get('login'), token)
-    token = login(client, member.get('login'))
-    return token, space_id
+    member_token, member = register_and_login(client)
+    admin_token, space_id, _ = create_space_as_admin(client, space_name)
+    add_member(client, space_id, member.get('login'), admin_token)
+    return member_token, space_id
 
 
 def create_share(client, space_id, token):

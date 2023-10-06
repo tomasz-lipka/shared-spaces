@@ -1,6 +1,6 @@
 import json
 from unittest import TestCase
-from test.helper import get_app,  register, create_space_as_admin, add_member, register_and_login, create_space
+from test.helper import get_app, register, create_space_as_admin, add_member, register_and_login, create_space
 
 
 class TestGetMembers(TestCase):
@@ -54,9 +54,9 @@ class TestGetMembers(TestCase):
             response.data, b"Space with ID '999999999' doesn't exist")
 
     def test_not_member(self):
-        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        token, _ = register_and_login(self.client)
+        _, space_id, _ = create_space_as_admin(self.client, 'space-1')
+        not_member_token, _ = register_and_login(self.client)
         response = self.client.get(
-            f'/spaces/{space_id}/members', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}/members', headers={"Authorization": f"Bearer {not_member_token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User-space pair doesn\'t exist')

@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test.helper import get_app, add_member, WRONG_TOKEN, register, register_and_login, login, create_space_as_admin
+from test.helper import get_app, add_member, WRONG_TOKEN, register, register_and_login, create_space_as_admin
 
 
 class TestAddMember(TestCase):
@@ -40,12 +40,12 @@ class TestAddMember(TestCase):
             response.data, b"User with login 'member' doesn't exist")
 
     def test_not_admin(self):
-        member = register(self.client)
-        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        add_member(self.client, space_id, member.get('login'), token)
-        token = login(self.client,  member.get('login'))
+        member_token, member = register_and_login(self.client)
+        admin_token, space_id, _ = create_space_as_admin(
+            self.client, 'space-1')
+        add_member(self.client, space_id, member.get('login'), admin_token)
         response = add_member(self.client, space_id,
-                              member.get('login'), token)
+                              member.get('login'), member_token)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User not admin')
 

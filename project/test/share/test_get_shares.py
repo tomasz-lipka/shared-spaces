@@ -2,8 +2,7 @@ import json
 import time
 from unittest import TestCase
 from test.helper import (
-    get_app, create_share, register_and_login, create_space,
-    register, add_member, login, create_space_as_not_member,
+    get_app, create_share, register_and_login, add_member, create_space_as_not_member,
     create_space_as_admin, create_share_with_image, are_images_same
 )
 
@@ -20,29 +19,25 @@ class TestGetShares(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_normal_run(self):
-        token, _ = register_and_login(self.client)
-        _, space_id_1 = create_space(self.client, 'space-1', token)
-        create_share(self.client, space_id_1, token)
-
-        member_1 = register(self.client)
-
-        token, admin_2 = register_and_login(self.client)
-        _, space_id_2 = create_space(self.client, 'space-2', token)
-        _, share_id_2 = create_share(self.client, space_id_2, token)
+        admin_1_token, space_id_1, _ = create_space_as_admin(
+            self.client, 'space-1')
+        create_share(self.client, space_id_1, admin_1_token)
+        member_token, member = register_and_login(self.client)
+        admin_2_token, space_id_2, admin_2 = create_space_as_admin(
+            self.client, 'space-2')
+        _, share_id_2 = create_share(self.client, space_id_2, admin_2_token)
         time.sleep(0.5)
-        add_member(self.client, space_id_2, member_1.get('login'), token)
-
-        token = login(self.client, member_1.get('login'))
-        _, share_id_3 = create_share(self.client, space_id_2, token)
+        add_member(self.client, space_id_2, member.get('login'), admin_2_token)
+        _, share_id_3 = create_share(self.client, space_id_2, member_token)
 
         response = self.client.get(
-            f'/spaces/{space_id_2}/shares', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id_2}/shares', headers={"Authorization": f"Bearer {member_token}"})
         expected_data = [
             {
                 "id": share_id_3,
                 "user": {
-                    "id": member_1.get('id'),
-                    "login": member_1.get('login')
+                    "id": member.get('id'),
+                    "login": member.get('login')
                 },
                 "text": "Lorem ipsum",
                 # "timestamp":

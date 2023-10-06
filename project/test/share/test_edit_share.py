@@ -3,7 +3,7 @@ from unittest import TestCase
 from test.helper import (
     get_app, create_space_as_admin,
     edit_share_with_image, create_share, register_and_login,
-    create_share_with_image, are_images_same, login, WRONG_TOKEN
+    create_share_with_image, are_images_same, WRONG_TOKEN
 )
 
 
@@ -54,15 +54,16 @@ class TestEditShare(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_owned(self):
-        token, space_id, _ = create_space_as_admin(self.client, 'space-1')
-        _, share_id = create_share(self.client, space_id, token)
-        token, _ = register_and_login(self.client)
+        admin_token, space_id, _ = create_space_as_admin(
+            self.client, 'space-1')
+        _, share_id = create_share(self.client, space_id, admin_token)
+        not_owner_token, _ = register_and_login(self.client)
 
         data = {
             "text": "Edit lorem ipsum"
         }
         response = self.client.put(
-            f'/shares/{share_id}', data=data, headers={"Authorization": f"Bearer {token}"})
+            f'/shares/{share_id}', data=data, headers={"Authorization": f"Bearer {not_owner_token}"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
@@ -131,19 +132,19 @@ class TestEditShare(TestCase):
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
 
     def test_not_owned_with_image(self):
-        token, space_id, admin = create_space_as_admin(self.client, 'space-1')
+        admin_token, space_id, _ = create_space_as_admin(
+            self.client, 'space-1')
         _, share_id = create_share_with_image(
-            self.client, space_id, 'test-image-1.jpg', token)
-        token, _ = register_and_login(self.client)
+            self.client, space_id, 'test-image-1.jpg', admin_token)
+        not_owner_token, _ = register_and_login(self.client)
 
         response = edit_share_with_image(
-            self.client, share_id, 'test-image-2.jpg', token)
+            self.client, share_id, 'test-image-2.jpg', not_owner_token)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
 
-        token = login(self.client, admin.get('login'))
         self.client.delete(
-            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
+            f'/spaces/{space_id}', headers={"Authorization": f"Bearer {admin_token}"})
 
     def test_not_exist_with_image(self):
         token, _ = register_and_login(self.client)
