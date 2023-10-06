@@ -125,4 +125,4 @@ class ShareService():
         """
         shares = self.get_shares_by_space_id(space_id)
         for share in shares:
-            self.delete_share_by_share_id(share.id)
+            self.repository.delete_by_id(Share, share.id)
