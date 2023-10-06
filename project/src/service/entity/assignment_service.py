@@ -34,7 +34,7 @@ class AssignmentService():
             Assignment.user_id == self.validator.get_logged_in_user_id()
         )
         assignments = sorted(
-            assignments, key=lambda assignment: assignment.space.name)
+            assignments, key=lambda assignment: assignment.space.name.lower())
         return assignments
 
     @jwt_required()
