@@ -26,7 +26,7 @@ class TestGetShares(TestCase):
         admin_2_token, space_id_2, admin_2 = create_space_as_admin(
             self.client, 'space-2')
         _, share_id_2 = create_share(self.client, space_id_2, admin_2_token)
-        time.sleep(0.5)
+        time.sleep(1)
         add_member(self.client, space_id_2, member.get('login'), admin_2_token)
         _, share_id_3 = create_share(self.client, space_id_2, member_token)
 
