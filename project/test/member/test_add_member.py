@@ -57,7 +57,7 @@ class TestAddMember(TestCase):
         response = add_member(self.client, space_id,
                               member.get('login'), token)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b"User-space pair already exists")
+        self.assertEqual(response.data, b"User already member of this space")
 
     def test_payload_invalid_type(self):
         register(self.client)

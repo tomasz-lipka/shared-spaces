@@ -104,7 +104,7 @@ class ServiceValidator():
                                                     Assignment.user_id == user.id,
                                                     Assignment.space_id == space.id
                                                     ):
-            raise ServiceException('User-space pair already exists', 400)
+            raise ServiceException('User already member of this space', 400)
 
     def validate_admin(self, assignment):
         """
