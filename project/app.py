@@ -40,12 +40,13 @@ from appmodules import AppModules
 
 def create_app(config_filename):
     app = Flask(__name__)
-    CORS(app)
 
     app.config.from_pyfile(config_filename)
     app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY')
     app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=999)
+
+    CORS(app, resources={r'*': {'origins': app.config['CORS_DOMAIN']}})
 
     app.register_blueprint(user_controller)
     app.register_blueprint(space_controller)
