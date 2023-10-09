@@ -3,6 +3,7 @@ Module containing the share controller blueprint with REST endpoints
 for managing shares within spaces.
 """
 import json
+import time
 from flask import Blueprint, request, make_response
 from injector import inject
 
@@ -37,6 +38,7 @@ def post_share(space_id, image_service: ImageService, service: ShareService):
                 request.files['file'],
                 share_id
             )
+            __wait_for_image(service, share_id)
         share = service.get_share_by_share_id(share_id)
         return json.dumps(share.to_dict())
     except ServiceException as exc:
@@ -125,3 +127,12 @@ def put_share(share_id, service: ShareService, image_service: ImageService):
         return make_response('Share edited', 200)
     except ServiceException as exc:
         return make_response(str(exc), exc.error_code)
+
+
+def __wait_for_image(service, share_id):
+    timeout = 7
+    while not service.get_share_by_share_id(share_id).image_url and timeout > 0:
+        time.sleep(1)
+        timeout -= 1
+    if timeout == 0:
+        print('Passed timeout. No image found')
