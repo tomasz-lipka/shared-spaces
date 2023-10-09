@@ -90,7 +90,7 @@ class ServiceValidator():
         assignment = self.repository.get_first_by_two_filters(
             Assignment, Assignment.user_id == user.id, Assignment.space_id == space.id)
         if not assignment:
-            raise ForbiddenException('User-space pair doesn\'t exist')
+            raise ForbiddenException('Can\'t access this space - not a member')
         return assignment
 
     def validate_no_assignment(self, space, user):

@@ -54,7 +54,7 @@ class TestCreateShare(TestCase):
         token, space_id = create_space_as_not_member(self.client)
         response, _ = create_share(self.client, space_id, token)
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data, b'User-space pair doesn\'t exist')
+        self.assertEqual(response.data, b'Can\'t access this space - not a member')
 
     def test_wrong_json_key(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
@@ -96,7 +96,7 @@ class TestCreateShare(TestCase):
         response, _ = create_share_with_image(
             self.client, space_id, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data, b'User-space pair doesn\'t exist')
+        self.assertEqual(response.data, b'Can\'t access this space - not a member')
         self.assertFalse(find_bucket(f'test-space-id-{space_id}'))
 
     def test_null_json_value(self):

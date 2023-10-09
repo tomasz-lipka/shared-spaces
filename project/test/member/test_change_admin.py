@@ -95,7 +95,7 @@ class TestChangeAdmin(TestCase):
         response = self.client.put(
             f"/spaces/{space_id_2}/members/{member.get('id')}", json=data, headers={"Authorization": f"Bearer {admin_2_token}"})
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data, b'User-space pair doesn\'t exist')
+        self.assertEqual(response.data, b'Can\'t access this space - not a member')
 
     def test_not_admin(self):
         member_token, member = register_and_login(self.client)

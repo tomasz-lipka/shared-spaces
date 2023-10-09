@@ -59,4 +59,4 @@ class TestGetMembers(TestCase):
         response = self.client.get(
             f'/spaces/{space_id}/members', headers={"Authorization": f"Bearer {not_member_token}"})
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data, b'User-space pair doesn\'t exist')
+        self.assertEqual(response.data, b'Can\'t access this space - not a member')

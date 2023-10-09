@@ -48,7 +48,7 @@ class TestGetAllImages(TestCase):
         response = self.client.get(
             f'/spaces/{space_id}/images', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data, b'User-space pair doesn\'t exist')
+        self.assertEqual(response.data, b'Can\'t access this space - not a member')
 
     def test_no_images(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
