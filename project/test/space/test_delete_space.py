@@ -52,7 +52,7 @@ class TestDeleteSpace(TestCase):
         response = self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data, b'Space not empty')
+        self.assertEqual(response.data, b'Space must contain only one member')
 
     def test_delete_s3_bucket(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')

@@ -126,7 +126,7 @@ class ServiceValidator():
         assignments = self.repository.get_all_by_filter(
             Assignment, Assignment.space_id == space.id)
         if len(assignments) != 1:
-            raise ServiceException('Space not empty', 400)
+            raise ServiceException('Space must contain only one member', 400)
         return True
 
     def validate_share(self, share_id):
