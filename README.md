@@ -64,4 +64,4 @@ A list of REST API endpoints exposed by the application
 ## Tests
 Full test coverage achieved with integration tests
 <br/><br/>
-![coverage-report](./readme/images/coverage-report-1_09.jpg)
+![coverage-report](./readme/images/coverage-report-13_10.jpg)
