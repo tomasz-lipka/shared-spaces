@@ -134,5 +134,3 @@ def __wait_for_image(service, share_id):
     while not service.get_share_by_share_id(share_id).image_url and timeout > 0:
         time.sleep(1)
         timeout -= 1
-    if timeout == 0:
-        print('Passed timeout. No image found')
