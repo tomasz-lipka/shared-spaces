@@ -10,7 +10,8 @@ class TokenBlocklist(Base):
     This class defines the structure of the TokenBlocklist.
     It keeps track who revoked a JWT token.
     'jti'' stands for JWTs unique identifier
-    For more info check: https://flask-jwt-extended.readthedocs.io/en/stable/blocklist_and_token_revoking.html
+    For more info check: 
+    https://flask-jwt-extended.readthedocs.io/en/stable/blocklist_and_token_revoking.html
     """
     __tablename__ = 'tokenblocklist'
 

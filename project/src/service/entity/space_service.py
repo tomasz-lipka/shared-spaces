@@ -17,8 +17,8 @@ from ..helper.input_validator import validate_usr_input
 class SpaceService():
     """
     This class provides methods for creating, retrieving, renaming, and deleting spaces.
-    The methods are designed to work with Flask-JWT-Extended for authentication. It utilizes validation
-    methods and makes use of ImageService to work with images. 
+    The methods are designed to work with Flask-JWT-Extended for authentication.
+    It utilizes validation methods and makes use of ImageService to work with images. 
     Additionally, the AssignmentService class is used to perform assignment-related actions.
     """
 
