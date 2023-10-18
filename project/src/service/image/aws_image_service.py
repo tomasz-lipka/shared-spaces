@@ -22,14 +22,14 @@ class AwsImageService(ImageService):
     FILE_FORMAT = '.jpg'
     MEDIA_URL_EXPIRES_IN = 10
 
-    def __init__(self, queue_url, s3_temp_bucket, mode, validator: ServiceValidator, ):
-        self.queue_url = queue_url
-        self.s3_temp_bucket = s3_temp_bucket
-        self.mode = mode
+    def __init__(self, app, validator: ServiceValidator):
+        self.queue_url = app.config['SQS_URL']
+        self.s3_temp_bucket = app.config['S3_TEMP_BUCKET']
+        self.mode = app.config['MODE']
         self.s3_client = boto3.client(
             's3',
-            aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
+            aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
         )
         self.validator = validator
 
@@ -79,7 +79,8 @@ class AwsImageService(ImageService):
         space = self.validator.validate_space(space_id)
         self.validator.validate_assignment(
             space,
-            self.validator.validate_user(self.validator.get_logged_in_user_id())
+            self.validator.validate_user(
+                self.validator.get_logged_in_user_id())
         )
 
         bucket = self.__find_bucket(space.id)

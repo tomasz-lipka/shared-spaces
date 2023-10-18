@@ -60,7 +60,7 @@ class TestDeleteSpace(TestCase):
             self.client, space_id, 'test-image-1.jpg', token)
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {token}"})
-        self.assertFalse(find_bucket(f'test-space-id-{space_id}'))
+        self.assertFalse(find_bucket(self.app, f'test-space-id-{space_id}'))
 
     def test_delete_share_with_space(self):
         member_token, member = register_and_login(self.client)

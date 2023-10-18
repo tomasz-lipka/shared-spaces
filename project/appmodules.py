@@ -20,12 +20,7 @@ class AppModules(Module):
         self.sql_alchemy_repository = SqlAlchemyRepository(
             app.config['DATABASE_URL'])
         self.validator = ServiceValidator(self.sql_alchemy_repository)
-        self.aws_image_service = AwsImageService(
-            app.config['SQS_URL'],
-            app.config['S3_TEMP_BUCKET'],
-            app.config['MODE'],
-            self.validator
-        )
+        self.aws_image_service = AwsImageService(app, self.validator)
 
     def configure(self, binder):
         binder.bind(

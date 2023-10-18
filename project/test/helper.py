@@ -7,11 +7,6 @@ from PIL import Image, ImageChops
 import requests
 from app import create_app
 
-s3_client = boto3.client(
-    's3',
-    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-)
 WRONG_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY5NDE2NDIwMSwianRpIjoiNjc0NmNhZGEtNzFjYS00ZGZhLWFkYTUtOTFhYTRlODg2YzZmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InRvbSIsIm5iZiI6MTY5NDE2NDIwMSwiZXhwIjoxNjk0MTY1MTAxfQ.GPN8b1ahikw28Iy8cv3zr3gv_MqHfxZktU5zWEiFGT8"
 RESOURCES = '/test/resources/'
 
@@ -127,7 +122,12 @@ def create_share_with_image(client, space_id, img_name, token):
         return response, share_id
 
 
-def find_bucket(bucket_name):
+def find_bucket(app, bucket_name):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+        aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+    )
     for bucket in s3_client.list_buckets()['Buckets']:
         if bucket["Name"].startswith(bucket_name):
             return True

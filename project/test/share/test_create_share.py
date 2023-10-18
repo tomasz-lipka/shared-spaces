@@ -80,7 +80,7 @@ class TestCreateShare(TestCase):
         self.assertEqual(
             response.data, b'{"msg":"Signature verification failed"}\n')
         self.assertEqual(response.status_code, 422)
-        self.assertFalse(find_bucket('test-space-id-999999999'))
+        self.assertFalse(find_bucket(self.app, 'test-space-id-999999999'))
 
     def test_space_not_exist_with_image(self):
         token, _ = register_and_login(self.client)
@@ -89,7 +89,7 @@ class TestCreateShare(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(
             response.data, b"Space with ID '999999999' doesn't exist")
-        self.assertFalse(find_bucket('test-space-id-999999999'))
+        self.assertFalse(find_bucket(self.app, 'test-space-id-999999999'))
 
     def test_not_member_with_image(self):
         token, space_id = create_space_as_not_member(self.client)
@@ -97,7 +97,7 @@ class TestCreateShare(TestCase):
             self.client, space_id, 'test-image-1.jpg', token)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'Can\'t access this space - not a member')
-        self.assertFalse(find_bucket(f'test-space-id-{space_id}'))
+        self.assertFalse(find_bucket(self.app, f'test-space-id-{space_id}'))
 
     def test_null_json_value(self):
         token, space_id, _ = create_space_as_admin(self.client, 'space-1')
