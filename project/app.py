@@ -3,7 +3,8 @@ Flask Application Initialization
 
 This script creates and configures a Flask application.
 It registers blueprints for user, space, assignment, and share controllers.
-It also initializes the Flask-JWT-Extended extension for user authentication and provides the JWTManager.
+It also initializes the Flask-JWT-Extended extension for 
+user authentication and provides the JWTManager.
 
 The application uses SQLAlchemy for database operations.
 And Amazon Web Services: SQS, Lambda and S3 Buckets to maintain images.
@@ -38,10 +39,14 @@ from src.model.tockenblocklist import TokenBlocklist
 from appmodules import AppModules
 
 
-def create_app(config_filename):
+def create_app(testing):
     app = Flask(__name__)
+    app.config.from_pyfile('app.config')
 
-    app.config.from_pyfile(config_filename)
+    if testing:
+        app.config["DATABASE_URL"] = 'sqlite:///test_db.sqlite'
+        app.config["MODE"] = 'test'
+
     app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY')
     app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=999)

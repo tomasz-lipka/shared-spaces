@@ -17,7 +17,7 @@ RESOURCES = '/test/resources/'
 
 
 def get_app():
-    app = create_app('test-app.config')
+    app = create_app('test_mode')
     app.config['TESTING'] = True
     return app
 
