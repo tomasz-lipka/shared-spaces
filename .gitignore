@@ -1,6 +1,5 @@
 test_db.sqlite
 db.sqlite
-app.config
 
 ### Python ###
 __pycache__/
