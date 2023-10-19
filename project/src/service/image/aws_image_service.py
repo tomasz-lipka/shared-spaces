@@ -28,8 +28,8 @@ class AwsImageService(ImageService):
         self.mode = app.config['MODE']
         self.s3_client = boto3.client(
             's3',
-            aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
-            aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+            aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
         )
         self.validator = validator
 

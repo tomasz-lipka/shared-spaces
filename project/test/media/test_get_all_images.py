@@ -59,4 +59,4 @@ class TestGetAllImages(TestCase):
         self.assertEqual(data, expected_data)
 
     def test_is_temp_bucket_created(self):
-        self.assertTrue(find_bucket(self.app, 'shared-spaces-temp'))
+        self.assertTrue(find_bucket('shared-spaces-temp'))

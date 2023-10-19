@@ -120,7 +120,7 @@ class TestGetShare(TestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data, b'User doesn\'t own this share')
-        self.assertTrue(find_bucket(self.app, f'test-space-id-{space_id}'))
+        self.assertTrue(find_bucket(f'test-space-id-{space_id}'))
 
         self.client.delete(
             f'/spaces/{space_id}', headers={"Authorization": f"Bearer {admin_token}"})
