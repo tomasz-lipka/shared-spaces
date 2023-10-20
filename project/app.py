@@ -12,11 +12,14 @@ And Amazon Web Services: SQS, Lambda and S3 Buckets to maintain images.
 Usage:
     export AWS_ACCESS_KEY_ID=<value>
     export AWS_SECRET_ACCESS_KEY=<value>
+    export SECRET_KEY=<value>
+    export JWT_SECRET_KEY=<value>
     flask run
 
 Author:
     Tomasz Lipka
 """
+import os
 from datetime import timedelta
 from flask import Flask
 from flask_cors import CORS
@@ -44,6 +47,8 @@ def create_app(testing=None):
         app.config["DATABASE_URL"] = 'sqlite:///test_db.sqlite'
         app.config["MODE"] = 'test'
 
+    app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY')
+    app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY')
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=999)
 
     CORS(app, resources={r'*': {'origins': app.config['CORS_DOMAIN']}})
