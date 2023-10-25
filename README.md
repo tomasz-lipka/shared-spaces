@@ -1,5 +1,5 @@
-# Shared Spaces
-Enhanced version of the application to share thoughts between family members and friends 
+# Shared Spaces - backend
+This is an enhanced version of the application to share thoughts between family members and friends.
 <br/>
 
 
