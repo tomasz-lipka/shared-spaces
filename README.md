@@ -15,7 +15,8 @@ Enhanced version of the application to share thoughts between family members and
 This project was developed to practice Python, Flask and AWS services. It is an enhanced version of the Family Advertisements App (see another project on my repository).
 It utilizes the same idea to create a simple but fully functional solution of a REST application.
 <br />
-From user perspective it's a social media app, but for a small group of people, namely your family and friends. By definition, it provides an intimate space for your close ones to let them know that you throw a party or need help with your broken car.
+From user perspective it's a social media app, but for a small group of people, namely your family and friends. By definition, it provides an intimate space for your close ones to let them know that you throw a party or need help with your broken car.<br/><br/>
+Live demo: [Click here](http://ec2-54-146-229-245.compute-1.amazonaws.com/)
 
 
 ## Technologies Used
