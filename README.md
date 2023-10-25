@@ -39,28 +39,27 @@ The application stores photos in AWS S3 buckets. To achieve this, it utilizes a 
 ## FEATURES
 A list of REST API endpoints exposed by the application
 <br/>
-| Method  | Endpoint                                    | Description                              			   						|
-| ------- | ------------------------------------------- | -------------------------------------------------------------------------- |
-| POST    | /login                                      | Log the user in. Accepts a JSON payload.    									|
-| POST    | /register                                   | Register a new user. Accepts a JSON payload.          	        			|
-| GET     | /logout                                     | Log the user out.											        	        |
-| PUT     | /change-password                            | Change user password. Accepts a JSON payload.                                |
-| POST    | /spaces                                     | Create a new space. Accepts a JSON payload.                                  |
-| GET     | /spaces/<space_id>                          | Get details of a space by its ID.                                            |
-| DELETE  | /spaces/<space_id>                          | Delete a space by its ID.                                                    |
-| PUT     | /spaces/<space_id>                          | Rename a space by its ID. Accepts a JSON payload.                            |
-| GET     | /spaces                                     | Get a list of spaces for the logged-in user.                                |
-| GET     | /spaces/<space_id>/members                  | Get a list of members in a space.                                           |
-| POST    | /spaces/<space_id>/members                  | Add a member to a space. Accept JSON payload.                                |
-| DELETE  | /spaces/<space_id>/members/<user_id>        | Delete a member from a space.                                               |
-| PUT     | /spaces/<space_id>/members/<user_id>        | Change the admin permission for a member in a space. Accept JSON payload.   |
+| Method  | Endpoint                                    | Description |
+| ------- | ------------------------------------------- | ----------- |
+| POST    | /login                                      | Log the user in. Accepts a JSON payload. |
+| POST    | /register                                   | Register a new user. Accepts a JSON payload. |
+| GET     | /logout                                     | Log the user out.	|
+| PUT     | /change-password                            | Change user password. Accepts a JSON payload. |
+| POST    | /spaces                                     | Create a new space. Accepts a JSON payload. |
+| GET     | /spaces/<space_id>                          | Get details of a space by its ID. |
+| DELETE  | /spaces/<space_id>                          | Delete a space by its ID. |
+| PUT     | /spaces/<space_id>                          | Rename a space by its ID. Accepts a JSON payload. |
+| GET     | /spaces                                     | Get a list of spaces for the logged-in user. |
+| GET     | /spaces/<space_id>/members                  | Get a list of members in a space. |
+| POST    | /spaces/<space_id>/members                  | Add a member to a space. Accept JSON payload. |
+| DELETE  | /spaces/<space_id>/members/<user_id>        | Delete a member from a space. |
+| PUT     | /spaces/<space_id>/members/<user_id>        | Change the admin permission for a member in a space. Accept JSON payload. |
 | POST    | /spaces/<space_id>/shares                   | Create a new share in a space and optionally upload an image. Accepts a form. |
-| GET     | /shares/<share_id>                          | Get details of a specific share by its share ID.                             |
-| GET     | /spaces/<space_id>/shares                   | Get a list of shares within a space.                                         |
-| DELETE  | /shares/<share_id>                          | Delete a share by its share ID.                                              |
-| PUT     | /shares/<share_id>                          | Update a share's text and optionally upload a new image. Accepts a form.    |
-| GET     | /spaces/<space_id>/images                   | Get all image URLs within a space.                                           |
-
+| GET     | /shares/<share_id>                          | Get details of a specific share by its share ID. |
+| GET     | /spaces/<space_id>/shares                   | Get a list of shares within a space. |
+| DELETE  | /shares/<share_id>                          | Delete a share by its share ID. |
+| PUT     | /shares/<share_id>                          | Update a share's text and optionally upload a new image. Accepts a form. |
+| GET     | /spaces/<space_id>/images                   | Get all image URLs within a space. |
 
 
 ## Tests
