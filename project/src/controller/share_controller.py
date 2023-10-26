@@ -124,6 +124,7 @@ def put_share(share_id, service: ShareService, image_service: ImageService):
                 request.files['file'],
                 share_id
             )
+            __wait_for_image(service, share_id)
         return make_response('Share edited', 200)
     except ServiceException as exc:
         return make_response(str(exc), exc.error_code)
