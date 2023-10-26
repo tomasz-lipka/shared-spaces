@@ -84,3 +84,12 @@ class TestLogin(TestCase):
         response = self.client.post('/login', json=data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data, b"Password must be provided")
+
+    def test_revoked_token(self):
+        token, _ = register_and_login(self.client)
+        self.client.delete(
+            '/logout', headers={"Authorization": f"Bearer {token}"})
+        response = self.client.get(
+            '/spaces', headers={"Authorization": f"Bearer {token}"})
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data, b"You aren't authorized")

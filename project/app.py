@@ -21,13 +21,11 @@ Author:
 """
 import os
 from datetime import timedelta
-from flask import Flask
+from flask import Flask, make_response
 from flask_cors import CORS
 from flask_injector import FlaskInjector
 from injector import Injector
 from flask_jwt_extended import JWTManager
-
-
 from src.controller.user_controller import user_controller
 from src.controller.space_controller import space_controller
 from src.controller.assignment_controller import assignment_controller
@@ -80,6 +78,15 @@ def create_app(testing=None):
         token = repository.get_first_by_filter(
             TokenBlocklist, TokenBlocklist.jti == jti)
         return token is not None
+
+    @jwt.revoked_token_loader
+    def revoked_token_loader(jwt_header, jwt_payload):
+        """
+        From: https://flask-jwt-extended.readthedocs.io/en/3.0.0_release/api/
+        Callback function that will be called if a revoked token attempts
+        to access a protected endpoint
+        """
+        return make_response("You aren't authorized", 401)
 
     app.engine = repository.engine
 
