@@ -3,3 +3,6 @@ db.sqlite
 
 ### Python ###
 __pycache__/
+
+# Environments
+.venv
