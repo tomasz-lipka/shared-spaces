@@ -37,7 +37,7 @@ The application stores photos in AWS S3 buckets. To achieve this, it utilizes a 
 ![aws-architecture](./readme/images/aws-architecture.jpg)
 
 
-## FEATURES
+## Features
 A list of REST API endpoints exposed by the application
 <br/>
 | Method  | Endpoint                                    | Description |
